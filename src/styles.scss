@@ -1,0 +1,58 @@
+/*++++++++++++++++ SOCXO Admin App ++++++++++++++++++++++++++
+- Reuse already existing classes.
+- Only add a new class when its absolutely necessary.
+- Inform via mail - to Architect(s), PM(s), Developer(s), Designer(s) when a new class is added.
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */ 
+
+
+ /*++++++++++++++++++++++ do not edit here ++++++++++++++++++++++ */
+
+/* ++++++++++++++ Noto Sans - google font attach +++++++++++++++++++ */
+@font-face{font-family:'noto';src:url(assets/fonts/noto/notosans-bold-webfont.woff2) format("woff2"),url(assets/fonts/noto/notosans-bold-webfont.woff) format("woff");font-weight:700;font-style:normal}
+@font-face{font-family:'noto';src:url(assets/fonts/noto/notosans-bolditalic-webfont.woff2) format("woff2"),url(assets/fonts/noto/notosans-bolditalic-webfont.woff) format("woff");font-weight:700;font-style:italic}
+@font-face{font-family:'noto';src:url(assets/fonts/noto/notosans-italic-webfont.woff2) format("woff2"),url(assets/fonts/noto/notosans-italic-webfont.woff) format("woff");font-weight:400;font-style:italic}
+@font-face{font-family:'noto';src:url(assets/fonts/noto/notosans-regular-webfont.woff2) format("woff2"),url(assets/fonts/noto/notosans-regular-webfont.woff) format("woff");font-weight:400;font-style:normal}
+/* ++++++++++++++ Noto Sans - google font attach +++++++++++++++++++ */
+
+/* ++++++++++++++ SASS Stylesheets attach - do not change order +++++++++++++++++++ */
+@import "assets/sass/icon-font"; // do not edit
+@import "assets/sass/brand-icon-font"; // do not edit
+@import "assets/sass/arabic"; // do not edit
+@import "assets/sass/spacing"; // do not edit
+@import "assets/sass/menu";    // do not edit
+@import "assets/sass/dark-theme";  // do not edit
+@import "assets/sass/utilities";  // do not edit
+@import "assets/sass/ui-switch-toggle";  // do not edit
+@import "assets/sass/date-range";  // do not edit
+@import "assets/sass/select2";  // do not edit
+@import "assets/sass/layout"; // do not edit
+@import "assets/sass/responsive"; // do not edit
+@import "assets/sass/table"; // do not edit
+@import "assets/sass/carousel"; // do not edit
+@import "assets/sass/variables";
+@import "assets/sass/mixins"; 
+@import "assets/sass/typography";
+@import "assets/sass/buttons";
+@import "assets/sass/images";
+@import "assets/sass/forms";
+@import "assets/sass/z-index";
+/* ++++++++++++++ SASS Stylesheets attach - do not change order  +++++++++++++++++++ */
+
+/*++++++++++++++++++++++ do not edit here ++++++++++++++++++++++ */
+
+a{  transition: all 0.35s ease-in-out, background-color 0.35s ease-in-out, background 0.35s ease-in-out, padding 0.35 ease-in-out, height 0.35 ease-in-out, width 0.35 ease-in-out, margin 0.35 ease-in-out;
+    -webkit-transition: background-color 0.35s ease-in-out;
+    -moz-transition: background-color 0.35s ease-in-out;
+    -o-transition: background-color 0.35s ease-in-out;
+    transition: background-color 0.35s ease-in-out;
+    -webkit-transition: all 0.35s ease-in-out;
+    -moz-transition: all 0.35s ease-in-out;
+    -o-transition: all 0.35s ease-in-out;
+    transition: all 0.35s ease-in-out;
+&:hover, &:focus{text-decoration: none;}
+}
+body{@include font-stack();
+@include font-render();
+color: $body-text-base;
+font-size: calc($size16 + 0.5vw);
+}

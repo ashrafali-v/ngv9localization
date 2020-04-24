@@ -1,0 +1,205 @@
+<section class="{{fullScreenToggleClass}}">
+    <article class="row">
+        <div class="col">
+            <h6 class="font-weight700 font-size14">SHARES & ENGAGEMENTS</h6>
+            <p class="font-size12">Insights on content shared by advocates through {{tenantOrganization}}.</p>
+        </div>
+
+        <div class="col">
+            <div class="row row justify-content-end">
+                <div class="col-auto ">
+                    <a class="icon icon-download app-icon-link" ngbTooltip="Download as Excelsheet"
+                        data-placement="top"></a>
+                    <a class="icon icon-refresh-cw app-icon-link" ngbTooltip="Refresh" data-placement="top"
+                        (click)="getGranularSocialMediaAnalytics()"></a>
+                    <a (click)="toggleFullscreenView()" class="icon icon-maximize-2 app-icon-link"
+                        ngbTooltip="Fullscreen View" data-placement="top"></a>
+                </div>
+            </div>
+        </div>
+    </article>    
+    <div *ngIf="errorOccurred" class="alert alert-danger margin-v-10" role="alert">
+        <div>Oops! Something went wrong!</div>
+    </div>
+    <article class="row gutter-5 card-header rounded-0 margin-top-5 margin-bottom-20"
+        [hidden]="!isDropdownsLoaded || !isTotalSharesAndEngagementsLoaded">
+        <div class="col-lg-3">
+            <div class="form-group mb-0">
+                <label class="col-form-label" for="social-media">Social Media</label>
+
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text icon icon-smartphone"></span>
+                    </div>
+                    <ng-select2 id="social-media" [data]="providerList" class="flex-grow-auto"
+                        [(ngModel)]="selectedProviderId" width="100%"
+                        (ngModelChange)="getGranularSocialMediaAnalytics()"></ng-select2>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3">
+            <div class="form-group mb-0 border rounded-5 padding-h-5 padding-bottom-5">
+                <div class="row justify-content-between">
+                    <div class="col">
+                        <label class="col-form-label" for="category">Category</label>
+                    </div>
+                    <div class="col text-right margin-top-3">
+                        <ui-switch [(ngModel)]="categorySelectEnabled"
+                            (ngModelChange)="getGranularSocialMediaAnalytics()" size="small"></ui-switch>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text icon icon-align-left"></span>
+                    </div>
+                    <ng-select2 width="100%" id="category" class="flex-grow-auto" [data]="categoryList"
+                        [(ngModel)]="selectedCategoryId" [disabled]="!categorySelectEnabled"
+                        (ngModelChange)="getGranularSocialMediaAnalytics()">
+                    </ng-select2>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3">
+            <div class="form-group mb-0 border rounded-5 padding-h-5 padding-bottom-5">
+                <div class="row">
+                    <div class="col-auto mr-auto">
+                        <label class="col-form-label" for="teams">Team</label>
+                    </div>
+                    <div class="col-auto text-right margin-top-3">
+                        <ui-switch [(ngModel)]="teamSelectEnabled" (ngModelChange)="getGranularSocialMediaAnalytics()"
+                            size="small"></ui-switch>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text icon icon-users"></span>
+                    </div>
+                    <ng-select2 width="100%" id="teams" class="flex-grow-auto" [data]="teamList"
+                        [(ngModel)]="selectedTeamId" [disabled]="!teamSelectEnabled"
+                        (ngModelChange)="getGranularSocialMediaAnalytics()">
+                    </ng-select2>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3">
+            <div class="form-group mb-0">
+                <label class="col-form-label" for="date-span">Date span</label>
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text icon icon-calendar"></span>
+                    </div>
+                    <input type="text" class="form-control form-control-sm" id="sedaterange">
+                </div>
+            </div>
+        </div>
+    </article>
+    <article class="row equi-height-wrap equi-wrap">
+        <div class="col-lg-9 lap-w-100 equi-height">            
+            <div *ngIf="!isGraphLoaded" class="row align-items-center justify-content-center h-100">
+                <div class="col-2">
+                    <img src="assets/images/app-preloader.svg" class="fluid-img">
+                </div>
+            </div>
+            <div [hidden]="!isGraphLoaded" class="row">
+                <div class="col-12">
+                    <canvas id="lineChart" class="w-100-strict"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 lap-w-100 equi-height">
+            <div class="block-relative">
+                <!--    <div class="preloader-cover"> <img src="assets/images/app-preloader.svg" class="preloader-middle">
+                </div> -->
+                <div class="row lap-margin-top-10 lap-top-separator-hide">
+                    <div class="lap-col12-to-col6">
+                        <div class="font-weight600 font-size12">TOTAL SHARES</div>
+                        <div class="font-weight700 font-size16">{{totalShare}}</div>
+
+                        <div *ngIf="!isTrendingStright" class="stat-box success-theme margin-v-5"  [ngClass]="isTrending ? 'success-theme' : 'danger-theme'">
+                            <div class="row no-gutters justify-content-between">
+                                <div class="col">
+                                    <div class="d-flex flex-row">
+                                        <div class="stat-icon-title"></div>
+                                        <div class="font-size13 font-weight500">{{shareTrendDiff}}</div>
+                                    </div>
+                                </div>
+                                <div class="col-auto text-right circle-progress">
+                                    <!-- ++++++++ radial progress bar ++++++++++ -->
+                                    <circle-progress [percent]="sharePercent" [subtitle]="shareSubtitle"
+                                        [innerStrokeColor]="shareInnerStrokeColor" [subtitleColor]="shareSubtitleColor"
+                                        [outerStrokeColor]="shareOuterStrokeColor"></circle-progress>
+                                    <!-- ++++++++ radial progress bar ++++++++++ -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <div *ngIf="isTrendingStright" class="stat-box same-trend-theme margin-v-5" >
+                            <div class="row no-gutters justify-content-between">
+                                <div class="col">
+                                    <div class="d-flex flex-row">
+                                        <div class="stat-icon-title"></div>
+                                        <div class="font-size13 font-weight500">{{shareTrendDiff}}</div>
+                                    </div>
+                                </div>
+                                <div class="col-auto text-right circle-progress">
+                                    <!-- ++++++++ radial progress bar ++++++++++ -->
+                                    <circle-progress [percent]="sharePercent" [subtitle]="shareSubtitle"
+                                        [innerStrokeColor]="shareInnerStrokeColor" [subtitleColor]="shareSubtitleColor"
+                                        [outerStrokeColor]="shareOuterStrokeColor"></circle-progress>
+                                    <!-- ++++++++ radial progress bar ++++++++++ -->
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="lap-col12-to-col6 padding-v-20 padding-h-30">
+                        <div class="font-weight600 font-size12">TOTAL ENGAGEMENTS</div>
+                        <div class="font-weight700 font-size16">{{totalEngagement}}</div>
+                        <div *ngIf="!engagementIsTrendingStright" class="stat-box success-theme margin-v-5" [ngClass]="engagementIsTrending ? 'success-theme' : 'danger-theme'">
+                            <div class="row no-gutters justify-content-between">
+                                <div class="col">
+                                    <div class="d-flex flex-row">
+                                        <div class="stat-icon-title"></div>
+                                        <div class="font-size13 font-weight500">{{engagementTrendDiff}}</div>
+                                    </div>
+                                </div>
+                                <div class="col-auto text-right circle-progress">
+                                    <!-- ++++++++ radial progress bar ++++++++++ -->
+                                    <circle-progress
+                                    [percent] = "engagementPercent"
+                                    [subtitle] = "engagementSubtitle"
+                                    [innerStrokeColor] = "engagementInnerStrokeColor"
+                                    [subtitleColor] = "engagementSubtitleColor"
+                                    [outerStrokeColor] = "engagementOuterStrokeColor"
+                                  ></circle-progress>
+                                    <!-- ++++++++ radial progress bar ++++++++++ -->
+                                </div>
+                            </div>
+                        </div>
+                        <div *ngIf="engagementIsTrendingStright" class="stat-box same-trend-theme margin-v-5" >
+                            <div class="row no-gutters justify-content-between">
+                                <div class="col">
+                                    <div class="d-flex flex-row">
+                                        <div class="stat-icon-title"></div>
+                                        <div class="font-size13 font-weight500">{{engagementTrendDiff}}</div>
+                                    </div>
+                                </div>
+                                <div class="col-auto text-right circle-progress">
+                                    <!-- ++++++++ radial progress bar ++++++++++ -->
+                                    <circle-progress
+                                    [percent] = "engagementPercent"
+                                    [subtitle] = "engagementSubtitle"
+                                    [innerStrokeColor] = "engagementInnerStrokeColor"
+                                    [subtitleColor] = "engagementSubtitleColor"
+                                    [outerStrokeColor] = "engagementOuterStrokeColor" >
+                                </circle-progress>
+                                    <!-- ++++++++ radial progress bar ++++++++++ -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </article>
+</section>

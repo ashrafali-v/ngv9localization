@@ -1,0 +1,662 @@
+<section class="{{fullScreenToggleClass}}">
+
+    <article class="row padding-top-20 padding-h-15" data-toggle="collapse" href="#content-perf-analytics-body"
+        aria-expanded="false" aria-controls="content-perf-analytics-body">
+        <div class="col">
+            <h6 class="font-weight700 font-size14">CONTENT PERFORMANCE ANALYTICS</h6>
+            <p class="font-size12">Analyse how your content has performed across platforms.</p>
+        </div>
+        <div class="col">
+            <div class="row row justify-content-end">
+                <div class="col-auto ">
+                    <a class="app-icon-link" ngbTooltip="Click to Expand" data-placement="top"
+                        (click)="initialLoadData()" data-toggle="collapse" href="#content-perf-analytics-body"
+                        role="button" aria-expanded="false" aria-controls="content-perf-analytics-body"><span
+                            class="icon icon-chevron-down" aria-hidden="true"></span></a>
+
+                    <a class="icon icon-refresh-cw app-icon-link remove-collapse" ngbTooltip="Refresh"
+                        data-placement="top" (click)="changeAnalyticsType()"></a>
+                    <a (click)="toggleFullscreenView()" class="icon icon-maximize-2 app-icon-link remove-collapse"
+                        ngbTooltip="Fullscreen View" data-placement="top"></a>
+                </div>
+            </div>
+        </div>
+    </article>
+    <div class="collapse padding-h-15" id="content-perf-analytics-body">
+        <article class="row card-header rounded-0 margin-top-5 margin-bottom-20">
+            <div class="col-6">
+                <div class="row">
+                    <div class="col">
+                        <div class="form-group mb-0">
+                            <label class="col-form-label" for="contentPerformance">Type</label>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text icon icon-menu"></span>
+                                </div>
+                                <select class="form-control form-control-sm" id="contentPerformance"
+                                    [(ngModel)]="chosenMod" (ngModelChange)="changeAnalyticsType()">
+                                    <option value="Click">Clicks</option>
+                                    <option value="Conversion">Conversions</option>
+                                </select>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="form-group mb-0">
+                            <label class="col-form-label" for="date-span">Date span</label>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text icon icon-calendar"></span>
+                                </div>
+                                <input type="text" id="cpadaterange" class="form-control form-control-sm">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </article>
+
+        <article class="row equi-height-wrap equi-wrap padding-bottom-20">
+            <div class="col-lg-9 lap-w-100 equi-height">
+                <div *ngIf="hasError" class="alert alert-danger margin-v-10" role="alert">
+                    <div>Oops! Something went wrong!</div>
+                </div>
+                <div *ngIf="contentAnalyticsIsLoading" class="row align-items-center justify-content-center h-100">
+                    <div class="row">
+                        <div class="col">
+                            <img src="assets/images/app-preloader.svg" class="img-fluid">
+                        </div>
+                    </div>
+                </div>
+                <div
+                    [hidden]="contentAnalyticsIsLoading || (chosenMod == 'Conversion' && totalPageView.Conversions==0)">
+                    <div class="row">
+                        <div class="col">
+                            <canvas id="contentChart" class="w-100-strict"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div *ngIf="chosenMod == 'Conversion' && !contentAnalyticsIsLoading &&(totalPageView == undefined || totalPageView.Conversions==0)"
+                    class="row align-items-center justify-content-center h-100 text-muted">
+                    <div class="text-center">
+                        <div class="icon icon-alert-circle font-size50"></div>
+                        <div class="font-size13 d-block">Uh oh, No Data Available!</div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="col-lg-3 lap-w-100 padding-v-0 equi-height" *ngIf="totalPageView != undefined">
+
+
+                <div class="block-relative">
+                    <div *ngIf="pageViewTotalIsLoading" class="preloader-cover"> <img
+                            src="assets/images/app-preloader.svg" class="preloader-middle">
+                    </div>
+
+                    <div class="row lap-margin-top-20">
+                        <div class="lap-col6-to-col3 padding-v-10 lap-bordered3-h-ends-0-bf-hide">
+                            <div class="font-weight600 font-size12">CONTENT</div>
+                            <div class="font-weight700 font-size16">{{totalPageView.Content}}</div>
+                        </div>
+                        <div class="lap-col6-to-col3 padding-v-10 lap-bordered3-h-ends-0-bf-hide">
+                            <div class="font-weight600 font-size12">USERS</div>
+                            <div class="font-weight700 font-size16">{{totalPageView.Users}}</div>
+                        </div>
+                        <div class="lap-col6-to-col3 padding-v-10 lap-bordered3-h-ends-0-bf-hide">
+                            <div class="font-weight600 font-size12">CLICKS</div>
+                            <div class="font-weight700 font-size16">{{totalPageView.Traffic}}</div>
+                        </div>
+                        <div class="lap-col6-to-col3 padding-v-10 lap-bordered3-h-ends-0-bf-hide">
+                            <div class="font-weight600 font-size12">CONVERSIONS</div>
+                            <div class="font-weight700 font-size16">{{totalPageView.Conversions}}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row justify-content-center lap-top-separator-bf-hide">
+                    <div class="col-md-auto block-relative">
+                        <button class="ghost-btn ghost-btn-lg font-size12 margin-v-20 d-block"
+                            (click)="viewMore(content)">View More Details</button>
+                        <div class="preloader-cover" *ngIf="isViewMoreLoading"> <img
+                                src="assets/images/app-preloader.svg" class="preloader20 preloader-middle">
+                        </div>
+                    </div>
+
+                </div>
+                <div *ngIf="hasErrorContentPerformanceViewMore" class="alert alert-danger margin-v-10" role="alert">
+                    <div>Oops! Something went wrong!</div>
+                </div>
+                <ng-template #content let-modal>
+                    <div class="modal-header">
+
+                        <div class="modal-title">
+                            <span class="font-size11 text-muted font-weight500">{{startDate}} to {{endDate}}</span>
+                            <span class=" font-weight700 d-block">Content Performance</span>
+                        </div>
+
+                        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-xl-6 col-lg-8 col-md-12">
+                                <div class="form-group margin-bottom-5">
+                                    <label class="col-form-label"
+                                        for="search">SEARCH
+                                        BY</label>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend"><span
+                                                class="input-group-text icon icon-search"></span>
+                                        </div>
+                                        <input class="form-control form-control-sm" [(ngModel)]="blurbSearchText"
+                                            placeholder="Blurb Title/ Description/ Comment" type="text">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="d-block max-height-30vw overflow-y-auto">
+                            <table class="table responsive-table table-striped table-header-fixed">
+                                <thead>
+                                    <tr>
+                                        <th scope="col" class="width-30p">#</th>
+                                        <th scope="col" class="width-3">Blurbs</th>
+                                        <th scope="col">
+                                            <button type="button" class="btn btn-link padding-h-0 padding-v-0"
+                                                (click)="sort(contentViewMore,'Users','UserAsc')">
+                                                <div>
+                                                    <span
+                                                        [ngClass]="{'icon-arrow-up' : UserAsc,'icon-arrow-down' : !UserAsc}"
+                                                        class="icon icon-arrow-up font-size14 font-weight700 d-inline"></span>
+                                                    <span class="font-size11 line-clamp1 d-inline"> Users</span>
+                                                </div>
+                                            </button>
+                                        </th>
+                                        <th scope="col">
+                                            <button type="button" class="btn btn-link padding-h-0 padding-v-0"
+                                                (click)="sort(contentViewMore,'Shares','ShareAsc')">
+                                                <div>
+                                                    <span
+                                                        [ngClass]="{'icon-arrow-up' : ShareAsc,'icon-arrow-down' : !ShareAsc}"
+                                                        class="icon icon-arrow-down font-size14 font-weight700 d-inline"></span>
+                                                    <span class="font-size11 line-clamp1 d-inline"> Shares</span>
+                                                </div>
+                                            </button>
+                                        </th>
+                                        <th scope="col">
+                                            <button type="button" class="btn btn-link padding-h-0 padding-v-0"
+                                                (click)="sort(contentViewMore,'Engagements','EngagementAsc')">
+                                                <div>
+                                                    <span
+                                                        [ngClass]="{'icon-arrow-up' : EngagementAsc,'icon-arrow-down' : !EngagementAsc}"
+                                                        class="icon icon-arrow-down font-size14 font-weight700 d-inline"></span>
+                                                    <span class="font-size11 line-clamp1 d-inline">
+                                                        Engagements</span>
+                                                </div>
+                                            </button>
+                                        </th>
+                                        <th scope="col">
+                                            <button type="button" class="btn btn-link padding-h-0 padding-v-0"
+                                                (click)="sort(contentViewMore,'Traffic','ClickAsc')">
+                                                <div>
+                                                    <span
+                                                        [ngClass]="{'icon-arrow-up' : ClickAsc,'icon-arrow-down' : !ClickAsc}"
+                                                        class="icon icon-arrow-up font-size14 font-weight700 d-inline"></span>
+                                                    <span class="font-size11 line-clamp1 d-inline"> Clicks</span>
+                                                </div>
+                                            </button>
+                                        </th>
+                                        <th scope="col">
+                                            <button type="button" class="btn btn-link padding-h-0 padding-v-0"
+                                                (click)="sort(contentViewMore,'GoogleTraffic','TrafficAsc')">
+                                                <div>
+                                                    <span
+                                                        [ngClass]="{'icon-arrow-up' : TrafficAsc,'icon-arrow-down' : !TrafficAsc}"
+                                                        class="icon icon-arrow-up font-size14 font-weight700 d-inline"></span>
+                                                    <span class="font-size11 line-clamp1 d-inline"> Traffic</span>
+                                                </div>
+                                            </button>
+                                        </th>
+                                        <th scope="col">
+                                            <button type="button" class="btn btn-link padding-h-0 padding-v-0"
+                                                (click)="sort(contentViewMore,'Conversions','ConversionAsc')">
+                                                <div>
+                                                    <span
+                                                        [ngClass]="{'icon-arrow-up' : ConversionAsc,'icon-arrow-down' : !ConversionAsc}"
+                                                        class="icon icon-arrow-down font-size14 font-weight700 d-inline"></span>
+                                                    <span class="font-size11 line-clamp1 d-inline">
+                                                        Conversions</span>
+                                                </div>
+                                            </button>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody *ngIf="contentViewMore!=undefined">
+                                    <ng-container
+                                        *ngFor="let analytics of contentViewMore | filter : blurbSearchText : blurbSearchableList :serachableProperty; let i = index;">
+                                        <tr>
+                                            <td data-label="#">
+                                                {{i+1}}
+                                            </td>
+                                            <td data-label="Blurbs">
+
+                                                <div class="row justify-content-end">
+                                                    <div
+                                                        class="col-3 padding-right-10 blurb-thumb-image-contain margin-top-5">
+                                                        <img [src]="analytics.Blurb.ImageUrl"
+                                                            class="img-fluid rounded-sm blurb-thumb-image"
+                                                            alt={{analytics.Blurb.Title}}>
+                                                    </div>
+                                                    <div class="col-9 padding-left-0 padding-right-5 text-left">
+                                                        <div
+                                                            class="font-weight500 font-size10 text-wrap word-break text-muted text-italic line-clamp1">
+                                                            {{analytics.Blurb.Category}},
+                                                            {{analytics.Blurb.FeedName}}
+                                                        </div>
+                                                        <div
+                                                            class="font-weight600 font-size14 text-wrap word-break line-clamp2">
+                                                            {{analytics.Blurb.Title}}</div>
+                                                        <div
+                                                            class="font-weight400 font-size12 text-wrap word-break line-clamp1">
+                                                            {{analytics.Blurb.Description}}
+                                                        </div>
+                                                        <div class="d-block margin-v-5 padding-h-15">
+                                                            <div class="row gutter-5">
+                                                                <div class="col-auto">
+                                                                    <button type="button"
+                                                                        class="ghost-btn ghost-btn-sm font-size10">
+                                                                        <a [href]="analytics.Blurb.Url"
+                                                                            target="_blank">View
+                                                                            Blurb</a>
+                                                                    </button>
+                                                                </div>
+                                                                <div class="col-auto">
+                                                                    <button type="button"
+                                                                        class="btn btn-primary btn-primary-sm font-size10"
+                                                                        (click)="analytics.isCollapsed = !analytics.isCollapsed"
+                                                                        [attr.aria-expanded]="!analytics.isCollapsed"
+                                                                        [attr.aria-controls]="'test'+i"
+                                                                        (click)="viewUserDetails(analytics)">View
+                                                                        Details
+                                                                    </button>
+                                                                </div>
+                                                                <div *ngIf="hasErrorUserWiseContentPerformanceAnaltics"
+                                                                    class="alert alert-danger margin-v-10" role="alert">
+                                                                    <div>Oops! Something went wrong!</div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                            </td>
+                                            <td data-label="Users" class="font-weight700">
+                                                {{analytics.Users}}</td>
+                                            <td data-label="Shares" class="font-weight700">
+                                                {{analytics.Shares}}</td>
+                                            <td data-label="Engagements" class="font-weight700">
+                                                {{analytics.Engagements}}</td>
+                                            <td data-label="Clicks" class="font-weight700">
+                                                {{analytics.Traffic}}</td>
+                                            <td data-label="Traffic" class="font-weight700">
+                                                {{analytics.GoogleTraffic}}</td>
+                                            <td data-label="Conversions" class="font-weight700">
+                                                {{analytics.Conversions}}</td>
+                                        </tr>
+                                        <tr [attr.id]="'test'+i"
+                                            [ngbCollapse]="analytics!=undefined &&  analytics.isCollapsed">
+                                            <td class="table__cell" colspan="8"> 
+                                                    <div class="row margin-v-5">
+                                                        <div class="col-lg-6 col-md-12">
+                                                            <div class="form-group mb-0 text-left"> 
+                                                                  <label class="col-form-label"
+                                                                    for="search">SEARCH
+                                                                    BY</label>
+                                                                <div class="input-group">
+                                                                    <div class="input-group-prepend">
+                                                                        <span
+                                                                            class="input-group-text icon icon-search"></span>
+                                                                    </div>
+                                                                    <input type="text"
+                                                                        class="form-control form-control-sm"
+                                                                        placeholder="User name"
+                                                                        [(ngModel)]="userSearchText">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        </div>
+                                                    <table
+                                                        class="responsive-table table-striped table-header-fixed-remove">
+                                                        <thead>
+                                                            <tr>
+                                                                <th scope="col" class="width-30p">#</th>
+                                                                <th scope="col">
+                                                                    <button type="button"
+                                                                        class="btn btn-link padding-v-0 padding-h-0">
+                                                                        <div>
+                                                                            <span
+                                                                                class="font-size11 line-clamp1 d-inline">
+                                                                                USERS</span>
+                                                                        </div>
+                                                                    </button>
+                                                                </th>
+                                                                <th scope="col">
+                                                                    <button type="button"
+                                                                        class="btn btn-link padding-h-0 padding-v-0"
+                                                                        (click)="sort(userViewMore,'Shares','UserShareAsc')">
+                                                                        <div>
+                                                                            <span
+                                                                                [ngClass]="{'icon-arrow-up' : UserShareAsc,'icon-arrow-down' : !UserShareAsc}"
+                                                                                class="icon icon-arrow-down font-size14 font-weight700 d-inline"></span>
+                                                                            <span
+                                                                                class="font-size11 line-clamp1 d-inline">
+                                                                                SHARES</span>
+                                                                        </div>
+                                                                    </button>
+                                                                </th>
+                                                                <th scope="col">
+                                                                    <button type="button"
+                                                                        class="btn btn-link padding-h-0 padding-v-0"
+                                                                        (click)="sort(userViewMore,'Engagements','UserEngagementAsc')">
+                                                                        <div>
+                                                                            <span
+                                                                                [ngClass]="{'icon-arrow-up' : UserEngagementAsc,'icon-arrow-down' : !UserEngagementAsc}"
+                                                                                class="icon icon-arrow-down font-size14 font-weight700 d-inline"></span>
+                                                                            <span
+                                                                                class="font-size11 line-clamp1 d-inline">
+                                                                                Engagements</span>
+                                                                        </div>
+                                                                    </button>
+                                                                </th>
+                                                                <th scope="col">
+                                                                    <button type="button"
+                                                                        class="btn btn-link padding-h-0 padding-v-0"
+                                                                        (click)="sort(userViewMore,'Traffic','UserClickAsc')">
+
+                                                                        <div>
+                                                                            <span
+                                                                                [ngClass]="{'icon-arrow-up' : UserClickAsc,'icon-arrow-down' : !UserClickAsc}"
+                                                                                class="icon icon-arrow-up font-size14 font-weight700 d-inline"></span>
+                                                                            <span
+                                                                                class="font-size11 line-clamp1 d-inline">
+                                                                                Clicks</span>
+                                                                        </div>
+                                                                    </button>
+                                                                </th>
+                                                                <th scope="col">
+                                                                    <button type="button"
+                                                                        class="btn btn-link padding-h-0 padding-v-0"
+                                                                        (click)="sort(userViewMore,'GoogleTraffic','UserTrafficAsc')">
+
+                                                                        <div>
+                                                                            <span
+                                                                                [ngClass]="{'icon-arrow-up' : UserTrafficAsc,'icon-arrow-down' : !UserTrafficAsc}"
+                                                                                class="icon icon-arrow-down font-size14 font-weight700 d-inline"></span>
+                                                                            <span
+                                                                                class="font-size11 line-clamp1 d-inline">
+                                                                                Traffic</span>
+                                                                        </div>
+                                                                    </button>
+                                                                </th>
+                                                                <th scope="col">
+                                                                    <button type="button"
+                                                                        class="btn btn-link padding-h-0 padding-v-0"
+                                                                        (click)="sort(userViewMore,'Conversions','UserConversionAsc')">
+
+                                                                        <div>
+                                                                            <span
+                                                                                [ngClass]="{'icon-arrow-up' : UserConversionAsc,'icon-arrow-down' : !UserConversionAsc}"
+                                                                                class="icon icon-arrow-up font-size14 font-weight700 d-inline"></span>
+                                                                            <span
+                                                                                class="font-size11 line-clamp1 d-inline">
+                                                                                Conversions</span>
+                                                                        </div>
+                                                                    </button>
+                                                                </th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <tr
+                                                                *ngFor="let user of userViewMore | filter : userSearchText : userbSearchableList :userSerachableProperty;">
+                                                                <td data-label="#">
+                                                                    <div class="d-block font-size13 text-center">
+                                                                        1</div>
+                                                                </td>
+                                                                <td data-label="Users">
+                                                                    <div
+                                                                        class="width-30p padding-right-5 margin-top-5 d-inline-block">
+                                                                        <img [src]="user.PictureUrl"
+                                                                            class="img-fluid rounded-sm user-thumb-image default-image"
+                                                                            alt="{{user.DisplayName}}">
+                                                                    </div>
+                                                                    <div class="width-6 padding-left-0 d-inline-block">
+                                                                        <div
+                                                                            class="font-weight600 font-size13 text-wrap word-break line-clamp1 text-left">
+                                                                            {{user.DisplayName}}</div>
+                                                                    </div>
+                                                                </td>
+                                                                <td data-label="Shares">
+                                                                    <div
+                                                                        class="d-block font-size13 font-weight600 text-center">
+                                                                        {{user.Shares}}</div>
+                                                                    <div *ngIf="user.Shares>0"
+                                                                        class="border padding-v-5 padding-h-5 rounded-5 margin-v-5">
+                                                                        <div
+                                                                            class="row gutter-5 padding-h-10 text-left">
+                                                                            <div *ngFor="let share of user.UserShareDetails;"
+                                                                                class="col-4 font-size9 margin-bottom-5">
+                                                                                <div
+                                                                                    [ngClass]="['icomoon-brand-icon-'+share.Provider,'font-size11', 'font-weight600', 'text-muted-3']">
+                                                                                </div>
+                                                                                <div
+                                                                                    class="text-muted-3 font-size8 font-weight700">
+                                                                                    {{share.Provider}}
+                                                                                </div>
+                                                                                <div class="font-size13 font-weight600">
+                                                                                    1</div>
+                                                                            </div>
+
+                                                                        </div>
+                                                                    </div>
+                                                                </td>
+                                                                <td data-label="Engagements">
+                                                                    <div
+                                                                        class="d-block font-size13 font-weight600 text-center">
+                                                                        {{user.Engagements}}</div>
+                                                                    <div *ngIf="user.Engagements>0"
+                                                                        class="border padding-v-5 padding-h-5 rounded-5 margin-v-5">
+                                                                        <div *ngFor="let share of user.UserShareDetails;"
+                                                                            class="row gutter-5 padding-h-10 text-left">
+                                                                            <div *ngIf="share.CurrentAnalytics!=null"
+                                                                                class="col-12 border-bottom margin-bottom-5">
+                                                                                <span
+                                                                                    [ngClass]="['icomoon-brand-icon-'+share.Provider,'font-size11', 'font-weight600', 'text-muted-3']">
+                                                                                </span>
+                                                                                <span
+                                                                                    class="text-muted-3 font-size10 font-weight700">
+                                                                                    {{share.Provider}}
+                                                                                </span>
+                                                                            </div>
+                                                                            <div *ngIf="share.CurrentAnalytics!=null && share.Provider!='twitter' "
+                                                                                class="col-4 font-size9 margin-bottom-5">
+                                                                                <div
+                                                                                    class="icon icon-thumbs-up font-size11 font-weight600 text-muted-3">
+                                                                                </div>
+                                                                                <div
+                                                                                    class="text-muted-3 font-size8 font-weight700">
+                                                                                    LIKES
+                                                                                </div>
+                                                                                <div class="font-size13 font-weight600">
+                                                                                    {{share.CurrentAnalytics.LikeCount}}
+                                                                                </div>
+                                                                            </div>
+                                                                            <div *ngIf=" share.CurrentAnalytics!=null && share.Provider!='twitter'"
+                                                                                class="col-4 font-size9 margin-bottom-5">
+                                                                                <div
+                                                                                    class="icon icon-corner-up-right font-size11 font-weight600 text-muted-3">
+                                                                                </div>
+                                                                                <div
+                                                                                    class="text-muted-3 font-size8 font-weight700">
+                                                                                    RE-SHARES
+                                                                                </div>
+                                                                                <div class="font-size13 font-weight600">
+                                                                                    {{share.CurrentAnalytics.ShareCount}}
+                                                                                </div>
+                                                                            </div>
+                                                                            <div *ngIf="share.CurrentAnalytics!=null && share.Provider!='twitter'"
+                                                                                class="col-4 font-size9 margin-bottom-5">
+                                                                                <div
+                                                                                    class="icon icon-message-square font-size11 font-weight600 text-muted-3">
+                                                                                </div>
+                                                                                <div
+                                                                                    class="text-muted-3 font-size8 font-weight700">
+                                                                                    COMMENTS
+                                                                                </div>
+                                                                                <div class="font-size13 font-weight600">
+                                                                                    {{share.CurrentAnalytics.CommentCount}}
+                                                                                </div>
+                                                                            </div>
+
+                                                                            <div *ngIf="share.CurrentAnalytics!=null && share.Provider=='twitter'"
+                                                                                class="col-4 font-size9 margin-bottom-5">
+                                                                                <div
+                                                                                    class="icon icon-heart font-size11 font-weight600 text-muted-3">
+                                                                                </div>
+                                                                                <div
+                                                                                    class="text-muted-3 font-size8 font-weight700">
+                                                                                    FAVS
+                                                                                </div>
+                                                                                <div class="font-size13 font-weight600">
+                                                                                    {{share.CurrentAnalytics.FavoriteCount}}
+                                                                                </div>
+                                                                            </div>
+                                                                            <div *ngIf=" share.CurrentAnalytics!=null && share.Provider=='twitter'"
+                                                                                class="col-4 font-size9 margin-bottom-5">
+                                                                                <div
+                                                                                    class="icon icon-repeat font-size11 font-weight600 text-muted-3">
+                                                                                </div>
+                                                                                <div
+                                                                                    class="text-muted-3 font-size8 font-weight700">
+                                                                                    RETWEETS
+                                                                                </div>
+                                                                                <div class="font-size13 font-weight600">
+                                                                                    {{share.CurrentAnalytics.RetweetCount}}
+                                                                                </div>
+                                                                            </div>
+
+                                                                        </div>
+                                                                    </div>
+                                                                </td>
+                                                                <td data-label="Clicks">
+                                                                    <div
+                                                                        class="d-block font-size13 font-weight600 text-center">
+                                                                        {{user.Traffic}}</div>
+                                                                    <div *ngIf="user.Traffic"
+                                                                        class="border padding-v-5 padding-h-5 rounded-5 margin-v-5">
+                                                                        <div
+                                                                            class="row gutter-5 padding-h-10 text-left">
+                                                                            <div *ngFor="let click of user.UserTarfficDetails"
+                                                                                class="col-4 font-size9 margin-bottom-5">
+                                                                                <div
+                                                                                    [ngClass]="['icomoon-brand-icon-'+click.Provider,'font-size11', 'font-weight600', 'text-muted-3']">
+                                                                                </div>
+                                                                                <div
+                                                                                    class="text-muted-3 font-size8 font-weight700">
+                                                                                    {{click.Provider}}
+                                                                                </div>
+                                                                                <div class="font-size13 font-weight600">
+                                                                                    {{click.Traffic}}</div>
+                                                                            </div>
+
+                                                                        </div>
+                                                                    </div>
+                                                                </td>
+                                                                <td data-label="Traffic">
+                                                                    <div
+                                                                        class="d-block font-size13 font-weight600 text-center">
+                                                                        {{user.GoogleTraffic}}</div>
+                                                                    <div *ngIf="user.GoogleTraffic>0"
+                                                                        class="border padding-v-5 padding-h-5 rounded-5 margin-v-5">
+                                                                        <div
+                                                                            class="row gutter-5 padding-h-10 text-left">
+                                                                            <div
+                                                                                class="col-4 font-size9 margin-bottom-5">
+                                                                                <div
+                                                                                    class="icomoon-brand-icon-facebook font-size11 font-weight600 text-muted-3">
+                                                                                </div>
+                                                                                <div
+                                                                                    class="text-muted-3 font-size8 font-weight700">
+                                                                                    FACEBOOK
+                                                                                </div>
+                                                                                <div class="font-size13 font-weight600">
+                                                                                    1</div>
+                                                                            </div>
+
+                                                                        </div>
+                                                                    </div>
+                                                                </td>
+                                                                <td data-label="Conversions">
+                                                                    <div
+                                                                        class="d-block font-size13 font-weight600 text-center">
+                                                                        {{user.Conversions}}</div>
+                                                                    <div *ngIf="user.Conversions>0"
+                                                                        class="border padding-v-5 padding-h-5 rounded-5 margin-v-5">
+                                                                        <div
+                                                                            class="row gutter-5 padding-h-10 text-left">
+                                                                            <div
+                                                                                class="col-12 font-size9 margin-bottom-5">
+                                                                                <div
+                                                                                    class="text-muted-3 font-size8 font-weight700">
+                                                                                    CAMPAIGN NAME
+                                                                                </div>
+                                                                                <div
+                                                                                    class="font-size13 font-weight600 text-wrap word-break line-clamp1">
+                                                                                    Social</div>
+                                                                            </div>
+
+                                                                            <div *ngFor="let click of user.UserTarfficDetails"
+                                                                                class="col-4 font-size9 margin-bottom-5">
+                                                                                <div
+                                                                                    [ngClass]="['icomoon-brand-icon-'+click.Provider,'font-size11', 'font-weight600', 'text-muted-3']">
+                                                                                </div>
+                                                                                <div
+                                                                                    class="text-muted-3 font-size8 font-weight700">
+                                                                                    {{click.Provider}}
+                                                                                </div>
+                                                                                <div class="font-size13 font-weight600">
+                                                                                    {{click.Conversions}}
+                                                                                </div>
+                                                                            </div>
+
+
+                                                                        </div>
+                                                                    </div>
+                                                                </td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>                                               
+                                            </td>
+                                        </tr>
+                                    </ng-container>
+                                </tbody>
+                                <tfoot>
+                                    <!-- <ngb-pagination
+                                    [(page)]="page"
+                                    [pageSize]="pageSize"
+                                    [collectionSize]="contentViewMore?.BlurbDetailsCollection.length"></ngb-pagination> -->
+                                </tfoot>
+                            </table>
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-light font-size13"
+                            (click)="modal.close('Close click')">Close</button>
+                    </div>
+                </ng-template>
+            </div>
+        </article>
+    </div>
+</section>

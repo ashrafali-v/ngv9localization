@@ -1,0 +1,649 @@
+<div class="row margin-h-0">
+    <div class="col-xl-12">
+
+        <article class="card p-3 rounded-10 border-0">
+
+            <div class="row">
+                <div class="col">
+                    <h6 class="font-weight700 font-size14">CATEGORIES</h6>
+                    <p class="font-size12">Manage content categories</p>
+                </div>
+                <div class="col">
+                    <div class="row row justify-content-end">
+                        <div class="col-auto">
+                            <button type="button" ngbTooltip="Add New Category" data-placement="bottom"
+                                class="btn btn-primary btn-block padding-v-5 rounded-5"
+                                (click)="createCategory(EditCategoryModal)"><span class="icon icon-plus"></span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row" *ngIf="getCategoryLoader">
+                <div class="col-12">
+                    <div class="row align-items-center justify-content-center h-100">
+                        <div class="col text-center"> <img src="assets/images/app-preloader.svg" class="img-fluid">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row gutter-5 card-header rounded-0 margin-top-5 margin-bottom-20" *ngIf="!getCategoryLoader">
+                <div class="col-12">
+                    <ul class="nav nav-pills justify-content-center font-size12" id="category-tab" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active" id="mandatory-category-tab" data-toggle="pill"
+                                href="#mandatory-category" role="tab" aria-controls="mandatory-category-tab"
+                                aria-selected="false" (click)="getCategoryTab('mandatory')">MANDATORY <span
+                                    class="badge badge-secondary font-size11">{{mandatoryCategoryLength}}</span></a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="optional-category-tab" data-toggle="pill" href="#optional-category"
+                                role="tab" aria-controls="optional-category-tab" aria-selected="false"
+                                (click)="getCategoryTab('optional')">OPTIONAL <span
+                                    class="badge badge-secondary font-size11">{{optionalCategoryLength}}</span></a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+
+            <div class="row" *ngIf="!getCategoryLoader">
+                <div class="col">
+                    <div class="tab-content" id="category-tabContent">
+                        <div class="tab-pane fade show active" id="mandatory-category" role="tabpanel"
+                            aria-labelledby="mandatory-category-tab">
+                            <div class="text-center text-muted" *ngIf="mandatoryCategoryLength <= 0">
+                                <div class="icon icon-alert-circle font-size50"></div> <span class="font-size13"> Lets
+                                    start afresh. Create a Mandatory Category!</span>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-lg-6 col-md-12">
+                                    <div class="form-group mb-0"><label class="col-form-label" for="search">SEARCH
+                                            BY</label>
+                                        <div class="input-group">
+                                            <div class="input-group-prepend"><span
+                                                    class="input-group-text icon icon-search"></span></div><input
+                                                class="form-control form-control-sm" [(ngModel)]="categorySearchText"
+                                                (ngModelChange)="categoryCurrentPage = 1" placeholder="Category name"
+                                                type="text">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <table class="table responsive-table table-striped table-header-fixed margin-top-5">
+                                <thead>
+                                    <tr>
+                                        <th scope="col" class="width-30p">
+                                            #
+                                        </th>
+                                        <th scope="col">
+                                            Category Name
+                                        </th>
+                                        <th scope="col">
+                                            CONTENT SOURCE
+                                        </th>
+                                        <th scope="col">STATUS
+                                            <span><button type="button" class="icon icon-filter btn btn-link"
+                                                    aria-label="filter" (click)="enbaleOrDisable()"></button></span>
+                                        </th>
+                                        <th scope="col">Actions
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr
+                                        *ngFor="let category of mandatoryCategories |filter : categorySearchText : '' : ['Name'] | slice: (mandatorycategoryCurrentPage-1) * pageSize : (mandatorycategoryCurrentPage-1) * pageSize + pageSize;  let i = index">
+                                        <td data-label="#">
+                                            {{i+1}}
+                                        </td>
+                                        <td data-label="Category Name">
+                                            <div class="font-weight700">
+                                                {{category.Name}}
+                                            </div>
+                                        </td>
+                                        <td data-label="Content Source">
+                                            <div class="form-check">
+                                                <div class="block-relative" *ngIf="category.FeedCount>0">
+                                                    <button type="button" class="btn btn-link btn-link-underline"
+                                                        (click)="getFeedsAssociated(category,categoryfeedlist)">{{category.FeedCount}}</button>
+
+                                                </div>
+                                                <div *ngIf="category.FeedCount==0"
+                                                    class="font-size16 font-weight700 text-muted-3">
+                                                    {{category.FeedCount}}
+                                                </div>
+                                            </div>
+
+                                        </td>
+                                        <td *ngIf="category.Enabled==true" data-label="Status">
+                                            <button type="button"
+                                                class="btn btn-link-underline badge badge-success font-weight500">
+                                                ENABLED
+                                            </button>
+                                        </td>
+                                        <td *ngIf="category.Enabled==false" data-label="Status">
+                                            <button type="button"
+                                                class="btn btn-link-underline badge badge-light font-weight500">
+                                                DISABLED
+                                            </button>
+                                        </td>
+                                        <td data-label="Actions">
+                                            <button type="button" class="btn btn-link ghost-btn ghost-btn-sm"
+                                                [ngbPopover]="categoryMoreOptions" [autoClose]="true"
+                                                aria-haspopup="true" aria-expanded="false"><span
+                                                    class="icon icon-more-vertical"></span>
+                                                <ng-template #categoryMoreOptions>
+                                                    <button type="link"
+                                                        (click)="editCategory(EditCategoryModal,category)"
+                                                        class="btn btn-link d-block padding-top-10 padding-h-5 margin-bottom-5 font-size12 btn-link-underline">
+                                                        <span class="icon icon-edit"></span>&nbsp;Edit
+                                                    </button>
+                                                </ng-template>
+                                            </button>
+                                        </td>
+                                    </tr>
+
+                                </tbody>
+                            </table>
+                            <ngb-pagination [rotate]="true" size='sm' class="d-flex justify-content-end"
+                                [(page)]="mandatorycategoryCurrentPage" [pageSize]="pageSize" [maxSize]="5"
+                                [collectionSize]="mandatoryCategories.length"></ngb-pagination>
+                        </div>
+                        <div class="tab-pane fade" id="optional-category" role="tabpanel"
+                            aria-labelledby="optional-category-tab">
+
+                            <div class="text-center text-muted" *ngIf="optionalCategoryLength<=0">
+                                <div class="icon icon-alert-circle font-size50"></div> <span class="font-size13"> Lets
+                                    start afresh. Create an Optional Category!</span>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-lg-6 col-md-12">
+                                    <div class="form-group mb-0"><label class="col-form-label" for="search">SEARCH
+                                            BY</label>
+                                        <div class="input-group">
+                                            <div class="input-group-prepend"><span
+                                                    class="input-group-text icon icon-search"></span></div><input
+                                                class="form-control form-control-sm" [(ngModel)]="categorySearchText"
+                                                (ngModelChange)="categoryCurrentPage = 1" placeholder="Category name"
+                                                type="text">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <table class="table responsive-table table-striped table-header-fixed margin-top-5">
+                                <thead>
+                                    <tr>
+                                        <th scope="col" class="width-30p">
+                                            #
+                                        </th>
+                                        <th scope="col">
+                                            Category Name
+                                        </th>
+                                        <th scope="col">
+                                            CONTENT SOURCE
+                                        </th>
+                                        <th scope="col">
+                                            STATUS
+                                            <span><button type="button" class="icon icon-filter btn btn-link"
+                                                    aria-label="filter" (click)="enbaleOrDisable()"></button></span>
+                                        </th>
+
+                                        <th scope="col">Actions
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr
+                                        *ngFor="let category of optionalCategories | filter : categorySearchText : '' : ['Name'] | slice: (categoryCurrentPage-1) * pageSize : (categoryCurrentPage-1) * pageSize + pageSize;  let i = index">
+                                        <td data-label="#">
+                                            {{i+1}}
+                                        </td>
+                                        <td data-label="Category Name">
+                                            <div class="font-weight700">
+                                                {{category.Name}}
+                                            </div>
+                                        </td>
+
+                                        <td data-label="Content Source">
+                                            <div class="form-check">
+                                                <div class="block-relative" *ngIf="category.FeedCount>0">
+                                                    <button type="button" class="btn btn-link btn-link-underline"
+                                                        (click)="getFeedsAssociated(category,categoryfeedlist)">{{category.FeedCount}}</button>
+
+                                                </div>
+                                                <div *ngIf="category.FeedCount==0" class="font-weight700 text-muted-3">
+                                                    {{category.FeedCount}}
+                                                </div>
+                                            </div>
+
+                                        </td>
+
+                                        <td *ngIf="category.Enabled==true" data-label="Status">
+                                            <button type="button" (click)="editCategory(EditCategoryModal,category)"
+                                                class="btn btn-link-underline badge badge-success font-weight500">
+                                                ENABLED
+                                            </button>
+                                        </td>
+                                        <td *ngIf="category.Enabled==false" data-label="Status">
+                                            <button (click)="editCategory(EditCategoryModal,category)"
+                                                class="btn btn-link-underline badge badge-light font-weight500">
+                                                DISABLED
+                                            </button>
+                                        </td>
+                                        <td>
+                                            <button type="button" class="btn btn-link ghost-btn ghost-btn-sm"
+                                                [ngbPopover]="categoryMoreOptions" [autoClose]="true"
+                                                aria-haspopup="true" aria-expanded="false"><span
+                                                    class="icon icon-more-vertical"></span>
+                                                <ng-template #categoryMoreOptions>
+                                                    <button type="link"
+                                                        (click)="editCategory(EditCategoryModal,category)"
+                                                        class="btn btn-link d-block padding-top-10 padding-h-5 margin-bottom-5 font-size12 btn-link-underline">
+                                                        <span class="icon icon-edit"></span>&nbsp;Edit
+                                                    </button>
+
+                                                </ng-template>
+                                            </button>
+                                        </td>
+                                    </tr>
+
+                                </tbody>
+                            </table>
+                            <ngb-pagination size="sm" class="d-flex justify-content-end" [maxSize]="5"
+                                [(page)]="categoryCurrentPage" [pageSize]="pageSize"
+                                [collectionSize]="optionalCategoryLength">
+                            </ngb-pagination>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </article>
+
+
+        <!-- +++++++++++ edit category modal ++++++++++++ -->
+        <ng-template #EditCategoryModal let-modal>
+            <form #createcategory="ngForm" (ngSubmit)="saveCategory(createcategory.value)">
+                <div class="modal-header">
+                    <div class="modal-title">
+                        <span class=" font-weight700 d-block">{{createCategoryPopupTitle}}</span>
+                    </div>
+
+                    <button type="button" class="close" aria-label="Close" (click)="closeCategoryModal()">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="form-group mb-0">
+                                        <label class="col-form-label" for="title">Category Name</label>
+                                        <div class="input-group">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text icon icon-users"></span>
+                                            </div>
+                                            <input type="text" id="title" name="title" class="form-control"
+                                                autocomplete="off" placeholder="Category Name"
+                                                [(ngModel)]="categoryName" (keyup)="validate($event)" />
+                                        </div>
+                                    </div>
+                                    <div *ngIf="isShowValidation"
+                                        class="alert alert-light border border-light margin-top-5">
+                                        <ul class="list-group bullet-list list-group-flush font-size13 list-group-sm">
+                                            <li [ngClass]="{'list-group-item-successfull': enableSaveCategory}"
+                                                class="list-group-item">
+                                                Enter a category name! and it should have minimum of 2 and maximum of 20
+                                                characters.</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="alert alert-danger my-1" role="alert" *ngIf="categoryLengthValidation">
+                                        Number of
+                                        characters should be less than or equal to 20
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row margin-top-15">
+                                <div class="col-12">
+                                    <div class="border rounded-5 padding-bottom-10 padding-h-10">
+                                        <div class="row no-gutters justify-content-between">
+                                            <div class="col-12">
+
+                                                <div class="d-flex justify-content-between">
+                                                    <div>
+                                                        <div class="font-size13 font-weight700 margin-top-5">Category
+                                                            Type
+                                                            <span class="icon icon-info"
+                                                                ngbTooltip="Manage the category type"
+                                                                data-placement="top"></span></div>
+                                                        <div class="font-size12 margin-top-5"> Manage Category</div>
+                                                    </div>
+                                                    <div class="d-block margin-top-10">
+                                                        <div class="toggle-radio">
+                                                            <input type="radio" checked name="categoryType"
+                                                                value="mandatory" id="mandatory"
+                                                                [(ngModel)]="categoryType" />
+                                                            <label for="mandatory"
+                                                                class="font-size12 font-weight500">Mandatory</label>
+                                                            <input type="radio" name="categoryType" value="optional"
+                                                                id="optional" [(ngModel)]="categoryType" />
+                                                            <label for="optional"
+                                                                class="font-size12 font-weight500">Optional</label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row margin-top-15" *ngIf="showCategoryStatus">
+                                <div class="col-12">
+                                    <div class="border rounded-5 padding-bottom-10 padding-h-10">
+                                        <div class="row no-gutters justify-content-between">
+                                            <div class="col-12">
+                                                <div class="d-flex justify-content-between">
+                                                    <div>
+                                                        <div class="font-size13 font-weight700 margin-top-5">Category
+                                                            Status
+                                                            <span class="icon icon-info"
+                                                                ngbTooltip="Manage the category status"
+                                                                data-placement="top"></span></div>
+                                                        <div class="font-size12 margin-top-5"> Manage Category</div>
+                                                    </div>
+                                                    <div class="d-block margin-top-10">
+                                                        <div class="toggle-radio">
+                                                            <input type="radio" checked name="categoryStatus"
+                                                                value="statusenabled" id="statusenabled"
+                                                                [(ngModel)]="enable"
+                                                                (change)="enbaleOrDisableCategory($event)" />
+                                                            <label for="statusenabled"
+                                                                class="font-size12 font-weight500">Enabled</label>
+                                                            <input type="radio" name="categoryStatus"
+                                                                value="statusdisabled" id="statusdisabled"
+                                                                [(ngModel)]="enable"
+                                                                (change)="enbaleOrDisableCategory($event)" />
+                                                            <label for="statusdisabled"
+                                                                class="font-size12 font-weight500">Disabled</label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div *ngIf="isCategoryEdit" class="row margin-top-10">
+
+                                                <div class="col-12">
+                                                    <div *ngIf="nonAutoApprovedContentSources.length>0||nonAutoApprovedContentSources.length>0"
+                                                        class="margin-top-20 font-size14 alert alert-warning">
+                                                        Do you want to disable <strong>{{categoryName}}</strong>?
+                                                        You
+                                                        won't be able to disable this category until content
+                                                        sources associated with this category are reassigned to
+                                                        another
+                                                        category.</div>
+                                                    <ol class="numbered-list margin-top-20">
+                                                        <li *ngIf="nonAutoApprovedContentSources.length>0">
+                                                            <div class="font-size14 font-weight600">Non Auto
+                                                                Approved
+                                                                Content Source(s)
+                                                            </div>
+                                                            <div class="font-size12">Assign a new category</div>
+
+                                                            <table
+                                                                class="table responsive-table table-striped table-header-fixed margin-top-10">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th scope="col" class="width-30p">
+                                                                            #
+                                                                        </th>
+                                                                        <th scope="col">
+                                                                            Content Source
+                                                                        </th>
+                                                                        <th scope="col">
+                                                                            Category
+                                                                        </th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                    <tr
+                                                                        *ngFor="let source of nonAutoApprovedContentSources;let i = index">
+                                                                        <td data-label="#">
+                                                                            {{i+1}}
+                                                                        </td>
+                                                                        <td data-label="Category Name">
+                                                                            <div class="row no-gutters">
+                                                                                <div
+                                                                                    class="width-40p user-thumb-image-sm-contain text-center margin-v-5 margin-right-10">
+                                                                                    <img class="default-image img-fluid rounded-sm user-thumb-image-sm"
+                                                                                        src="{{source.ImageUrl}} "
+                                                                                        alt="image of {{source.Title}}">
+                                                                                </div>
+                                                                                <div class="width-8">
+                                                                                    <div
+                                                                                        class="font-size13 font-weight600 text-left">
+                                                                                        {{source.Title}}
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </td>
+                                                                        <td data-label="Category"
+                                                                            ngModelGroup="nonApprovedCategories">
+                                                                            <div class="form-group mb-0 text-left">
+                                                                                <div class="input-group">
+                                                                                    <div class="input-group-prepend">
+                                                                                        <span
+                                                                                            class="input-group-text icon icon-smartphone"></span>
+                                                                                    </div>
+                                                                                    <ng-select2 width="100%"
+                                                                                        name="categorynonAuto"
+                                                                                        id="category_{{i}}"
+                                                                                        [data]="categoryList"
+                                                                                        class="flex-grow-auto"
+                                                                                        ngModel="selectedCategoryId"
+                                                                                        (ngModelChange)="changeCategory(source.FeedId,createcategory.value)"
+                                                                                        #selectCategory="ngModel"
+                                                                                        aria-placeholder="select category">
+                                                                                    </ng-select2>
+                                                                                </div>
+                                                                            </div>
+                                                                        </td>
+
+                                                                    </tr>
+                                                                </tbody>
+                                                            </table>
+
+                                                        </li>
+                                                        <li *ngIf="autoApprovedContentSources.length>0">
+                                                            <div class="font-size14 font-weight600">Auto Approved
+                                                                Content Source(s)
+                                                            </div>
+                                                            <div class="font-size12">Assign a new category</div>
+
+                                                            <table
+                                                                class="table responsive-table table-striped table-header-fixed-removed margin-top-10">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th scope="col" class="width-20p">
+                                                                            #
+                                                                        </th>
+                                                                        <th scope="col">
+                                                                            Content Source
+                                                                        </th>
+                                                                        <th scope="col">
+                                                                            Category
+                                                                        </th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                    <tr
+                                                                        *ngFor="let source of autoApprovedContentSources;let i = index">
+                                                                        <td data-label="#">
+                                                                            {{i+1}}
+                                                                        </td>
+                                                                        <td data-label="Category Name">
+                                                                            <div class="row no-gutters">
+                                                                                <div
+                                                                                    class="width-60p blurb-thumb-image-contain text-center margin-v-5 margin-right-10">
+                                                                                    <img class="default-image img-fluid rounded-sm blurb-thumb-image"
+                                                                                        src="{{source.ImageUrl}} "
+                                                                                        alt="image of {{source.Title}}">
+                                                                                </div>
+                                                                                <div class="width-8">
+                                                                                    <div
+                                                                                        class="font-size13 font-weight600 text-left">
+                                                                                        {{source.Title}}
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </td>
+                                                                        <td data-label="Category"
+                                                                            ngModelGroup="nonApprovedCategories">
+                                                                            <div class="form-group mb-0">
+                                                                                <div class="input-group">
+                                                                                    <div class="input-group-prepend">
+                                                                                        <span
+                                                                                            class="input-group-text icon icon-smartphone"></span>
+                                                                                    </div>
+                                                                                    <ng-select2 name="categorynonAuto"
+                                                                                        width="100%" id="category_{{i}}"
+                                                                                        [data]="categoryList"
+                                                                                        class="flex-grow-auto"
+                                                                                        ngModel="selectedCategoryId"
+                                                                                        (ngModelChange)="changeCategory(source.FeedId,createcategory.value)"
+                                                                                        #selectCategory="ngModel"
+                                                                                        aria-placeholder="select category">
+                                                                                    </ng-select2>
+                                                                                </div>
+                                                                            </div>
+                                                                        </td>
+                                                                    </tr>
+                                                                </tbody>
+                                                            </table>
+                                                        </li>
+                                                    </ol>
+
+                                                </div>
+
+
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+
+                    <button type="button" class="btn btn-link" aria-label="Cancel"
+                        (click)="closeCategoryModal()">Cancel</button>
+                    <button class="btn btn-primary" type="submit" id="saveCategory"
+                        [disabled]="!enableSaveCategory">{{editOrCreateButton}}</button>
+
+
+                </div>
+            </form>
+
+        </ng-template>
+        <!-- +++++++++++ edit category modal ++++++++++++ -->
+
+        <ng-template #categoryfeedlist let-modal>
+            <div class="modal-header">
+
+                <div class="modal-title">
+                    <span class="font-size11 text-muted font-weight500">{{categoryName}}-Content sources.
+                    </span>
+                    <span class=" font-weight700 d-block">Content Sources</span>
+                </div>
+
+                <button type="button" class="close" aria-label="Close" (click)="closeCategoryModal()">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-xl-6 col-lg-8 col-md-12">
+                        <div class="form-group margin-bottom-5"><label class="col-form-label" for="search">SEARCH
+                                BY</label>
+                            <div class="input-group">
+                                <div class="input-group-prepend"><span class="input-group-text icon icon-search"></span>
+                                </div>
+                                <input class="form-control form-control-sm"
+                                    *ngIf="allCategoryFeeds!=undefined && allCategoryFeeds.length>0"
+                                    [(ngModel)]="feedSearchText" placeholder="Content source name"
+                                    (ngModelChange)="categoryCurrentPage = 1" type="text">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="d-block max-height-30vw overflow-y-auto">
+                    <table class="table responsive-table table-striped table-header-fixed">
+                        <thead>
+                            <tr>
+                                <th scope="col" class="width-30p">
+                                    #
+                                </th>
+                                <th scope="col">
+                                    Name
+                                </th>
+                                <th scope="col">
+                                    Type
+                                </th>
+
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr
+                                *ngFor="let source of allCategoryFeeds|filter : feedSearchText : '' : ['Title'] ;let i = index;">
+
+                                <td data-label="Name">
+                                    {{i + 1}}
+                                </td>
+
+                                <td data-label="Category Name">
+                                    <div class="row no-gutters">
+                                        <div
+                                            class="width-60p blurb-thumb-image-contain text-center margin-v-5 margin-right-5">
+                                            <img class="default-image img-fluid rounded-sm blurb-thumb-image"
+                                                src="{{source.ImageUrl}} " alt="image of {{source.Title}}">
+                                        </div>
+                                        <div class="width-8">
+                                            <div class="font-size13 font-weight600 text-left">
+                                                {{source.Title}}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td *ngIf="source.IsAutoApprove" data-label="Rank">
+                                    <div class="text-wrap word-break line-clamp2">
+                                        Auto Approved.
+                                    </div>
+                                </td>
+                                <td *ngIf="!source.IsAutoApprove" data-label="Rank">
+                                    <div class="text-wrap word-break line-clamp2">
+                                        Non Auto Approved.
+                                    </div>
+                                </td>
+
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-link" (click)="closeCategoryModal()">Close</button>
+            </div>
+        </ng-template>
+
+    </div>
+
+
+</div>

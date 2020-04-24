@@ -1,0 +1,145 @@
+ 
+    <div class="modal-header">
+        <div class="modal-title">
+            <span class=" font-weight700 d-block">{{pointPlanName}}</span>
+        </div>
+        <button type="button" class="close" aria-label="Close" (click)="activeModal.close('Close click')">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="max-height-60vh overflow-y-auto">
+            <table class="table responsive-table table-striped table-header-fixed">
+                <thead>
+                    <tr>
+                        <th scope="col" class="text-left font-size11 width-30p">
+                            #
+                        </th>
+                        <th scope="col" class="font-size11 text-left">
+                            Channel
+                        </th>
+                        <th scope="col" class="font-size11">
+                            Shares
+                        </th>
+                        <th scope="col" class="font-size11">
+                            Engagements
+                        </th>
+                        <th scope="col" class="font-size11">
+                            Clicks
+                        </th>
+                        <th scope="col" class="font-size11">
+                            Conversions
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let defaultPlan of pointPlan;let i =index">
+                        <td data-label="#" class="font-size10 text-left">
+                            {{i+1}}
+                        </td>
+                        <td data-label="Channel" class="font-size13 text-left font-weight700">
+                            {{defaultPlan.Provider}}
+                        </td>
+                        <td data-label="Shares" class="font-size12 text-left">
+
+                            <div class="border padding-v-5 padding-h-5 margin-v-5 rounded-5">
+                                <div class="row font-size12 no-gutters">
+                                    <div class="col">
+                                        <div><span class="text-muted text-uppercase font-weight500 font-size10"><span
+                                                    class="icon icon-monitor"></span>&nbsp;WEB</span></div>
+                                        <div class="font-weight600 font-size12">{{defaultPlan.Shares.PointsForWeb}}
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div><span class="text-muted text-uppercase font-weight500 font-size10"><span
+                                                    class="icon icon-smartphone"></span>&nbsp;MOBILE</span></div>
+                                        <div class="font-weight600 font-size12">{{defaultPlan.Shares.PointsForMobile}}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </td>
+                        <td data-label="Engagements" class="font-size12 text-left"
+                            *ngIf="defaultPlan.Engagements != null">
+
+                            <div class="border padding-v-5 padding-h-5 margin-v-5 rounded-5"
+                                *ngIf="defaultPlan.Provider == 'Facebook'">
+                                <div class="row font-size12 no-gutters">
+                                    <div class="col">
+                                        <div><span class="text-muted text-uppercase font-weight500 font-size10"><span
+                                                    class="icon icon-thumbs-up"></span>&nbsp;LIKES</span></div>
+                                        <div class="font-weight600 font-size12">{{defaultPlan.Engagements.Like}}</div>
+                                    </div>
+                                    <div class="col">
+                                        <div><span class="text-muted text-uppercase font-weight500 font-size10"><span
+                                                    class="icon icon-message-square"></span>&nbsp;COMMENTS</span></div>
+                                        <div class="font-weight600 font-size12">{{defaultPlan.Engagements.Comment}}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row font-size12 no-gutters">
+                                    <div class="col">
+                                        <div><span class="text-muted text-uppercase font-weight500 font-size10"><span
+                                                    class="icon icon-corner-up-right"></span>&nbsp;RESHARES</span></div>
+                                        <div class="font-weight600 font-size12">{{defaultPlan.Engagements.ReShare}}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="border padding-v-5 padding-h-5 margin-v-5 rounded-5"
+                                *ngIf="defaultPlan.Provider == 'Twitter'">
+                                <div class="row font-size12 no-gutters">
+                                    <div class="col">
+                                        <div><span class="text-muted text-uppercase font-weight500 font-size10"><span
+                                                    class="icon icon-heart"></span>&nbsp;FAVOURITES</span></div>
+                                        <div class="font-weight600 font-size12">{{defaultPlan.Engagements.Favourite}}
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div><span class="text-muted text-uppercase font-weight500 font-size10"><span
+                                                    class="icon icon-repeat"></span>&nbsp;RETWEETS</span></div>
+                                        <div class="font-weight600 font-size12">{{defaultPlan.Engagements.ReTweet}}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="border padding-v-5 padding-h-5 margin-v-5 rounded-5"
+                                *ngIf="defaultPlan.Provider == 'LinkedIn'">
+                                <div class="row font-size12 no-gutters">
+                                    <div class="col">
+                                        <div><span class="text-muted text-uppercase font-weight500 font-size10"><span
+                                                    class="icon icon-thumbs-up"></span>&nbsp;LIKES</span></div>
+                                        <div class="font-weight600 font-size12">{{defaultPlan.Engagements.Like}}</div>
+                                    </div>
+                                    <div class="col">
+                                        <div><span class="text-muted text-uppercase font-weight500 font-size10"><span
+                                                    class="icon icon-message-square"></span>&nbsp;COMMENTS</span></div>
+                                        <div class="font-weight600 font-size12">{{defaultPlan.Engagements.Comment}}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </td>
+                        <td data-label="Engagements" class="font-size12" *ngIf="defaultPlan.Engagements == null">
+                            -
+                        </td>
+                        <td data-label="Clicks" class="font-size12">
+                            <div class="font-weight600 font-size12"> {{defaultPlan.Clicks.PointsForClicks}}</div>
+                        </td>
+                        <td data-label="Conversions" class="font-size12">
+                            <div class="font-weight600 font-size12"> {{defaultPlan.Conversions.PointsForConversion}}
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-link" (click)="activeModal.close('Close click')">Close</button>
+    </div>
+ 

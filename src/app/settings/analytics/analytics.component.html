@@ -1,0 +1,814 @@
+<section>
+    <div class="row margin-h-0">
+        <div class="col-xl-12">
+            <article class="card p-3 rounded-10 border-0">
+                <div class="row">
+                    <div class="col-12">
+                        <div *ngIf="!initialLoadSuccess || isPlatformAnalyticsLoadError || isEarnedMediaSettingsLoadError"
+                            class="alert alert-danger margin-v-10" role="alert">
+                            <div>Oops! Something went wrong! Click <a href="/settings/analytics">here</a> to reload this
+                                page.
+                            </div>
+                        </div>
+                        <h6 class="font-weight700 font-size14">ANALYTICS</h6>
+                        <p class="font-size12">Manage content analytics</p>
+                    </div>
+                </div>
+                <div class="row gutter-5 card-header rounded-0 margin-top-5 margin-bottom-20">
+                    <div class="col-12">
+                        <ul class="nav nav-pills justify-content-center font-size12" id="analytics-tab" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link active" id="google-analytics-tab" data-toggle="pill"
+                                    href="#google-analytics" role="tab" aria-controls="google-analytics-tab"
+                                    aria-selected="false">GOOGLE ANALYTICS</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="platform-analytics-tab" data-toggle="pill"
+                                    href="#platform-analytics" role="tab" aria-controls="platform-analytics-tab"
+                                    aria-selected="false">PLATFORM
+                                    ANALYTICS</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="earned-media-tab" data-toggle="pill" href="#earned-media"
+                                    role="tab" aria-controls="earned-media-tab" aria-selected="false">EARNED MEDIA
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col">
+                        <div class="tab-content" id="analytics-tab">
+                            <div class="tab-pane fade show active" id="google-analytics" role="tabpanel"
+                                aria-labelledby="google-analytics-tab">
+                                <!-- Google analytics code goes here ! -->
+
+
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="border rounded padding-v-10 padding-h-10">
+                                            <div class="alert alert-info">Integrate your Google Analytics accounts for
+                                                activating
+                                                conversion analytics.</div>
+                                            <div class="row align-items-center justify-content-center h-100"
+                                                *ngIf="isGAListLoading">
+                                                <div class="col text-center"> <img src="assets/images/app-preloader.svg"
+                                                        class="img-fluid">
+                                                </div>
+                                            </div>
+                                            <div class="text-center text-muted" *ngIf="noGAAccountsToDisplay">
+                                                <div class="icon icon-alert-circle font-size50"></div> <span
+                                                    class="font-size13">
+                                                    Looks like a
+                                                    'clean slate'. No accounts connected!</span>
+                                            </div>
+                                            <div class="d-flex justify-content-between"
+                                                *ngIf="!isGAListLoading && googleAnalyticsAccounts.length > 0">
+                                                <div class="col-xl-6 col-lg-8 col-md-12 padding-h-0">
+                                                    <div class="form-group margin-bottom-5"><label
+                                                            class="col-form-label" for="searchAccount">SEARCH
+                                                            BY</label>
+                                                        <div class="input-group">
+                                                            <div class="input-group-prepend"><span
+                                                                    class="input-group-text icon icon-search"></span>
+                                                            </div>
+                                                            <input class="form-control form-control-sm"
+                                                                [(ngModel)]="gaSearchText" id="searchAccount"
+                                                                placeholder="Account Name"
+                                                                aria-placeholder="Account Name"
+                                                                (ngModelChange)="gaListCurrentPage = 1" type="text">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div>
+                                                    <div class="text-right">
+                                                        <button type="button"
+                                                            (click)="showGoogleAnalyticsConnectionModal(addGoogleAnalyticsAccount)"
+                                                            ngbTooltip=" Add a google analytics account"
+                                                            data-placement="bottom"
+                                                            class="btn btn-primary btn-block padding-v-5 rounded-5"><span
+                                                                class="icon icon-plus"></span>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col">
+                                                    <table
+                                                        class="table responsive-table table-striped table-header-fixed"
+                                                        *ngIf="googleAnalyticsAccounts != undefined && googleAnalyticsAccounts.length > 0 && !isGAListLoading">
+                                                        <thead>
+                                                            <tr>
+                                                                <th scope="col" class="text-left font-size11 width-20p">
+                                                                    #
+                                                                </th>
+                                                                <th scope="col" class="text-left font-size11">
+                                                                    Account Name
+                                                                </th>
+                                                                <th scope="col" class="font-size11">
+                                                                    Profile
+                                                                </th>
+                                                                <th scope="col" class="font-size11">Action
+                                                                </th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <ng-container
+                                                                *ngFor="let account of googleAnalyticsAccounts | filter : gaSearchText : '' : ['GoogleAnalyticsAccountName'] | slice: (gaListCurrentPage-1) * gaListPageSize : (gaListCurrentPage-1) * gaListPageSize + gaListPageSize; index as i">
+                                                                <tr>
+                                                                    <td data-label="#">
+                                                                        <div class="font-size11">{{i+1}}</div>
+                                                                    </td>
+                                                                    <td data-label="Account Name">
+                                                                        <div class="row">
+                                                                            <div class="col-3">
+                                                                                <div
+                                                                                    class="blurb-thumb-image-contain margin-v-5">
+                                                                                    <img src="{{account.GoogleAccountUserImageUrl}}"
+                                                                                        class="default-image img-fluid rounded-sm blurb-thumb-image"
+                                                                                        alt="{{account.GoogleAnalyticsAccountName}}">
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-9 padding-h-0">
+                                                                                <div
+                                                                                    class="font-size13 font-weight700 text-left">
+                                                                                    {{account.GoogleAnalyticsAccountName}}
+                                                                                </div>
+                                                                                <div class="row">
+                                                                                    <div class="col-12 text-left">
+                                                                                        <div
+                                                                                            class="tiny-well padding-v-5 padding-h-5 margin-v-5">
+                                                                                            <div class="font-size12">
+                                                                                                USERNAME
+                                                                                            </div>
+                                                                                            <div
+                                                                                                class="font-weight700 font-size13">
+                                                                                                {{account.GoogleAccountUserName}}
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </td>
+                                                                    <td data-label="Profile">
+                                                                        <div>
+                                                                            <button
+                                                                                class="btn btn-link btn-link-underline"
+                                                                                [disabled]="account.ProfileCount == 0"
+                                                                                (click)="listConnectedProfiles(account.googleAnalyticsAccountId, true)">
+                                                                                {{account.ProfileCount}}
+                                                                            </button>
+                                                                        </div>
+                                                                    </td>
+                                                                    <td data-label="Action">
+                                                                        <button type="button"
+                                                                            class="btn btn-link ghost-btn ghost-btn-sm"
+                                                                            [ngbPopover]="gaMoreOptions"
+                                                                            [autoClose]="true" aria-haspopup="true"
+                                                                            aria-expanded="false"><span
+                                                                                class="icon icon-more-vertical"></span>
+                                                                            <ng-template #gaMoreOptions>
+                                                                                <button
+                                                                                    class="btn btn-link-danger d-block padding-v-10 padding-h-5 font-size12 btn-link-underline"
+                                                                                    (click)="showDeleteAccount(account, i, removeAccount)">
+                                                                                    <span
+                                                                                        class="icon icon-trash"></span>&nbsp;Delete
+                                                                                </button>
+                                                                            </ng-template>
+                                                                        </button>
+                                                                    </td>
+                                                                </tr>
+                                                                <tr
+                                                                    [ngbCollapse]="account != undefined && !account.IsExpanded">
+                                                                    <td colspan="4">
+                                                                        <!-- expand/ collapse pages list -->
+                                                                        <div class="row">
+                                                                            <div class="col-12">
+
+                                                                                <div
+                                                                                    class="border rounded padding-h-10 padding-v-10 margin-v-5 margin-h-10">
+                                                                                    <div class="row align-items-center justify-content-center h-100"
+                                                                                        *ngIf="isProfileListLoading">
+                                                                                        <div class="col text-center">
+                                                                                            <img src="assets/images/app-preloader.svg"
+                                                                                                class="img-fluid">
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <table *ngIf="!isProfileListLoading"
+                                                                                        class="table responsive-table table-striped table-header-fixed">
+                                                                                        <thead>
+                                                                                            <tr>
+                                                                                                <th scope="col"
+                                                                                                    class="text-left font-size11">
+                                                                                                    Profile Name
+                                                                                                </th>
+                                                                                                <th scope="col"
+                                                                                                    class="font-size11">
+                                                                                                    URL
+                                                                                                </th>
+                                                                                                <th scope="col"
+                                                                                                    class="font-size11">
+
+                                                                                                </th>
+                                                                                                <th scope="col"
+                                                                                                    class="font-size11">
+                                                                                                    Action
+                                                                                                </th>
+                                                                                            </tr>
+                                                                                        </thead>
+                                                                                        <tbody>
+                                                                                            <tr
+                                                                                                *ngFor="let profile of account.GoogleAnalyticsProfiles; index as profileIndex">
+                                                                                                <td
+                                                                                                    data-label="Profile name">
+                                                                                                    <div
+                                                                                                        class="col-10 padding-h-0">
+                                                                                                        <div
+                                                                                                            class="font-size12 font-weight700 text-left">
+                                                                                                            {{profile.ProfileName}}
+                                                                                                        </div>
+                                                                                                    </div>
+                                                                                                </td>
+                                                                                                <td
+                                                                                                    data-label="Website URL">
+                                                                                                    <div
+                                                                                                        class="font-size12 font-weight700 text-left">
+                                                                                                        {{profile.WebsiteUrl}}
+                                                                                                    </div>
+                                                                                                </td>
+                                                                                                <td
+                                                                                                    data-label="Website URL">
+                                                                                                    <div [ngClass]="{ 'badge-light' : !profile.IsEnabled}"
+                                                                                                        *ngIf="!profile.IsEnabled"
+                                                                                                        class="badge font-weight500">
+                                                                                                        Disabled</div>
+                                                                                                    <div [ngClass]="{ 'badge-success' : profile.IsEnabled}"
+                                                                                                        *ngIf="profile.IsEnabled"
+                                                                                                        class="badge font-weight500">
+                                                                                                        Enabled</div>
+                                                                                                </td>
+                                                                                                <td>
+                                                                                                    <button
+                                                                                                        type="button"
+                                                                                                        class="btn btn-link ghost-btn ghost-btn-sm"
+                                                                                                        [ngbPopover]="profileMoreOptions"
+                                                                                                        [autoClose]="true"
+                                                                                                        aria-haspopup="true"
+                                                                                                        aria-expanded="false"><span
+                                                                                                            class="icon icon-more-vertical"></span>
+                                                                                                        <ng-template
+                                                                                                            #profileMoreOptions>
+                                                                                                            <button
+                                                                                                                *ngIf="!profile.IsEnabled"
+                                                                                                                type="button"
+                                                                                                                class="btn btn-link d-block padding-top-10 padding-h-5 margin-bottom-5 font-size12 btn-link-underline"
+                                                                                                                (click)="showEnableOrDisableProfile(profile, i, profileIndex, enableOrDisableProfileModal)">
+                                                                                                                <span
+                                                                                                                    class="icon icon-edit"></span>&nbsp;Enable
+                                                                                                            </button>
+                                                                                                            <button
+                                                                                                                *ngIf="profile.IsEnabled"
+                                                                                                                type="button"
+                                                                                                                class="btn btn-link d-block padding-top-10 padding-h-5 margin-bottom-5 font-size12 btn-link-underline"
+                                                                                                                (click)="showEnableOrDisableProfile(profile, i, profileIndex, enableOrDisableProfileModal)">
+                                                                                                                <span
+                                                                                                                    class="icon icon-edit"></span>&nbsp;Disable
+                                                                                                            </button>
+                                                                                                        </ng-template>
+                                                                                                    </button>
+                                                                                                </td>
+                                                                                            </tr>
+                                                                                        </tbody>
+                                                                                    </table>
+                                                                                </div>
+
+                                                                            </div>
+                                                                        </div>
+                                                                        <!-- expand/ collapse pages list -->
+                                                                    </td>
+                                                                </tr>
+                                                            </ng-container>
+                                                        </tbody>
+                                                    </table>
+                                                    <div *ngIf="googleAnalyticsAccounts.length > gaListPageSize">
+                                                        <ngb-pagination size="sm" class="d-flex justify-content-end"
+                                                            [(page)]="gaListCurrentPage" [pageSize]="gaListPageSize"
+                                                            [collectionSize]="googleAnalyticsAccounts.length"
+                                                            [maxSize]="5">
+                                                        </ngb-pagination>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div *ngIf="!isGAListLoading && googleAnalyticsAccounts.length > 0"
+                                            class="border rounded padding-v-10 padding-h-10 margin-top-30">
+                                            <div class="row">
+                                                <div class="col-12">
+                                                    <div class="row justify-content-end">
+                                                        <div class="col-auto">
+                                                            <button type="button" ngbTooltip="Edit utm parameters"
+                                                                (click)="utmForm.enable()" data-placement="bottom"
+                                                                class="btn ghost-btn-bright btn-block padding-v-5 rounded-5"><span
+                                                                    class="icon icon-edit"></span>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                    <div class="font-size14 font-weight700 uppercase"> UTM PARAMETERS
+                                                    </div>
+                                                    <div class="font-size12">Set up custom UTM parameters for your
+                                                        advocacy campaigns</div>
+                                                    <form class="form-group m-0" [formGroup]="utmForm">
+                                                        <fieldset>
+                                                            <div class="form-group margin-top-10"> <label
+                                                                    class="col-form-label" for="title">CAMPAIGN
+                                                                    NAME</label>
+                                                                <div class="input-group">
+                                                                    <div class="input-group-prepend"> <span
+                                                                            class="input-group-text icon icon-users"></span>
+                                                                    </div> <input formControlName="campaignName"
+                                                                        type="text" id="campaignName"
+                                                                        name="campaignName" class="form-control"
+                                                                        autocomplete="off"
+                                                                        placeholder="Campaign Name" />
+                                                                </div>
+                                                                <div *ngIf="utmFormSubmitted && utmFormControl().campaignName.errors && utmFormControl().campaignName.errors.required"
+                                                                    class="alert alert-danger my-1" role="alert">Please
+                                                                    enter a campaign name!</div>
+                                                                <div *ngIf="utmFormSubmitted && utmFormControl().campaignName.errors && utmFormControl().campaignName.errors.maxLength"
+                                                                    class="alert alert-danger my-1" role="alert">
+                                                                    A campaign name should not be more than 25
+                                                                    characters!</div>
+                                                                <div *ngIf="utmFormSubmitted && utmFormControl().campaignName.errors && utmFormControl().campaignName.errors.pattern"
+                                                                    class="alert alert-danger my-1" role="alert">
+                                                                    A campaign name allows only alphabets and numbers!
+                                                                    Please check your input.
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group mb-0"> <label class="col-form-label"
+                                                                    for="title">CAMPAIGN MEDIUM</label>
+                                                                <div class="input-group">
+                                                                    <div class="input-group-prepend"> <span
+                                                                            class="input-group-text icon icon-users"></span>
+                                                                    </div> <input formControlName="campaignMedium"
+                                                                        type="text" id="campaignMedium"
+                                                                        name="campaignMedium" class="form-control"
+                                                                        autocomplete="off"
+                                                                        placeholder="Campaign Medium" />
+                                                                    <div *ngIf="utmFormSubmitted && utmFormControl().campaignMedium.errors && utmFormControl().campaignMedium.errors.required"
+                                                                        class="alert alert-danger my-1" role="alert">
+                                                                        Please enter a campaign medium!</div>
+                                                                    <div *ngIf="utmFormSubmitted && utmFormControl().campaignMedium.errors && utmFormControl().campaignMedium.errors.maxLength"
+                                                                        class="alert alert-danger my-1" role="alert">
+                                                                        A campaign medium should not be more than 25
+                                                                        characters!</div>
+                                                                    <div *ngIf="utmFormSubmitted && utmFormControl().campaignMedium.errors && utmFormControl().campaignMedium.errors.pattern"
+                                                                        class="alert alert-danger my-1" role="alert">
+                                                                        A campaign medium allows only alphabets and
+                                                                        numbers! Please check your input.
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="d-flex justify-content-end margin-top-30">
+                                                                <button *ngIf="utmForm.enabled" aria-label="Cancel"
+                                                                    class="btn btn-link" type="button"
+                                                                    (click)="utmForm.disable(); utmFormSubmitted=false;">Cancel</button>
+                                                                <div class="block-relative">
+                                                                    <button class="btn btn-primary margin-left-10"
+                                                                        [disabled]="utmForm.disabled" type="submit"
+                                                                        (click)="updateUtmParameters()">Save</button>
+                                                                    <div class="preloader-cover"
+                                                                        *ngIf="savingUtmInProgress">
+                                                                        <img src="assets/images/app-preloader.svg"
+                                                                            class="preloader20 preloader-middle">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </fieldset>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="tab-pane fade" id="platform-analytics" role="tabpanel"
+                                aria-labelledby="platform-analytics-tab">
+
+                                <div class="row align-items-center justify-content-center h-100"
+                                    *ngIf="isPlatformAnalyticsLoading">
+                                    <div class="col text-center"> <img src="assets/images/app-preloader.svg"
+                                            class="img-fluid">
+                                    </div>
+                                </div>
+
+                                <div class="border rounded-10 padding-h-10 padding-v-10 margin-top-20"
+                                    *ngIf="!isPlatformAnalyticsLoading">
+                                    <div class="row">
+                                        <div class="col-xl-12">
+                                            <div class="font-size14 font-weight700 uppercase"> CTA Conversion</div>
+                                            <div class="font-size12">Implement conversion tracking with SOCXO</div>
+                                            <div class="row">
+                                                <div class="col-xl-12 margin-top-20">
+                                                    <div class="alert alert-info">You
+                                                        can copy the following code and paste
+                                                        it in your landing pages, and you will be able to track
+                                                        conversions
+                                                        with SOCXO.</div>
+
+                                                    <div class="form-group mb-0">
+                                                        <div class="input-group">
+                                                            <div class="input-group-prepend"><span
+                                                                    class="input-group-text icon icon-file-text"></span>
+                                                            </div> <textarea
+                                                                class="form-control text-area-height overflow-y-auto"
+                                                                id="conversion-code" rows="3"
+                                                                [(ngModel)]="conversionCode" readonly
+                                                                #conversioncodelink></textarea>
+                                                        </div>
+                                                    </div>
+
+
+                                                    <div class="d-flex justify-content-end margin-top-5">
+
+                                                        <div class="text-right">
+                                                            <input type="button"
+                                                                class="btn ghost-btn-bright ghost-btn-sm font-size13"
+                                                                (click)="copyLinkForConversionCodes(conversioncodelink)"
+                                                                value="Copy Link" />
+                                                        </div>
+                                                    </div>
+
+                                                    <hr>
+                                                    <div class="alert alert-info">You can copy the following code
+                                                        for Image element.</div>
+
+                                                    <div class="form-group margin-v-5 text-left">
+                                                        <div class="input-group">
+                                                            <div class="input-group-prepend">
+                                                                <span
+                                                                    class="input-group-text icon icon-file-text"></span>
+                                                            </div>
+                                                            <input id="conversion-image-code" type="text"
+                                                                [(ngModel)]="imageConversionCode" readonly
+                                                                #conversionimagecodelink class="form-control">
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="d-flex justify-content-end">
+
+                                                        <div class="text-right">
+                                                            <input type="button"
+                                                                class="btn ghost-btn-bright ghost-btn-sm font-size13"
+                                                                (click)="copyLinkForConversionCodes(conversionimagecodelink)"
+                                                                value="Copy Link" />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="border rounded-10 padding-h-10 padding-v-10 margin-top-20"
+                                    *ngIf="!isPlatformAnalyticsLoading">
+                                    <div class="row">
+                                        <div class="col-xl-12">
+                                            <div class="font-size14 font-weight700 uppercase"> Traffic Settings</div>
+                                            <div class="font-size12">Configuration to redirect to your page</div>
+                                            <div class="row">
+                                                <div class="col-xl-12">
+                                                    <ul class="list-group list-group-flush margin-top-20">
+                                                        <li class="list-group-item">
+                                                            <div class="d-flex justify-content-between">
+                                                                <div>
+                                                                    <div class="font-size15">Redirect traffic to landing
+                                                                        page
+                                                                    </div>
+                                                                    <div class="font-size12">If you enable this,traffic
+                                                                        will be
+                                                                        redirected to your website/landing page,not to
+                                                                        your
+                                                                        social media brand pages.</div>
+                                                                </div>
+                                                                <div class="text-right">
+                                                                    <ui-switch size="small"
+                                                                        [(ngModel)]="isRedirectToLandingPage"
+                                                                        (click)="updateTrafficSettingsSettings('RedirectToLandingPage',isRedirectToLandingPage)">
+                                                                    </ui-switch>
+                                                                    <div class="font-size12"
+                                                                        *ngIf="isRedirectToLandingPage">Enabled</div>
+                                                                    <div class="font-size12"
+                                                                        *ngIf="!isRedirectToLandingPage">Disabled</div>
+
+                                                                </div>
+                                                            </div>
+                                                        </li>
+                                                        <li class="list-group-item">
+                                                            <div class="d-flex justify-content-between">
+                                                                <div class="width-10">
+                                                                    <div class="font-size15">Short URL Display Option
+                                                                        for
+                                                                        Twitter Re-tweet & LinkedIn Re-Share</div>
+                                                                    <div class="font-size12">If Enabled, Short URL will
+                                                                        be
+                                                                        inserted & displayed in Re-Tweet or Re-Share
+                                                                        Comment
+                                                                        box. If Disabled, Short URL will be removed &
+                                                                        not
+                                                                        displayed in Re-Tweet or Reshare Comment box.
+                                                                        Note – If
+                                                                        Disabled, Clicks & Conversion for the content
+                                                                        may not be
+                                                                        tracked.</div>
+                                                                </div>
+                                                                <div class="text-right">
+                                                                    <ui-switch size="small"
+                                                                        [(ngModel)]="isShortUrlEnabledForReshare"
+                                                                        (click)="updateTrafficSettingsSettings('IsAppendShortURLEnabled',isShortUrlEnabledForReshare)">
+                                                                    </ui-switch>
+                                                                    <div class="font-size12"
+                                                                        *ngIf="isShortUrlEnabledForReshare">Enabled
+                                                                    </div>
+                                                                    <div class="font-size12"
+                                                                        *ngIf="!isShortUrlEnabledForReshare">Disabled
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <div class="tab-pane fade" id="earned-media" role="tabpanel" aria-labelledby="earned-media">
+
+                                <div class="row align-items-center justify-content-center h-100"
+                                    *ngIf="isEarnedMediaSettingsLoading">
+                                    <div class="col text-center"> <img src="assets/images/app-preloader.svg"
+                                            class="img-fluid">
+                                    </div>
+                                </div>
+                                <div class="border rounded-10 padding-h-10 padding-v-10 margin-top-20"
+                                    *ngIf="!isEarnedMediaSettingsLoading">
+                                    <div class="row">
+                                        <div class="col">
+                                            <div class="font-size14 font-weight700 uppercase"> Earned Media Value [EMV]
+                                            </div>
+                                            <div class="font-size12">Manage earned media value</div>
+                                        </div>
+                                        <div class="col">
+                                            <div class="row row justify-content-end">
+                                                <div class="col-auto">
+                                                    <button type="button" (click)="editEarnedMediaValuePopUp(editEmv)"
+                                                        ngbTooltip="Edit emv" data-placement="bottom"
+                                                        class="btn ghost-btn-bright btn-block padding-v-5 rounded-5"><span
+                                                            class="icon icon-edit"></span>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row margin-top-20">
+                                        <div class="col">
+                                            <table class="table responsive-table table-striped table-header-fixed"
+                                                *ngIf="earnedMediaValue!=undefined && earnedMediaValue.length>0">
+                                                <thead>
+                                                    <tr>
+                                                        <th scope="col" class="width-30p">
+                                                            #
+                                                        </th>
+                                                        <th scope="col">
+                                                            Attribute
+                                                        </th>
+                                                        <th scope="col">
+                                                            Value
+                                                        </th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr *ngFor="let emv of earnedMediaValue;let i = index;">
+                                                        <td data-label="#">
+                                                            {{i+1}}
+                                                        </td>
+                                                        <td data-label="Attribute">
+                                                            <div class="font-weight600">
+                                                                {{emv.DisplayName}}
+                                                            </div>
+                                                        </td>
+                                                        <td data-label="Value">
+                                                            <div class="font-weight600">{{emv.Value}}</div>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <ng-template #addGoogleAnalyticsAccount let-modal>
+                    <div class="modal-header">
+                        <div class="modal-title">
+                            <span class=" font-weight700 d-block">Create New Google Analytics Account</span>
+                        </div>
+                        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="font-size12 alert alert-primary">You will be navigated to Google login
+                                    screen. We recommend you to logout of any active Google session in your browser,
+                                    before proceeding to avoid adding a wrong connection.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12 d-flex justify-content-center margin-top-20">
+                                <img src="assets/images/google_analytics_banner.png" alt="Google Analytics">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <div>
+                            <button type="button" (click)="modal.dismiss('Cross click')"
+                                class="btn ghost-btn">Cancel</button>
+                        </div>
+                        <div class="block-relative margin-left-20">
+                            <button (click)="connectGoogleAnalytics()" class="btn btn-primary">Connect</button>
+                        </div>
+                    </div>
+                </ng-template>
+
+                <ng-template #enableOrDisableProfileModal let-modal>
+                    <div class="modal-header">
+                        <div class="modal-title">
+                            <span class=" font-weight700 d-block">Manage Profile</span>
+                        </div>
+                        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="margin-v-0 font-size14">
+                                    <span class="badge badge-light font-size14">{{selectedProfile.ProfileName}}</span>
+                                    will be
+                                    {{enableOrDisableTextForSelectedProfile}}d.
+                                </div>
+                                <div class="alert alert-info margin-top-20">
+                                    Do you want to <span
+                                        class="font-weight700">{{enableOrDisableTextForSelectedProfile}}</span>
+                                    this profile?
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <div class="d-flex justify-content-end">
+                            <div>
+                                <button type="button" (click)="modal.dismiss('Cross click')"
+                                    class="btn ghost-btn">Cancel</button>
+                            </div>
+                            <div class="block-relative margin-left-20">
+                                <button type="button" class="btn btn-primary camelcase"
+                                    (click)="enableOrDisableGoogleAnalyticsProfile()">{{enableOrDisableTextForSelectedProfile}}</button>
+                                <div class="preloader-cover" *ngIf="enableOrDisableProfileInProgress">
+                                    <img src="assets/images/app-preloader.svg" class="preloader20 preloader-middle">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </ng-template>
+                <ng-template #removeAccount let-modal>
+                    <div class="modal-header">
+                        <div class="modal-title">
+                            <span class=" font-weight700 d-block">Delete Account</span>
+                        </div>
+
+                        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="margin-v-0 font-size14">
+                                    Do you want to remove<span
+                                        class="badge badge-light font-size15">{{selectedAccount.GoogleAnalyticsAccountName}}</span>?
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <div class="d-flex justify-content-end">
+                            <div>
+                                <button type="button" (click)="modal.dismiss('Cross click')"
+                                    class="btn ghost-btn">Cancel</button>
+                            </div>
+                            <div class="block-relative margin-left-20">
+                                <button type="button" class="btn btn-danger"
+                                    (click)="removeGoogleAnalyticsAccount()">Delete</button>
+                                <div class="preloader-cover" *ngIf="googleAnalyticsAccountRemovalInProgress">
+                                    <img src="assets/images/app-preloader.svg" class="preloader20 preloader-middle">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </ng-template>
+                <ng-template #editEmv let-modal>
+                    <form #editEmvForm="ngForm">
+
+                        <div class="modal-header">
+                            <div class="modal-title">
+                                <span class=" font-weight700 d-block">Edit earned media value</span>
+                            </div>
+
+                            <button type="button" class="close" aria-label="Close"
+                                (click)="modal.dismiss('Cross click')">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+
+                            <div class="max-height-60vh overflow-y-auto">
+                                <table class="table responsive-table table-striped table-header-fixed">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col" class="width-30p">
+                                                #
+                                            </th>
+                                            <th scope="col">
+                                                Attribute
+                                            </th>
+                                            <th scope="col">
+                                                Value
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let emv of earnedMediaValue;let i = index;" [ngModelGroup]="i">
+                                            <td data-label="#">{{i+1}}</td>
+                                            <input type="hidden"
+                                                class="border-0 bg-transparent font-size12 font-weight600 w-100 word-break line-clamp2"
+                                                readonly ngModel="{{emv.Name}}" name="Name" #pointsName="ngModel">
+                                            <input type="hidden"
+                                                class="border-0 bg-transparent font-size12 font-weight600 w-100 word-break line-clamp2"
+                                                readonly ngModel="{{emv.ActionValueId}}" name="ActionValueId"
+                                                #pointsEmvId="ngModel">
+                                            <td data-label="Attribute">
+                                                <input type="text"
+                                                    class="border-0 bg-transparent font-size12 font-weight600 w-100 word-break line-clamp2"
+                                                    readonly ngModel="{{emv.DisplayName}}" name="DisplayName"
+                                                    #pointsDisplayName="ngModel">
+                                            </td>
+                                            <td data-label="Value">
+                                                <input type="number" class="form-control form-control-sm margin-v-5"
+                                                    required pattern="^[0-9]*$" ngModel="{{emv.Value}}" min="0"
+                                                    name="Value" #pointsValue="ngModel"></td>
+                                            <div class="alert alert-danger" *ngIf="!pointsValue.valid">
+                                                <div *ngIf="pointsValue.errors.required"> This field cannot be empty
+                                                </div>
+                                                <div *ngIf="pointsValue.errors.pattern"> Enter only positive values.
+                                                    Decimals not
+                                                    allowed
+                                                </div>
+                                            </div>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-link" aria-label="Cancel"
+                                (click)="modal.close('Close click')">Cancel</button>
+
+                            <div class="block-relative">
+                                <button class="btn btn-primary" type="submit" id="btneditemv"
+                                    (click)="updateEarnedMediaValue(editEmvForm.value)"
+                                    [disabled]="editEmvForm.invalid">Save</button>
+                                <div *ngIf="editEarnedMediaValueSubmitted" class="preloader-cover"> <img
+                                        src="assets/images/app-preloader.svg" class="preloader20 preloader-middle">
+                                </div>
+                            </div>
+
+                        </div>
+                    </form>
+
+                </ng-template>
+            </article>
+        </div>
+    </div>
+</section>

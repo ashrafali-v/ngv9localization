@@ -1,0 +1,132 @@
+<div class="auth-background">
+    <section class="container">
+        <article class="row full-height align-items-center justify-content-center align-self-center">
+            <div class="card col-lg-4 col-md-6 col-sm-6 pb-1 px-0 rounded-lg">
+                <div class="card-body pt-0">
+                    <div class="tenant-line mt-n1 mb-4"></div>
+
+                    <article class="row  align-items-center justify-content-center align-self-center margin-bottom-10">
+                        <div class="auth-logo-container">
+
+
+                            <div *ngIf="tenantLogoUrl===''; else loadTenantImage"
+                                class="row align-items-center justify-content-center h-100">
+                                <div class="col text-center"> <img src="assets/images/app-preloader.svg"
+                                        class="img-fluid preloader20"> </div>
+                            </div>
+                            <ng-template #loadTenantImage>
+                                <img src="{{tenantLogoUrl}}" class="img-fluid rounded-md mb-2 mt-0 default-image"
+                                    alt="{{tenantName}}">
+                            </ng-template>
+
+
+                        </div>
+                    </article>
+
+                    <article class="row">
+                        <div class="col">
+                            <h5 class="mb-3 text-center">Login to your Account</h5>
+                            <div class="alert alert-danger my-1" *ngIf="isSAMLAuth">
+                                Access denied. Your
+                                tenant is
+                                configured to use SAML Idp authentication. Please
+                                <a href="{{samlLoginUrl}}">login</a> from Idp to continue.
+                            </div>
+
+                        </div>
+                    </article>
+
+                    <article class="row">
+                        <div class="col">
+                            <!-- For Normal Login -->
+                            <form *ngIf="!isSAMLAuth && !isADFSAuth" class="form-group m-0" [formGroup]="form"
+                                (ngSubmit)="login()">
+
+                                <article class="row">
+                                    <div class="col">
+                                        <div *ngIf="failedLoginMessage.length>0" class="alert alert-danger my-1"
+                                            role="alert">
+                                            {{failedLoginMessage}}
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-form-label" for="email">Your Email</label>
+                                            <input type="email" name="email" id="email" class="form-control"
+                                                aria-placeholder="Your email" placeholder="example@domain.com"
+                                                formControlName="email">
+                                            <div *ngIf="submitted && formControl().email.errors && formControl().email.errors.required"
+                                                class="alert alert-danger my-1" role="alert">
+                                                Email is required!</div>
+                                            <div *ngIf="submitted && formControl().email.errors && formControl().email.errors.email"
+                                                class="alert alert-danger my-1" role="alert">
+                                                Please enter a valid e-mail address!</div>
+                                        </div>
+                                        <div class="form-group password-container">
+                                            <label class="col-form-label" for="password">Password</label>
+                                            <input type={{passwordTextboxType}} name="password" id="password"
+                                                aria-placeholder="Your password" placeholder="Your password"
+                                                class="form-control" formControlName="password">
+                                            <span (click)="togglePassword()" class="password-control"><i
+                                                    class={{passwordToggleClass}}></i></span>
+                                            <div *ngIf="submitted && formControl().password.errors"
+                                                class="alert alert-danger my-1" role="alert">Password is
+                                                required!</div>
+                                        </div>
+
+
+                                        <div class="form-group form-check">
+                                            <input type="checkbox" name="remember" id="remember"
+                                                class="form-check-input checkbox-theme">
+                                            <label class="form-check-label" for="remember">Remember me</label>
+                                        </div>
+
+                                        <div class="block-relative">
+                                            <button type="submit" class="btn btn-primary btn-block padding-v-10 rounded-5"
+                                                aria-label="Login">Login</button>
+                                            <div class="preloader-cover" *ngIf="isLoginInProgress">
+                                                <img src="assets/images/app-preloader.svg"
+                                                    class="preloader20 preloader-middle">
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </article>
+
+                                <article class="row justify-content-center margin-top-20">
+                                    <div class="col-6 text-center">
+                                        <a routerLink="/forgotpassword" class="ghost-btn btn-block padding-v-5 font-size13 rounded-5">Forgot
+                                            Password?</a>
+                                    </div>
+                                    <div class="col-6 text-center">
+                                        <a routerLink="/help" class="ghost-btn btn-block padding-v-5 font-size13 rounded-5">FAQ</a>
+                                    </div>
+                                </article>
+
+                            </form>
+                        </div>
+                    </article>
+
+                    <article class="row">
+                        <div class="col">
+                            <div *ngIf="isADFSAuth">
+                                <a href={{adfsLoginUrl}} class="btn btn-primary btn-block py-3 mb-2 rounded-md">Login
+                                    with
+                                    ADFS</a>
+                            </div>
+
+                            <hr>
+                            <div class="text-center font-size11">By continuing, you are confirming that you have read
+                                and
+                                agreed to
+                                our <a href="https://www.socxo.com/terms-condition" target="_blank">Terms and
+                                    Conditions</a>
+                                and <a href="https://www.socxo.com/privacy-policy" target="_blank">Privacy Policy</a>
+                            </div>
+                        </div>
+                    </article>
+
+
+                </div>
+            </div>
+        </article>
+    </section>
+</div>

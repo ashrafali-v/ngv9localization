@@ -1,0 +1,773 @@
+<div class="row margin-h-0">
+    <div class="col-xl-12">
+
+        <article class="card p-3 rounded-10 border-0">
+            <div *ngIf="!initialLoadSuccess" class="alert alert-danger margin-v-10" role="alert">
+                <div>Oops! Something went wrong! Click <a href="/settings/channels">here</a> to reload this page.</div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <h6 class="font-weight700 font-size14">CHANNEL</h6>
+                    <p class="font-size12">Manage company social media accounts.</p>
+                </div>
+                <div class="col">
+                    <div class="row row justify-content-end">
+                        <div class="col-auto">
+                            <button type="button" (click)="showAddChannelPopup(addChannel)"
+                                ngbTooltip=" Add New Channel" data-placement="bottom"
+                                class="btn btn-primary btn-block padding-v-5 rounded-5"><span
+                                    class="icon icon-plus"></span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row gutter-5 card-header rounded-0 margin-top-5 margin-bottom-20">
+                <div class="col-12">
+                    <ul class="nav nav-pills justify-content-center font-size12" id="channels-tab" role="tablist">
+                        <li class="nav-item">
+                            <a [ngClass]="{ 'nav-link-danger': isAnyFacebookAccountExpired,
+                                            'active': selectedProvider == 'facebook' }" class="nav-link"
+                                id="facebook-channels-tab"
+                                (click)="selectedProvider='facebook'; getConnectedAccountAndPageCount();"
+                                data-toggle="pill" href="#facebook-channels" role="tab"
+                                aria-controls="facebook-channels-tab" aria-selected="false">FACEBOOK
+                                <span
+                                    [ngClass]="{ 'badge-danger': isAnyFacebookAccountExpired, 'badge-secondary': !isAnyFacebookAccountExpired }"
+                                    class="badge font-size11">{{fbAccountCount}}</span></a>
+                        </li>
+                        <li class="nav-item">
+                            <a [ngClass]="{ 'active': selectedProvider == 'twitter' }" class="nav-link"
+                                id="twitter-channels-tab"
+                                (click)="selectedProvider='twitter'; getConnectedAccountAndPageCount();"
+                                data-toggle="pill" href="#twitter-channels" role="tab"
+                                aria-controls="twitter-channels-tab" aria-selected="false">TWITTER <span
+                                    class="badge badge-secondary font-size11">{{twitterAccountCount}}</span></a>
+                        </li>
+                        <li class="nav-item">
+                            <a [ngClass]="{ 'nav-link-danger': isAnyLinkedinAccountExpired,
+                                            'active': selectedProvider == 'linkedin' }" class="nav-link"
+                                id="linkedin-channels-tab"
+                                (click)="selectedProvider='linkedin'; getConnectedAccountAndPageCount();"
+                                data-toggle="pill" href="#linkedin-channels" role="tab"
+                                aria-controls="linkedin-channels-tab" aria-selected="false">LINKEDIN
+                                <span
+                                    [ngClass]="{ 'badge-danger': isAnyLinkedinAccountExpired, 'badge-secondary': !isAnyLinkedinAccountExpired }"
+                                    class="badge font-size11">{{linkedinAccountCount}}</span></a>
+                        </li>
+                        <li class="nav-item">
+                            <a [ngClass]="{ 'active': selectedProvider == 'instagram' }" class="nav-link"
+                                id="instagram-channels-tab"
+                                (click)="selectedProvider='instagram'; getConnectedAccountAndPageCount();"
+                                data-toggle="pill" href="#instagram-channels" role="tab"
+                                aria-controls="instagram-channels-tab" aria-selected="false">INSTAGRAM <span
+                                    class="badge badge-secondary font-size11">{{instaAccountCount}}</span></a>
+                        </li>
+                        <li class="nav-item">
+                            <a [ngClass]="{ 'active': selectedProvider == 'youtube' }" class="nav-link"
+                                id="youtube-channels-tab"
+                                (click)="selectedProvider='youtube'; getConnectedAccountAndPageCount();"
+                                data-toggle="pill" href="#youtube-channels" role="tab"
+                                aria-controls="youtube-channels-tab" aria-selected="false">YOUTUBE <span
+                                    class="badge badge-secondary font-size11">{{youtubeAccountCount}}</span></a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-12">
+                    <div class="row align-items-center justify-content-center h-100" *ngIf="isChannelListLoading">
+                        <div class="col text-center"> <img src="assets/images/app-preloader.svg" class="img-fluid">
+                        </div>
+                    </div>
+                    <div class="text-center text-muted" *ngIf="noAccountsToDisplay">
+                        <div class="icon icon-alert-circle font-size50"></div> <span class="font-size13"> Looks like a
+                            'clean slate'. No accounts connected!</span>
+                    </div>
+                    <div class="row" *ngIf="!isChannelListLoading && socialMediaAccountsAndPageCount.length > 0">
+                        <div class="col-xl-6 col-lg-8 col-md-12">
+                            <div class="form-group margin-bottom-5"><label class="col-form-label"
+                                    for="searchAccount">SEARCH
+                                    BY</label>
+                                <div class="input-group">
+                                    <div class="input-group-prepend"><span
+                                            class="input-group-text icon icon-search"></span>
+                                    </div>
+                                    <input class="form-control form-control-sm" [(ngModel)]="channelSearchText"
+                                        id="searchAccount" placeholder="Account Name" aria-placeholder="Account Name"
+                                        (ngModelChange)="channelListCurrentPage = 1" type="text">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <table class="table responsive-table table-striped table-header-fixed"
+                        *ngIf="socialMediaAccountsAndPageCount != undefined && socialMediaAccountsAndPageCount.length > 0 && !isChannelListLoading">
+                        <thead>
+                            <tr>
+                                <th scope="col" class="width-30p">
+                                    #
+                                </th>
+                                <th scope="col">
+                                    Account Name
+                                </th>
+                                <th scope="col">
+                                    Associated Page
+                                </th>
+                                <th scope="col">Actions
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <ng-container
+                                *ngFor="let channel of socialMediaAccountsAndPageCount | filter : channelSearchText : '' : ['ProviderUsername'] | slice: (channelListCurrentPage-1) * channelListPageSize : (channelListCurrentPage-1) * channelListPageSize + channelListPageSize; index as i">
+                                <tr>
+                                    <td data-label="#">
+                                       {{i+1}}
+                                    </td>
+                                    <td data-label="Account Name">
+                                        <div class="row">
+                                            <div class="col-3">
+                                                <div class="blurb-thumb-image-contain margin-v-5">
+                                                    <img src="{{channel.ProfileImageUrl}}"
+                                                        class="default-image img-fluid rounded-sm blurb-thumb-image"
+                                                        alt="{{channel.ProviderUsername}}">
+                                                </div>
+                                            </div>
+                                            <div class="col-9 padding-h-0">
+                                                <div class="font-size12 font-weight700 text-left">
+                                                    {{channel.ProviderUsername}}
+                                                </div>
+                                                <div class="row" *ngIf="channel.ModifiedBy ||
+                                                channel.ModifiedDate != '0001-01-01T00:00:00' ||
+                                                currentUserName == channel.Username && channel.ExpiresInDays <= 0 ||
+                                                currentUserName != channel.Username && channel.ExpiresInDays <= 0">
+                                                    <div class="col-12 text-left">
+                                                        <div class="tiny-well padding-v-5 padding-h-5 margin-v-5">
+                                                            <div *ngIf="channel.ModifiedBy" class="font-size12">Last
+                                                                modified by: <span
+                                                                    class="font-weight700">{{channel.ModifiedBy}}</span>
+                                                            </div>
+                                                            <div *ngIf="channel.ModifiedDate != '0001-01-01T00:00:00'"
+                                                                class="font-size11 border-bottom padding-bottom-5 margin-bottom-5">
+                                                                Modified on: <span
+                                                                    class="font-weight700">{{channel.ModifiedDate}}</span>
+                                                            </div>
+                                                            <div class=""
+                                                                *ngIf="currentUserName == channel.Username && channel.ExpiresInDays <= 0">
+                                                                <div class="block-relative">
+                                                                    <button class="btn btn-danger font-size11"
+                                                                        (click)="channel.IsNotifyUserInProgress = true; 
+                                                                    connectSocialMediaAccount(selectedProvider)">Reconnect
+                                                                        Account</button>
+                                                                    <div class="preloader-cover"
+                                                                        *ngIf="channel.IsNotifyUserInProgress">
+                                                                        <img src="assets/images/app-preloader.svg"
+                                                                            class="preloader20 preloader-middle">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class=""
+                                                                *ngIf="currentUserName != channel.Username && channel.ExpiresInDays <= 0">
+                                                                <button data-placement="top"
+                                                                    ngbTooltip="Click for more options"
+                                                                    (click)="showNotifyUserModal(channel, notifyUserModal)"
+                                                                    class="btn ghost-danger-btn ghost-btn-sm font-size11">Notify
+                                                                    Account Owner</button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td data-label="Associated Page">
+                                        <div *ngIf="!channel.IsPagesAssociatedWithAccount"
+                                            class="font-weight700 text-muted-2">
+                                            0
+                                        </div>
+                                        <div *ngIf="channel.IsPagesAssociatedWithAccount">
+                                            <button class="btn btn-link btn-link-underline"
+                                                [disabled]="channel.TotalPageCount == 0"
+                                                (click)="listConnectedPages(channel.ProviderUserId, true)">{{channel.TotalPageCount}}</button>
+                                        </div>
+
+                                    </td>
+                                    <td data-label="Actions">
+                                        <button type="button" class="btn btn-link ghost-btn ghost-btn-sm"
+                                            [ngbPopover]="channelMoreOptions" [autoClose]="true" aria-haspopup="true"
+                                            aria-expanded="false"><span class="icon icon-more-vertical"></span>
+                                            <ng-template #channelMoreOptions>
+                                                <button
+                                                    *ngIf="channel.IsPagesAssociatedWithAccount && channel.ExpiresInDays > 0"
+                                                    (click)="refreshSocialMediaPages(channel.ProviderUserId, channel.ProviderUsername)"
+                                                    class="btn btn-link d-block padding-v-10 padding-h-5 font-size12 btn-link-underline">
+                                                    <span class="icon icon-refresh-cw"></span>&nbsp;Refresh
+                                                </button>
+                                                <a disabled
+                                                    *ngIf="channel.IsPagesAssociatedWithAccount && channel.ExpiresInDays <= 0"
+                                                    ngbTooltip="Please reconnect this account to refresh pages!"
+                                                    data-placement="top"
+                                                    class="btn btn-link d-block padding-v-10 padding-h-5 font-size12 btn-link-underline">
+                                                    <span class="icon icon-refresh-cw"></span>&nbsp;Refresh
+                                                </a>
+                                                <button
+                                                    (click)="showRemoveSocialMediaAccountModal(channel, removeChannel)"
+                                                    class="btn btn-link-danger d-block padding-v-10 padding-h-5 font-size12 btn-link-underline">
+                                                    <span class="icon icon-trash"></span>&nbsp;Delete
+                                                </button>
+                                            </ng-template>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr [ngbCollapse]="channel != undefined && !channel.IsExpanded">
+                                    <td colspan="4">
+                                        <!-- expand/ collapse pages list -->
+
+                                        <div class="row">
+                                            <div class="col-12">
+
+                                                <div
+                                                    class="border rounded padding-h-10 padding-v-10 margin-v-5 margin-h-10">
+                                                    <div class="row align-items-center justify-content-center h-100"
+                                                        *ngIf="isChannelPageListLoading">
+                                                        <div class="col text-center"> <img
+                                                                src="assets/images/app-preloader.svg" class="img-fluid">
+                                                        </div>
+                                                    </div>
+                                                    <div *ngIf="noPagesToDisplay" class="alert alert-danger">Bummer!
+                                                        there are no page(s) associated with this account!</div>
+                                                    <table
+                                                        class="table responsive-table table-striped table-header-fixed">
+                                                        <thead>
+                                                            <tr>
+                                                                <th scope="col">
+                                                                    Page Name
+                                                                </th>
+                                                                <th scope="col">
+
+                                                                </th>
+                                                                <th scope="col">
+                                                                    Action
+                                                                </th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <tr
+                                                                *ngFor="let page of socialMediaAccountPageList | slice: (channelPageListCurrentPage-1) * channelPageListPageSize : (channelPageListCurrentPage-1) * channelPageListPageSize + channelPageListPageSize">
+                                                                <td data-label="Page Name">
+                                                                    <div class="row">
+                                                                        <div class="col-2">
+                                                                            <div
+                                                                                class="blurb-thumb-image-contain margin-v-5">
+                                                                                <img src="{{page.ProfileImageUrl}}"
+                                                                                    alt="{{page.PageName}}"
+                                                                                    class="default-image img-fluid rounded-sm blurb-thumb-image">
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-10 padding-h-0">
+                                                                            <div
+                                                                                class="font-size12 font-weight700 text-left">
+                                                                                {{page.PageName}}
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </td>
+                                                                <td data-label="Status">
+                                                                    <div class="badge badge-light font-weight500">
+                                                                        {{page.ActiveStatus}}</div>
+                                                                </td>
+                                                                <td data-label="Action">
+                                                                    <button type="button"
+                                                                        class="btn btn-link ghost-btn ghost-btn-sm"
+                                                                        [ngbPopover]="pageMoreOptions"
+                                                                        [autoClose]="true" aria-haspopup="true"
+                                                                        aria-expanded="false"><span
+                                                                            class="icon icon-more-vertical"></span>
+                                                                        <ng-template #pageMoreOptions>
+                                                                            <button type="button"
+                                                                                class="btn btn-link d-block padding-top-10 padding-h-5 margin-bottom-5 font-size12 btn-link-underline"
+                                                                                (click)="showEnableOrDisablePageModal(page, enableOrDisablePageModal)">
+                                                                                <span
+                                                                                    class="icon icon-edit"></span>&nbsp;{{page.EnableDisableButtonText}}
+                                                                            </button>
+                                                                            <button type="button"
+                                                                                class="btn btn-link-danger d-block padding-v-10 padding-h-5 font-size12 btn-link-underline"
+                                                                                (click)="showRemoveConnectedPageModal(page, removePageModal)">
+                                                                                <span
+                                                                                    class="icon icon-trash"></span>&nbsp;Delete
+                                                                            </button>
+                                                                        </ng-template>
+                                                                    </button>
+                                                                </td>
+                                                            </tr>
+
+                                                        </tbody>
+                                                    </table>
+                                                    <div
+                                                        *ngIf="socialMediaAccountPageList.length > channelPageListPageSize">
+                                                        <ngb-pagination size="sm" class="d-flex justify-content-end"
+                                                            [(page)]="channelPageListCurrentPage"
+                                                            [pageSize]="channelPageListPageSize" [maxSize]="5"
+                                                            [collectionSize]="socialMediaAccountPageList.length">
+                                                        </ngb-pagination>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- expand/ collapse pages list -->
+                                    </td>
+                                </tr>
+                            </ng-container>
+                        </tbody>
+                    </table>
+                    <div *ngIf="socialMediaAccountsAndPageCount.length > channelListPageSize">
+                        <ngb-pagination size="sm" class="d-flex justify-content-end" [(page)]="channelListCurrentPage"
+                            [pageSize]="channelListPageSize" [collectionSize]="socialMediaAccountsAndPageCount.length"
+                            [maxSize]="5">
+                        </ngb-pagination>
+                    </div>
+                </div>
+            </div>
+        </article>
+
+
+        <ng-template #addChannel let-modal>
+            <div class="modal-header">
+                <div class="modal-title">
+                    <span class=" font-weight700 d-block">Create New Account</span>
+                </div>
+
+                <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="margin-v-0 font-size14 alert alert-info">
+
+                            <ul class="list-group list-group-sm bullet-list list-group-transparent list-group-flush">
+                                <li class="list-group-item"> Choose from below social media channels,
+                                    to create a new
+                                    company
+                                    social media channel.</li>
+                                <li class="list-group-item"> You will be navigated to the respective channel
+                                    login screen. We recommend you to logout of any active {{selectedProvider}} session
+                                    in your
+                                    browser,
+                                    before proceeding to avoid adding a wrong connection.</li>
+                            </ul>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="d-flex justify-content-center margin-top-30">
+                    <div class="margin-h-10">
+                        <div class="block-relative margin-left-20">
+                            <button ngbAutofocus type="button"
+                                (click)="facebookConnectionInProgress = true; connectSocialMediaAccount('facebook')"
+                                class="facebook-large-btn">Facebook</button>
+                            <div class="preloader-cover" *ngIf="facebookConnectionInProgress">
+                                <img src="assets/images/app-preloader.svg" class="preloader20 preloader-middle">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="margin-h-10">
+                        <div class="block-relative margin-left-20">
+                            <button class="twitter-large-btn"
+                                (click)="twitterConnectionInProgress = true; connectSocialMediaAccount('twitter')">
+                                Twitter</button>
+                            <div class="preloader-cover" *ngIf="twitterConnectionInProgress">
+                                <img src="assets/images/app-preloader.svg" class="preloader20 preloader-middle">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="margin-h-10">
+                        <div class="block-relative margin-left-20">
+                            <button class="linkedin-large-btn"
+                                (click)="linkedinConnectionInProgress = true; connectSocialMediaAccount('linkedin')">
+                                LinkedIn</button>
+                            <div class="preloader-cover" *ngIf="linkedinConnectionInProgress">
+                                <img src="assets/images/app-preloader.svg" class="preloader20 preloader-middle">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="margin-h-10">
+                        <div class="block-relative margin-left-20">
+                            <button class="instagram-large-btn"
+                                (click)="instagramConnectionInProgress = true; connectSocialMediaAccount('instagram')">
+                                Instagram</button>
+                            <div class="preloader-cover" *ngIf="instagramConnectionInProgress">
+                                <img src="assets/images/app-preloader.svg" class="preloader20 preloader-middle">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="margin-h-10">
+                        <div *ngIf="youtubeAccountCount == 0">
+                            <div class="block-relative margin-left-20">
+                                <button class="youtube-large-btn"
+                                    (click)="youtubeConnectionInProgress = true; connectSocialMediaAccount('youtube')">
+                                    YouTube</button>
+                                <div class="preloader-cover" *ngIf="youtubeConnectionInProgress">
+                                    <img src="assets/images/app-preloader.svg" class="preloader20 preloader-middle">
+                                </div>
+                            </div>
+                        </div>
+                        <div *ngIf="youtubeAccountCount > 0"
+                            ngbTooltip="Only one youtube account is allowed! You already have one."
+                            data-placement="top">
+                            <button class="youtube-large-btn">YouTube</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </ng-template>
+        <ng-template #removeChannel let-modal>
+            <div class="modal-header">
+                <div class="modal-title">
+                    <span class=" font-weight700 d-block">Delete Account</span>
+                </div>
+
+                <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="margin-v-0 font-size14">
+                            Do you want to remove<span
+                                class="badge badge-light font-size15">{{accountNameSelected}}</span> ?
+                            <div *ngIf="contentSourceAssociated != undefined && contentSourceAssociated.length > 0">
+                                <ol class="numbered-list margin-top-20">
+                                    <li>
+                                        <div class="font-size13">Associate Content Source(s) that will get deleted.
+                                        </div>
+                                        <div class="alert alert-warning margin-top-10">
+                                            <span
+                                                class="badge badge-secondary padding-v-5 margin-right-5 margin-bottom-5"
+                                                *ngFor="let source of contentSourceAssociated">
+                                                <div class="d-flex">
+                                                    <div
+                                                        class="width-40p blurb-thumb-image-contain text-center margin-right-10">
+                                                        <img class="default-image img-fluid rounded-sm blurb-thumb-image"
+                                                            src="{{source.ImageUrl}}" alt="image of {{source.Title}}">
+                                                    </div>
+                                                    <div class="col padding-h-5">
+                                                        <div class=" font-weight600  margin-right-5 font-size13">
+                                                            {{source.Title}}</div>
+                                                    </div>
+                                                </div>
+                                            </span>
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <div class="font-size13">On deleting {{accountNameSelected}}, the following will
+                                            be
+                                            affected:</div>
+                                        <div class="alert alert-warning margin-top-10">
+                                            <ul
+                                                class="list-group list-group-transparent bullet-removed text-left list-group-sm">
+                                                <li class="list-group-item"><i
+                                                        class="icon icon-alert-circle font-size18"></i>&nbsp; All
+                                                    content associated will become "Non Shareable" - content will be
+                                                    read -
+                                                    only.
+                                                </li>
+                                                <li class="list-group-item"><i
+                                                        class="icon icon-alert-circle font-size18"></i>&nbsp; Other
+                                                    admin(s) will be
+                                                    notified.
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </li>
+                                </ol>
+                                <div class="row margin-top-10">
+                                    <div class="col-12">
+                                        <div class="border rounded-5 padding-h-10 padding-v-10 margin-top-20 mb-0">
+                                            <div class="form-group form-check mb-0">
+                                                <input
+                                                    class="form-check-input checkbox-theme ng-untouched ng-pristine ng-valid"
+                                                    id="removeAccountConsent" name="removeAccountConsent"
+                                                    type="checkbox" [(ngModel)]="removeAccountConsentChecked">
+                                                <label class="form-check-label" for="removeAccountConsent">
+                                                    I understand the implications and want to proceed
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="d-flex justify-content-end">
+                    <div>
+                        <button type="button" (click)="modal.dismiss('Cross click')"
+                            class="btn ghost-btn">Cancel</button>
+                    </div>
+                    <div class="block-relative margin-left-20">
+                        <button
+                            [disabled]="removeAccountButtonDisabled || (contentSourceAssociated.length > 0 && !removeAccountConsentChecked)"
+                            type="button" class="btn btn-danger" (click)="removeAccount()">Delete</button>
+                        <div class="preloader-cover" *ngIf="accountRemovalInProgress">
+                            <img src="assets/images/app-preloader.svg" class="preloader20 preloader-middle">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </ng-template>
+        <ng-template #removePageModal let-modal>
+            <div class="modal-header">
+                <div class="modal-title">
+                    <span class=" font-weight700 d-block">Delete Page</span>
+                </div>
+                <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="margin-v-0 font-size14"><span
+                                class="badge badge-light font-size15">{{pageNameSelected}}
+                            </span>&nbsp;
+                            will be removed<i ngbTooltip="Will be removed from this app only." data-placement="top"
+                                class="padding-h-0 line-height1 font-size14 btn btn-link icon icon-info"></i></div>
+                    </div>
+                </div>
+                <div *ngIf="contentSourceAssociated != undefined && contentSourceAssociated.length > 0">
+                    <ol class="numbered-list margin-top-20">
+                        <li>
+                            <div class="font-size13">Associate Content Source(s) that will get deleted.</div>
+                            <div class="alert alert-warning margin-top-10">
+
+                                <span class="badge badge-secondary padding-v-5 margin-right-5 margin-bottom-5"
+                                    *ngFor="let source of contentSourceAssociated">
+                                    <div class="d-flex">
+                                        <div class="width-40p blurb-thumb-image-contain text-center margin-right-10">
+                                            <img class="default-image img-fluid rounded-sm blurb-thumb-image"
+                                                src="{{source.ImageUrl}}" alt="image of {{source.Title}}">
+                                        </div>
+                                        <div class="col padding-h-5">
+                                            <div class=" font-weight600  margin-right-5 font-size13">
+                                                {{source.Title}}</div>
+                                        </div>
+                                    </div>
+                                </span>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="font-size13">On deleting {{pageNameSelected}}, the following will be
+                                affected:</div>
+                            <div class="alert alert-warning margin-top-10">
+                                <ul class="list-group list-group-transparent bullet-removed text-left list-group-sm">
+                                    <li class="list-group-item"><i class="icon icon-alert-circle font-size18"></i>&nbsp;
+                                        All
+                                        content associated will become "Non Shareable" - content will be read -
+                                        only.
+                                    </li>
+                                    <li class="list-group-item"><i class="icon icon-alert-circle font-size18"></i>&nbsp;
+                                        Other admin(s) will be notified.
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+                    </ol>
+
+                    <div class="row margin-top-10">
+                        <div class="col-12">
+                            <div class="alert alert-warning margin-top-20">Are you sure you want to remove this page?
+                            </div>
+                            <div class="border rounded-5 padding-h-10 padding-v-10 margin-top-20 mb-0">
+                                <div class="form-group form-check mb-0">
+                                    <input class="form-check-input checkbox-theme ng-untouched ng-pristine ng-valid"
+                                        id="removePageConsent" name="removePageConsent" type="checkbox"
+                                        [(ngModel)]="removePageConsentChecked">
+                                    <label class="form-check-label" for="removePageConsent">
+                                        I understand the implications and want to proceed
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="d-flex justify-content-end">
+                    <div>
+                        <button type="button" (click)="modal.dismiss('Cross click')"
+                            class="btn ghost-btn">Cancel</button>
+                    </div>
+                    <div class="block-relative margin-left-20">
+                        <button
+                            [disabled]="removePageButtonDisabled  || (contentSourceAssociated.length > 0 && !removePageConsentChecked)"
+                            type="button" class="btn btn-danger" (click)="removePage()">Delete</button>
+                        <div class="preloader-cover" *ngIf="pageRemovalInProgress">
+                            <img src="assets/images/app-preloader.svg" class="preloader20 preloader-middle">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </ng-template>
+        <ng-template #enableOrDisablePageModal let-modal>
+            <div class="modal-header">
+                <div class="modal-title">
+                    <span class=" font-weight700 d-block">Manage Page</span>
+                </div>
+                <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="margin-v-0 font-size14">
+                            <span class="badge badge-light font-size14">{{pageNameSelected}}</span> will be
+                            {{enableOrDisableTextForSelectedPage}}d.
+                        </div>
+                        <div class="alert alert-info margin-top-20">
+                            Do you want to <span class="font-weight700">{{enableOrDisableTextForSelectedPage}}</span>
+                            this page ?
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="d-flex justify-content-end">
+                    <div>
+                        <button type="button" (click)="modal.dismiss('Cross click')"
+                            class="btn ghost-btn">Cancel</button>
+                    </div>
+                    <div class="block-relative margin-left-20">
+                        <button type="button" class="btn btn-primary camelcase"
+                            (click)="enableOrDisablePage()">{{enableOrDisableTextForSelectedPage}}</button>
+                        <div class="preloader-cover" *ngIf="enableOrDisablePageInProgress">
+                            <img src="assets/images/app-preloader.svg" class="preloader20 preloader-middle">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </ng-template>
+        <ng-template #notifyUserModal let-modal>
+            <div class="modal-header">
+                <div class="modal-title">
+                    <span class=" font-weight700 d-block">Notify Owner</span>
+                </div>
+                <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="margin-v-0 font-size14"> The {{selectedProvider}} account
+                            <span class="badge badge-light font-size15">{{accountNameSelected}}</span>
+                            has expired. You can do any of the following:</div>
+                        <div class="alert alert-primary margin-top-10">
+                            <ul class="list-group list-group-transparent bullet-removed text-left list-group-sm">
+                                <li class="list-group-item"><i class="icon icon-alert-circle font-size18"></i>&nbsp;
+                                    Notify the owner by sending an e-mail.
+                                </li>
+                                <li class="list-group-item"><i class="icon icon-alert-circle font-size18"></i>&nbsp;
+                                    Reconnect the account if you know the login credentials. This will make you the
+                                    owner of this account in Socxo.
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="alert alert-warning margin-v-0 font-size14">
+                            <span class="badge badge-light font-size14">Note: If you use the credentials of a different
+                                account for reconnection, a new account will be connected!</span>
+                            <span class="badge badge-light font-size14">We recommend you to logout of any active social
+                                media session in your browser, before proceeding.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="d-flex justify-content-end">
+                    <div>
+                        <button type="button" (click)="modal.dismiss('Cross click')"
+                            class="btn ghost-btn">Cancel</button>
+                    </div>
+                    <div class="block-relative margin-left-20">
+                        <button type="button" class="btn btn-primary camelcase"
+                            (click)="notifySocialMediaAccountExpiry(selectedChannel)">Notify Owner</button>
+                        <div class="preloader-cover" *ngIf="selectedChannel.IsNotifyUserInProgress">
+                            <img src="assets/images/app-preloader.svg" class="preloader20 preloader-middle">
+                        </div>
+                    </div>
+                    <div class="block-relative margin-left-20">
+                        <button type="button" class="btn btn-primary camelcase" (click)="facebookConnectionInProgress = true; 
+                                    connectSocialMediaAccount(selectedProvider)">Reconnect Account</button>
+                        <div class="preloader-cover" *ngIf="facebookConnectionInProgress">
+                            <img src="assets/images/app-preloader.svg" class="preloader20 preloader-middle">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </ng-template>
+    </div>
+
+    <!-- <div class="col-xl-3 col-lg-6">
+        <article class="card p-3 rounded-10 border-0">
+            <div class="font-weight700 font-size16">Pro Tip</div>
+           
+            <div id="teams-pro-tip" class="carousel slide" data-ride="carousel" data-interval="false">
+                <div class="row justify-content-end margin-top-neg-20 margin-bottom-5">
+                    <div class="col-3">
+                        <a class="carousel-control-prev ghost-btn ghost-btn-sm" href="#teams-pro-tip" role="button"
+                            data-slide="prev">
+                            <span class="icon icon-arrow-left"></span>
+                        </a>
+                    </div>
+                    <div class="col-3">
+                        <a class="carousel-control-next ghost-btn ghost-btn-sm" href="#teams-pro-tip" role="button"
+                            data-slide="next">
+                            <span class="icon icon-arrow-right"></span>
+                        </a>
+                    </div>
+                </div>
+                <div class="carousel-inner">
+                    <div class="carousel-item active">
+                        <img src=" " class="d-block w-100" alt="...">
+                        <div class="carousel-caption">
+                            <div class="font-size14 font-weight700"><span class="font-size30 font-weight700">1</span>/10
+                            </div>
+                            <div class="font-size14 font-weight700">What is a Leaderboard ?</div>
+                            <div class="font-size12 font-weight400 margin-bottom-5">Leaderboard features users list,
+                                comprising of basic
+                                user info, which includes Name, Ranking, Points, Team, Badges earned and vital
+                                Social media metrics (Shares , Engagements, Clicks and Conversions).
+                            </div>
+                            <div class="font-size12 font-weight400">Learn how you can manage the list displayed in
+                                leaderboard.<a data-target="#teams-pro-tip" data-slide-to="1"
+                                    class="font-size12 btn btn-link btn-link-underline" href="#">Tip #2</a></div>
+                        </div>
+                    </div>
+                    <div class="carousel-item">
+                        <img src=" " class="d-block w-100" alt="...">
+                        <div class="carousel-caption">
+                            <h5>Second slide label</h5>
+                            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+                        </div>
+                    </div>
+                    <div class="carousel-item">
+                        <img src=" " class="d-block w-100" alt="...">
+                        <div class="carousel-caption">
+                            <h5>Third slide label</h5>
+                            <p>Praesent commodo cursus magna, vel scelerisque nisl consectetur.</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        
+        </article>
+    </div> -->
+</div>

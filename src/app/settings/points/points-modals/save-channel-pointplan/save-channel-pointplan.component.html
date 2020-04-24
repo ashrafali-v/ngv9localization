@@ -1,0 +1,336 @@
+<div class="modal-header">
+    <div class="modal-title">
+        <span class="font-weight700 d-block">{{modalTitle}}</span>
+    </div>
+
+    <button type="button" class="close" aria-label="Close" *ngIf="!isFormValueChange" (click)="activeModal.close()">
+        <span aria-hidden="true">&times;</span>
+    </button>
+    <button type="button" class="close" aria-label="Close" *ngIf="isFormValueChange" (click)="confirmation()">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+
+<div class="modal-body">
+    <div class="row margin-bottom-10">
+        <div class="col-lg-6 col-md-6">
+            <div class="form-group mb-0">
+                <label class="col-form-label" for="pointplanName">Plan Name</label>
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text icon icon-users"></span>
+                    </div>
+                    <input id="point-plan-name" type="text" name="pointplanName" class="form-control" autocomplete="off"
+                        placeholder="Enter plan name" [(ngModel)]="pointPlanName" name="pointplanName" />
+                </div>
+            </div>
+            <div *ngIf="validationBoxStatus" class="alert alert-light border border-light margin-top-5">
+                <ul class="list-group bullet-list list-group-flush font-size13 list-group-sm">
+                    <li [ngClass]="{'list-group-item-successfull': isPointPlanNameValid}" class="list-group-item">
+                        Enter a point plan name! and it should have minimum 3 characters.</li>
+                </ul>
+            </div>
+        </div>
+        <div class="col-lg-6 col-md-6 text-right">
+            <ui-switch size="small" (click)="pointPlanStatus()" [(ngModel)]="isPointPlanActive"> </ui-switch>
+            <div *ngIf="isPointPlanActive" class="font-size11">Enabled</div>
+            <div *ngIf="!isPointPlanActive" class="font-size11">Disabled</div>
+        </div>
+    </div>
+    <form #createPointForm="ngForm">
+        <div class="d-block max-height-30vw overflow-y-auto">
+            <table class="table responsive-table table-striped table-header-fixed">
+                <thead>
+                    <tr>
+                        <th scope="col" class="width-30p">
+                            #
+                        </th>
+                        <th scope="col">
+                            Channel
+                        </th>
+                        <th scope="col">
+                            Share
+                        </th>
+                        <th scope="col">
+                            Engagement
+                        </th>
+                        <th scope="col">
+                            Click
+                        </th>
+                        <th scope="col">
+                            Conversion
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let defaultPlan of pointPlan;let i = index" [ngModelGroup]="i">
+                        <td data-label="#" class="font-size10 text-left">
+                            {{i+1}}
+                        </td>
+                        <td data-label="Channel">
+                            <input type="text"
+                                class="border-0 bg-transparent font-size13 font-weight700 width100per text-wrap word-break line-clamp2"
+                                readonly ngModel="{{defaultPlan.Provider}}" name="Provider"
+                                id="{{defaultPlan.Provider}}">
+                        </td>
+                        <td data-label="Shares" ngModelGroup="Shares">
+
+                            <div class="border padding-bottom-5 padding-h-5 rounded-5 margin-v-5">
+
+                                <div class="form-group mb-0 text-left">
+                                    <label class="col-form-label" for="sharesWeb_{{defaultPlan.Provider}}">WEB</label>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text icon icon-monitor"></span>
+                                        </div>
+                                        <input type="number" min="0" required pattern="^[0-9]*$"
+                                            class="form-control form-control-sm"
+                                            ngModel="{{defaultPlan.Shares.PointsForWeb}}" #pointsforWeb="ngModel"
+                                            name="pointsForWeb" id="sharesWeb_{{defaultPlan.Provider}}">
+
+                                    </div>
+                                    <div class="alert alert-danger font-size10" *ngIf="!pointsforWeb.valid">
+                                        <div *ngIf="pointsforWeb.errors.required"> This field cannot be empty</div>
+                                        <div *ngIf="pointsforWeb.errors.pattern"> Enter only positive values.Decimals
+                                            not
+                                            allowed</div>
+
+                                    </div>
+                                </div>
+
+                                <div class="form-group mb-0 text-left">
+                                    <label class="col-form-label"
+                                        for="sharesMob_{{defaultPlan.Provider}}">MOBILE</label>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text icon icon-smartphone"></span>
+                                        </div>
+                                        <input type="number" min="0" class="form-control form-control-sm" required
+                                            pattern="^[0-9]*$" ngModel="{{defaultPlan.Shares.PointsForMobile}}"
+                                            #pointsforMob="ngModel" name="pointsForMobile"
+                                            id="sharesMob_{{defaultPlan.Provider}}">
+
+                                    </div>
+                                    <div class="alert alert-danger font-size10" *ngIf="!pointsforMob.valid">
+                                        <div *ngIf="pointsforMob.errors.required"> This field cannot be empty</div>
+                                        <div *ngIf="pointsforMob.errors.pattern"> Enter only positive values.Decimals
+                                            not
+                                            allowed</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                        <td data-label="Engagements" ngModelGroup="Engagements" *ngIf="defaultPlan.Engagements != null">
+
+                            <div class="border padding-bottom-5 padding-h-5 rounded-5 margin-v-5"
+                                *ngIf="defaultPlan.Provider == 'Facebook'">
+                                <div class="form-group mb-0 text-left">
+                                    <label class="col-form-label" for="like_{{defaultPlan.Provider}}">LIKE</label>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text icon icon-thumbs-up"></span>
+                                        </div>
+                                        <input type="number" min="0" class="form-control form-control-sm" required
+                                            pattern="^[0-9]*$" ngModel="{{defaultPlan.Engagements.Like}}"
+                                            #fbLike="ngModel" name="Like" id="like_{{defaultPlan.Provider}}">
+                                    </div>
+                                    <div class="alert alert-danger" *ngIf="!fbLike.valid">
+                                        <div *ngIf="fbLike.errors.required"> This field cannot be empty</div>
+                                        <div *ngIf="fbLike.errors.pattern"> Enter only positive values. Decimals not
+                                            allowed
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group mb-0 text-left">
+                                    <label class="col-form-label" for="comment_{{defaultPlan.Provider}}">COMMENT</label>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text icon icon-message-square"></span>
+                                        </div>
+                                        <input type="number" min="0" class="form-control form-control-sm" min="0"
+                                            required pattern="^[0-9]*$" ngModel="{{defaultPlan.Engagements.Comment}}"
+                                            #fbComment="ngModel" name="Comment" id="comment_{{defaultPlan.Provider}}">
+                                    </div>
+                                    <div class="alert alert-danger" *ngIf="!fbComment.valid">
+                                        <div *ngIf="fbComment.errors.required"> This field cannot be empty</div>
+                                        <div *ngIf="fbComment.errors.pattern"> Enter only positive values. Decimals not
+                                            allowed
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group mb-0 text-left">
+                                    <label class="col-form-label" for="reshare_{{defaultPlan.Provider}}">RESHARE</label>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text icon icon-corner-up-right"></span>
+                                        </div>
+                                        <input type="number" min="0" class="form-control form-control-sm" type="number"
+                                            min="0" required pattern="^[0-9]*$"
+                                            ngModel="{{defaultPlan.Engagements.ReShare}}" #fbReshare="ngModel"
+                                            name="ReShare" id="reshare_{{defaultPlan.Provider}}">
+                                    </div>
+                                    <div class="alert alert-danger" *ngIf="!fbReshare.valid ">
+                                        <div *ngIf="fbReshare.errors.required"> This field cannot be empty</div>
+                                        <div *ngIf="fbReshare.errors.pattern"> Enter only positive values. Decimals not
+                                            allowed
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="border padding-bottom-5 padding-h-5 rounded-5 margin-v-5"
+                                *ngIf="defaultPlan.Provider == 'Twitter'">
+                                <div class="form-group mb-0 text-left">
+                                    <label class="col-form-label" for="retweet_{{defaultPlan.Provider}}">RETWEET</label>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text icon icon-repeat"></span>
+                                        </div>
+                                        <input type="number" min="0" class="form-control form-control-sm" required
+                                            pattern="^[0-9]*$" ngModel="{{defaultPlan.Engagements.ReTweet}}"
+                                            #twitterRetweet="ngModel" name="ReTweet"
+                                            id="retweet_{{defaultPlan.Provider}}">
+                                    </div>
+                                    <div class="alert alert-danger" *ngIf="!twitterRetweet.valid">
+                                        <div *ngIf="twitterRetweet.errors.required"> This field cannot be empty</div>
+                                        <div *ngIf="twitterRetweet.errors.pattern"> Enter only positive values. Decimals
+                                            not
+                                            allowed</div>
+                                    </div>
+                                </div>
+                                <div class="form-group mb-0 text-left">
+                                    <label class="col-form-label"
+                                        for="favourite_{{defaultPlan.Provider}}">FAVOURITE</label>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text icon icon-heart"></span>
+                                        </div>
+                                        <input type="number" min="0" class="form-control form-control-sm" min="0"
+                                            required pattern="^[0-9]*$" ngModel="{{defaultPlan.Engagements.Favourite}}"
+                                            #twitterFavourite="ngModel" name="Favourite"
+                                            id="favourite_{{defaultPlan.Provider}}">
+                                    </div>
+                                    <div class="alert alert-danger" *ngIf="!twitterFavourite.valid">
+                                        <div *ngIf="twitterFavourite.errors.required"> This field cannot be empty</div>
+                                        <div *ngIf="twitterFavourite.errors.pattern"> Enter only positive values.
+                                            Decimals
+                                            not allowed</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="border padding-bottom-5 padding-h-5 rounded-5 margin-v-5"
+                                *ngIf="defaultPlan.Provider == 'LinkedIn'">
+                                <div class="form-group mb-0 text-left">
+                                    <label class="col-form-label" for="like_{{defaultPlan.Provider}}">LIKE</label>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text icon icon-thumbs-up"></span>
+                                        </div>
+                                        <input type="number" min="0" class="form-control form-control-sm" required
+                                            pattern="^[0-9]*$" ngModel="{{defaultPlan.Engagements.Like}}"
+                                            #linkedinLike="ngModel" name="Like" id="like_{{defaultPlan.Provider}}">
+                                    </div>
+                                    <div class="alert alert-danger" *ngIf="!linkedinLike.valid">
+                                        <div *ngIf="linkedinLike.errors.required"> This field cannot be empty</div>
+                                        <div *ngIf="linkedinLike.errors.pattern"> Enter only positive values.Decimals
+                                            not
+                                            allowed</div>
+                                    </div>
+                                </div>
+                                <div class="form-group mb-0 text-left">
+                                    <label class="col-form-label" for="comment_{{defaultPlan.Provider}}">COMMENT</label>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text icon icon-message-square"></span>
+                                        </div>
+                                        <input type="number" min="0" class="form-control form-control-sm" required
+                                            pattern="^[0-9]*$" ngModel="{{defaultPlan.Engagements.Comment}}"
+                                            #linkedinComment="ngModel" name="Comment"
+                                            id="comment_{{defaultPlan.Provider}}">
+                                    </div>
+                                    <div class="alert alert-danger" *ngIf="!linkedinComment.valid">
+                                        <div *ngIf="linkedinComment.errors.required"> This field cannot be empty</div>
+                                        <div *ngIf="linkedinComment.errors.pattern"> Enter only positive values.Decimals
+                                            not
+                                            allowed</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                        <td *ngIf="defaultPlan.Engagements == null">
+                            <div><input type="hidden" ngModel=null name="Engagements" class="hidden">-</div>
+                        </td>
+                        <td data-label="Clicks" ngModelGroup="Clicks">
+                            <div class="border padding-bottom-5 padding-h-5 rounded-5 margin-v-5">
+                                <div class="form-group mb-0 text-left">
+                                    <label class="col-form-label" for="clicks_{{defaultPlan.Provider}}">CLICKS</label>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text icon icon-mouse-pointer"></span>
+                                        </div>
+                                        <input type="number" min="0" class="form-control form-control-sm" required
+                                            pattern="^[0-9]*$" ngModel="{{defaultPlan.Clicks.PointsForClicks}}"
+                                            #clicks="ngModel" name="PointsForClicks"
+                                            id="clicks_{{defaultPlan.Provider}}">
+                                    </div>
+                                    <div class="alert alert-danger" *ngIf="!clicks.valid">
+                                        <div *ngIf="clicks.errors.required"> This field cannot be empty</div>
+                                        <div *ngIf="clicks.errors.pattern"> Enter only positive values. Decimals are not
+                                            allowed
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                        <td data-label="Conversions" ngModelGroup="Conversions">
+                            <div class="border padding-bottom-5 padding-h-5 rounded-5 margin-v-5">
+                                <div class="form-group mb-0 text-left">
+                                    <label class="col-form-label"
+                                        for="conversion_{{defaultPlan.Provider}}">CONVERSIONS</label>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text icon icon-refresh-ccw"></span>
+                                        </div>
+                                        <input type="number" min="0" class="form-control form-control-sm" required
+                                            pattern="^[0-9]*$" ngModel="{{defaultPlan.Conversions.PointsForConversion}}"
+                                            #conversions="ngModel" name="PointsForConversion"
+                                            id="conversion_{{defaultPlan.Provider}}">
+                                    </div>
+                                    <div class="alert alert-danger" *ngIf="!conversions.valid">
+                                        <div *ngIf="conversions.errors.required"> This field cannot be empty</div>
+                                        <div *ngIf="conversions.errors.pattern"> Enter only positive values. Decimals
+                                            are
+                                            not allowed
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </form>
+</div>
+
+<div class="modal-footer">
+    <div class="d-flex justify-content-end">
+        <button type="button" class="btn btn-link" *ngIf="!isFormValueChange" aria-label="Cancel"
+            (click)="activeModal.close()">Cancel</button>
+        <button type="button" class="btn btn-link" *ngIf="isFormValueChange" aria-label="Cancel"
+            (click)="confirmation()">Cancel</button>
+        <div class="block-relative">
+            <button class="btn btn-primary" type="submit" *ngIf="isCreate"
+                (click)="savePointPlan(createPointForm.value)"
+                [disabled]="createPointForm.invalid || !isPointPlanNameValid">Create
+            </button>
+            <button class="btn btn-primary" type="submit" *ngIf="!isCreate"
+                (click)="savePointPlan(createPointForm.value)"
+                [disabled]="createPointForm.invalid || !isPointPlanNameValid">Save
+            </button>
+            <div *ngIf="isEditPointPlanLoaderActive" class="preloader-cover"> <img src="assets/images/app-preloader.svg"
+                    class="preloader20 preloader-middle"> </div>
+        </div>
+    </div>
+</div>

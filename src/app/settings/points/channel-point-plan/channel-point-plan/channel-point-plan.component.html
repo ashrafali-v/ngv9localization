@@ -1,0 +1,289 @@
+<div *ngIf="channelPointPlan.length == 0;else pointplan" class="row align-items-center justify-content-center h-100">
+  <div class="col text-center"> No channel point plan available </div>
+</div>
+<ng-template #pointplan>
+  <div class="row">
+    <div class="col-lg-6 col-md-12">
+      <div class="form-group mb-0"><label class="col-form-label" for="searchAccount">SEARCH
+          BY</label>
+        <div class="input-group">
+          <div class="input-group-prepend"><span class="input-group-text icon icon-search"></span></div><input
+            class="form-control form-control-sm" [(ngModel)]="pointPlanSearchText" id="searchAccount"
+            (ngModelChange)="currentPage = 1" placeholder="Point plan name" type="text" *ngIf="!isLoaderActive">
+        </div>
+      </div>
+    </div>
+  </div>
+  <table #pointplan class="table responsive-table table-striped table-header-fixed margin-top-5">
+    <thead>
+      <tr>
+        <th scope="col" class="width-30p">
+          #
+        </th>
+        <th scope="col">
+          Plan Name
+        </th>
+        <th scope="col">
+
+        </th>
+        <th scope="col">
+          STATUS
+        </th>
+        <th scope="col">Actions
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr
+        *ngFor="let points of channelPointPlan | filter : pointPlanSearchText : '' : ['Name']  | slice : (currentPage-1) * pageSize : (currentPage-1) * pageSize + pageSize; let i = index">
+        <td data-label="#">
+          {{i+1}}
+        </td>
+        <td data-label="Poin Plan">
+          <div class="badge badge-primary" *ngIf="points.IsDefault">
+            DEFAULT POINT PLAN
+          </div>
+          <div class="font-weight700">
+            {{points.Name}}
+          </div>
+        </td>
+        <td data-label="Options">
+          <div class="row">
+            <div class="col-12 text-left">
+              <div class="tiny-well padding-v-5 padding-h-5 margin-v-5">
+
+                <div class="row no-gutters block-relative">
+                  <div class="col block-relative">
+                    <button type="button"
+                      [disabled]="points.AssociatedContentSourceCount == 0 && points.AssociatedContentCount == 0"
+                      (click)="moreInfo(infobox,points)"
+                      class="btn btn-link-primary d-block padding-top-10 padding-h-5 margin-bottom-5 font-size12"
+                      aria-haspopup="true" aria-expanded="false"> More Info
+                      <span *ngIf="points.AssociatedContentSourceCount == 0 && points.AssociatedContentCount == 0"
+                        ngbTooltip="There are no content sources or contents available." data-placement="top"><i
+                          class="icon icon-alert-circle font-size15"></i></span>
+                    </button>
+                    <div *ngIf="points.isMoreInfoLoaderActive" class="preloader-cover"> <img
+                        src="assets/images/app-preloader.svg" class="preloader20 preloader-middle"> </div>
+                  </div>
+                  <div class="col block-relative">
+                    <button ngbTooltip="View plan details" data-placement="top"
+                      class="btn ghost-btn-bright ghost-btn-sm font-size11 col-12"
+                      (click)="viewChannelPointPlan(points)">View Plan</button>
+                    <div *ngIf="points.isViewPlanLoaderActive" class="preloader-cover"> <img
+                        src="assets/images/app-preloader.svg" class="preloader20 preloader-middle"> </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </td>
+        <td data-label="Status">
+          <button class="btn btn-link-underline badge badge-success font-weight500" *ngIf="points.IsActive">
+            ENABLED
+          </button>
+          <button class="btn btn-link-underline badge badge-light font-weight500" *ngIf="!points.IsActive">
+            DISABLED
+          </button>
+        </td>
+        <td data-label="Actions">
+          <button type="button" [ngbPopover]="pointsMoreOptions" autoClose="outside" #popOver="ngbPopover"
+            triggers="manual" (click)="popOver.open()" class="btn btn-link ghost-btn ghost-btn-sm"><span
+              class="icon icon-more-vertical"></span>
+            <ng-template #pointsMoreOptions>
+              <div class="block-relative">
+                <button type="button"
+                  class="btn btn-link d-block padding-top-10 padding-h-5 margin-bottom-5 font-size12 btn-link-underline"
+                  (click)="editChannelPointPlan(points,i,popOver)" aria-haspopup="true" aria-expanded="false">
+                  <span class="icon icon-edit"></span>&nbsp;Edit
+                </button>
+                <div *ngIf="isEditPlanLoaderActive" class="preloader-cover"> <img src="assets/images/app-preloader.svg"
+                    class="preloader20 preloader-middle"> </div>
+              </div>
+              <div class="block-relative">
+                <button type="button"
+                  class="btn btn-link d-block padding-top-10 padding-h-5 margin-bottom-5 font-size12 btn-link-underline"
+                  (click)="copyChannelPointPlan(points.Id,popOver)" aria-haspopup="true" aria-expanded="false">
+                  <span class="icon icon-copy"></span>&nbsp;Duplicate
+                </button>
+                <div *ngIf="isCopyPlanLoaderActive" class="preloader-cover"> <img src="assets/images/app-preloader.svg"
+                    class="preloader20 preloader-middle"> </div>
+              </div>
+              <!-- <button type="button"
+            class="btn btn-link d-block padding-top-10 padding-h-5 margin-bottom-5 font-size12 btn-link-underline"
+            (click)="downloadPointPlan(points.Id,points.Name)" aria-haspopup="true" aria-expanded="false">
+            <span class="icon icon-download"></span>&nbsp;Download
+          </button> -->
+              <span *ngIf="!points.IsActive" ngbTooltip="Activate this plan to set as default" data-placement="top">
+                <button type="button"
+                  class="btn btn-link d-block padding-top-10 padding-h-5 margin-bottom-5 font-size12 btn-link-underline"
+                  [disabled]="!points.IsActive" *ngIf="!points.IsDefault"
+                  (click)="setasDefaultChannelPointPlan(setasDefaultModal,points.Id,points.Name,popOver)"
+                  aria-haspopup="true" aria-expanded="false">
+                  <span class="icon icon-bookmark"></span>&nbsp;Set as Default
+                </button></span>
+              <button type="button" *ngIf="points.IsActive && !points.IsDefault"
+                class="btn btn-link d-block padding-top-10 padding-h-5 margin-bottom-5 font-size12 btn-link-underline"
+                (click)="setasDefaultChannelPointPlan(setasDefaultModal,points.Id,points.Name,popOver)"
+                aria-haspopup="true" aria-expanded="false">
+                <span class="icon icon-bookmark"></span>&nbsp;Set as Default
+              </button>
+              <span *ngIf="points.AssociatedContentSourceCount > 0" ngbTooltip="Can't delete point plan with associated content sources."
+                data-placement="top">
+                <button type="button" [disabled]="points.AssociatedContentSourceCount > 0"
+                  class="btn btn-link-danger d-block padding-top-10 padding-h-5 margin-bottom-5 font-size12 btn-link-underline"
+                  (click)="deleteChannelPointPlan(points.Id,points.Name,i,popOver)" aria-haspopup="true"
+                  aria-expanded="false">
+                  <span class="icon icon-trash"></span>&nbsp;Delete
+                </button>
+              </span>
+              <button *ngIf="points.AssociatedContentSourceCount == 0" type="button"
+                class="btn btn-link-danger d-block padding-top-10 padding-h-5 margin-bottom-5 font-size12 btn-link-underline"
+                (click)="deleteChannelPointPlan(points.Id,points.Name,i,popOver)" aria-haspopup="true"
+                aria-expanded="false">
+                <span class="icon icon-trash"></span>&nbsp;Delete
+              </button>
+            </ng-template>
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <ngb-pagination *ngIf="channelPointPlan.length >= this.pageSize" size="sm" class="d-flex justify-content-end"
+    [(page)]="currentPage" [pageSize]="pageSize" [collectionSize]="channelPointPlan.length" [maxSize]="5">
+  </ngb-pagination>
+</ng-template>
+<ng-template #infobox let-c="close" let-d="dismiss">
+  <div class="modal-header">
+    <div class="modal-title">
+      <span class="font-size11 text-muted-2 font-weight500">Account Info</span>
+      <span class="font-weight700 d-block">{{pointPlanName}}</span>
+    </div>
+    <button type="button" class="close" aria-label="Close" (click)="d('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div class="margin-v-5">
+      <div class="row">
+        <div class="col">
+          <div class="border rounded-5 padding-h-5 padding-v-5">
+            <div class="d-flex justify-content-between">
+              <div class="col-8 padding-h-0">
+                <div><span class="text-muted-1 text-uppercase font-weight500 font-size10">Content Sources</span></div>
+                <div class="font-weight700 font-size16">{{contentsourceCount}}
+                </div>
+              </div>
+              <!-- <div class="col-4 padding-h-0 text-right">
+                  <button type="button" (click)="downloadContentSource(pointPlanId,pointPlanName)"
+                    *ngIf="contentsourceCount > 0" class="btn ghost-btn-bright ghost-btn-sm"><span
+                      class="icon icon-download"></span></button>
+                </div> -->
+            </div>
+
+          </div>
+        </div>
+        <div class="col">
+          <div class="border rounded-5 padding-h-5 padding-v-5">
+            <div class="d-flex justify-content-between">
+              <div class="col-8 padding-h-0">
+                <div><span class="text-muted-1 text-uppercase font-weight500 font-size10">Content</span></div>
+                <div class="font-weight700 font-size16">{{contentCount}}
+                </div>
+              </div>
+              <!-- <div class="col-4 padding-h-0 text-right">
+                  <button type="button" (click)="downloadContent(pointPlanId,pointPlanName)" *ngIf="contentCount > 0"
+                    class="btn ghost-btn-bright ghost-btn-sm"><span class="icon icon-download"></span></button>
+                </div> -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="max-height-30vw overflow-y-auto margin-top-10" *ngIf="contentsourceCount > 0">
+      <table class="table responsive-table table-striped table-header-fixed">
+        <thead>
+          <tr>
+            <th scope="col" class="width-30p">
+              #
+            </th>
+            <th scope="col">
+              Content Source
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let contentSource of contentSourceList;let i = index;">
+            <td data-label="#">
+              {{i+1}}
+            </td>
+
+            <td data-label="Content Source">
+
+              <div class="row no-gutters">
+                <div class="width-60p blurb-thumb-image-contain text-center margin-v-5 margin-right-10">
+                  <img class="default-image img-fluid rounded-sm blurb-thumb-image" src=" "
+                    alt="image of {{contentSource.Title}}">
+                </div>
+                <div class="width-8">
+                  <div class="font-size13 font-weight600 text-left">{{contentSource.Title}}</div>
+                </div>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-link" (click)="c()">Close</button>
+  </div>
+</ng-template>
+
+<ng-template #setasDefaultModal let-c="close" let-d="dismiss">
+  <div class="modal-header">
+    <div class="modal-title">
+      <span class=" font-weight700 d-block">Default Channel Point Plan</span>
+    </div>
+    <button type="button" class="close" aria-label="Close" (click)="d()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div class="row">
+      <div class="col-lg-12">
+        <div class="border rounded-5 padding-bottom-10 padding-h-10">
+          <div class="row">
+            <div class="col-12">
+              <div class="tiny-well padding-bottom-5 padding-h-10 margin-top-5">
+                <div class="form-group margin-v-0">
+                  <label class="col-form-label padding-top-0">CURRENT DEFAULT
+                    PLAN</label>
+                  <div class="font-size12 font-weight700">
+                    {{defaultPlan}}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row margin-top-10">
+            <div class="col-12">
+              <div class="form-group form-check">
+                <label class="form-check-label" for="default">Set <b>{{pointPlanName}}</b> as default Point Plan
+                  ?</label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="modal-footer">
+    <button type="button" class="btn btn-link" aria-label="Cancel" (click)="c()">Cancel</button>
+    <button class="btn btn-primary" type="submit" (click)="c('Save')">Save Changes</button>
+  </div>
+
+</ng-template>

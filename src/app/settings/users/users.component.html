@@ -1,0 +1,160 @@
+<section class="row margin-h-0">
+    <div class="col-xl-12">
+
+
+        <article class="card p-3 rounded-10 border-0">
+
+            <div class="font-size14 font-weight700 uppercase">User Invite</div>
+            <div class="font-size12">Manage user invite settings</div>
+
+            <div class="row align-items-center justify-content-center h-100" *ngIf="isUserSettingsLoading">
+                <div class="col text-center"> <img src="assets/images/app-preloader.svg" class="img-fluid"> </div>
+            </div>
+            <div *ngIf="isUserSettingsError" class="alert alert-danger margin-v-10" role="alert">
+                <div>Oops! Something went wrong!Click <a href="/settings/users">here</a> to reload this page.</div>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-12" *ngIf="!isUserSettingsLoading && !isUserSettingsError">
+                    <ul class="list-group list-group-flush margin-top-20">
+                        <li class="list-group-item">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <div class="font-size13 font-weight700">Advocates</div>
+                                    <div class="font-size14">Enable <span class="font-size600">user
+                                            invite</span> for advocates.</div>
+                                </div>
+                                <div>
+                                    <ui-switch [(ngModel)]="isReferUserEnabledForAdvocates" size="small"
+                                        (click)="updateReferUserSettings()">
+                                    </ui-switch>
+                                    <div class="font-size11" *ngIf="isReferUserEnabledForAdvocates">Enabled</div>
+                                    <div class="font-size11" *ngIf="!isReferUserEnabledForAdvocates">Disabled
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="list-group-item" *ngIf="!isUserSettingsLoading && !isUserSettingsError">
+                            <div class="font-size13 font-weight700">Admin</div>
+                            <div class="font-size14 margin-top-10">Manage how you want to send invites to users.
+                                <br>
+                                Note: As a default option, users will be sent SOCXO’s invitation
+                                template from the system.
+                                However, if you wish to send user invite outside SOCXO using mail chimp or other invite
+                                systems,
+                                choose the option below:</div>
+
+                            <div class="border rounded-5 padding-h-10 padding-v-10 margin-top-20 mb-0">
+                                <div class="form-group form-check mb-0">
+                                    <input type="checkbox" name="resetUserPoints" id="invitesettings"
+                                        class="form-check-input checkbox-theme" (click)="updateInviteMailSettings()"
+                                        [(ngModel)]="isExternalRegisteration">
+                                    <label class="form-check-label" for="invitesettings">I will create & send invites
+                                        to users
+                                        outside
+                                        SOCXO.</label>
+                                </div>
+                                <div *ngIf="isExternalRegisteration">
+                                    <div class="col-sm-12 margin-top-20">
+                                        <div class="form-group margin-v-5 text-left">
+                                            <div class="input-group">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text icon icon-copy"></span>
+                                                </div>
+                                                <input type="text" #regLink [(ngModel)]="userRegisterLink"
+                                                    class="form-control" readonly>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="d-flex justify-content-between padding-h-15">
+                                        <div class="col-10 padding-h-0 font-size13">
+                                            Share this link with users for them to
+                                            register
+                                            with SOCXO
+                                        </div>
+                                        <div class="text-right">
+                                            <input type="button" class="btn ghost-btn-bright ghost-btn-sm font-size13"
+                                                (click)="copyLink(regLink)" value="Copy Link" />
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+
+
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+        </article>
+
+        <article class="card p-3 rounded-10 border-0 margin-top-20"
+            *ngIf="!isUserSettingsLoading && !isUserSettingsError">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="font-size13 font-weight700 uppercase">Reset User Points</div>
+                    <div class="font-size14 margin-top-10">Reset all your user reward points, total user points,
+                        activity
+                        points, rank
+                        information to default state. Please note that points earned from social media connection will
+                        remain
+                        unless redeemed.</div>
+
+                    <div class="d-flex justify-content-end margin-top-30">
+                        <button type="button" (click)="resetUserPointPopUp(resetPointPlan)"
+                            class="btn btn-outline-warning margin-top-20 font-size13">Confirm
+                        </button>
+                    </div>                  
+                </div>
+            </div>
+        </article>
+
+        <ng-template #resetPointPlan let-modal>
+
+
+            <div class="modal-header">
+
+                <div class="modal-title">
+                    <span class=" font-weight700 d-block">Reset User Points</span>
+                </div>
+
+                <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <div class="modal-body">
+
+                <div class="alert alert-warning margin-v-10">
+                    <p> Following aspects will get affected</p>
+                    <ul class="list-group list-group-flush list-group-sm bullet-list list-group-transparent">
+                        <li class="list-group-item">Total reward points will be made zero across all users</li>
+                        <li class="list-group-item">Total user points will be made zero across all users</li>
+                        <li class="list-group-item">Users rank will be reset</li>
+                        <li class="list-group-item">Note: Once deleted,the above data can't be retrieved.
+                        </li>
+                    </ul>
+                </div>
+                <div class="form-group form-check mb-0">
+                    <input type="checkbox" name="resetUserPoints" id="resetUserPoints"
+                        class="form-check-input checkbox-theme" [(ngModel)]="isResetPointCriteriaAccepted">
+                    <label class="form-check-label" for="resetUserPoints">I understand the implications on
+                        choosing
+                        this
+                        point reset. I want to proceed.</label>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-link" (click)="modal.close('Close click')">Cancel</button>
+                <div class="block-relative">
+                    <button type="button" class="btn btn-danger" [ngbTooltip]="(!isResetPointCriteriaAccepted) ? 'Please confirm I accept' : ''"  [disabled]='!isResetPointCriteriaAccepted' (click)="resetUserPoint()">Reset</button>
+                    <div *ngIf="isResetInprogress" class="preloader-cover"> <img src="assets/images/app-preloader.svg"
+                            class="preloader20 preloader-middle">
+                    </div>
+                </div>
+            </div>
+        </ng-template>
+    </div>
+</section>

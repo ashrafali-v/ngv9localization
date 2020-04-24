@@ -1,0 +1,587 @@
+<section>
+  <div class="row margin-h-0">
+    <div class="col-xl-12">
+      <article class="card p-3 rounded-10 border-0">
+        <div class="font-size14 font-weight700 uppercase"> Sharing Intent</div>
+        <div class="font-size12">Configure social channels to which your Advocates can share
+          Content from Web & Mobile app.</div>
+
+
+        <div class="row gutter-5 card-header rounded-0 margin-v-20">
+          <div class="col-12">
+            <ul class="nav nav-pills justify-content-center font-size12" id="content-channels-tab" role="tablist">
+              <li class="nav-item">
+                <a class="nav-link active" id="web-content-channel-tab" data-toggle="pill" href="#web-content-channel"
+                  role="tab" aria-controls="web-content-channel-tab" aria-selected="false">WEB CHANNELS</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" id="mobile-content-channel-tab" data-toggle="pill" href="#mobile-content-channel"
+                  role="tab" aria-controls="mobile-content-channel-tab" aria-selected="false">MOBILE CHANNELS</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div *ngIf="isSharingControlsFetchError;else sharingintent" class="alert alert-danger margin-v-10" role="alert">
+          <div>Oops! Something went wrong!Click <a href="/settings/content">here</a> to reload this page.</div>
+        </div>
+        <ng-template #sharingintent>
+          <div class="row">
+
+            <div class="col">
+              <div *ngIf="isSharingControlLoaderActive && isLoadingContentSettings;else sharingintentbody"
+                class="row align-items-center justify-content-center h-100">
+                <div class="col text-center"> <img src="assets/images/app-preloader.svg" class="img-fluid"> </div>
+              </div>
+              <ng-template #sharingintentbody>
+                <div class="tab-content" id="content-channels-tabContent">
+                  <div class="tab-pane fade show active" id="web-content-channel" role="tabpanel"
+                    aria-labelledby="web-content-channel-tab">
+                    <div *ngIf="webControls.length == 0;else sharingintentboxesweb"
+                      class="row align-items-center justify-content-center h-100">
+                      <div class="col text-center"> No web controls available! </div>
+                    </div>
+                    <ng-template #sharingintentboxesweb>
+                      <div class="row">
+                        <div class="col-xl-12">
+                          <div class="alert alert-info font-size13">
+                            Click & drag to enable/ disable channels. Once enabled, move channels between
+                            Content Share Icons & More Sharig options to prioritise on how the intent will be displayed
+                            on
+                            Content Card at the Advocate side.
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="row margin-top-20">
+                        <div class="col-xl-8 col-lg-9 col-md-6">
+
+                          <div class="row">
+                            <div class="col-lg-6 col-md-12">
+                              <div class="card border">
+                                <div class="card-header font-weight700 text-capitalise font-size13">
+                                  <div class="row">
+                                    <div class="width-30p margin-right-10">
+                                      <span class="icon icon-square font-size20 sharing-intent-content"></span>
+                                    </div>
+                                    <div class="col-8">
+                                      Content Share Icons <span class="font-weight500">(Max 4 Icons Only)</span>
+                                    </div>
+                                  </div>
+                                </div>
+                                <div class="card-body max-height-16vw overflow-y-auto">
+
+                                  <div id="blurb-sharing-web-intent" data-target="blurb" dragula="blurbchannels"
+                                    [(dragulaModel)]="blurbIcons" class="sharing-scroll">
+                                    <div class="sharing-intent-channel" *ngFor="let icons of blurbIcons">
+                                      <div class="drag-bar-outer">
+                                        <span class="icon icon-menu"></span>
+                                      </div>
+                                      <div class="sharing-channel-outer">
+                                        <div class="sharing-channel-name"> <span
+                                            [ngClass]="'inline-block font-size18 icomoon-brand-icon-' + icons.DisplayName | lowercase"></span>&nbsp;{{icons.DisplayName}}
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                            <div class="col-lg-6 col-md-12">
+                              <div class="card border">
+                                <div class="card-header font-weight700 text-capitalise font-size13">
+                                  <div class="row">
+                                    <div class="width-30p margin-right-10">
+                                      <span class="icon icon-square font-size20 sharing-intent-more"></span>
+                                    </div>
+                                    <div class="col-8">
+                                      More Sharing Options
+                                    </div>
+                                  </div>
+                                </div>
+                                <div class="card-body max-height-16vw overflow-y-auto">
+                                  <div id="more-sharing-web-intent" data-target="more" class="sharing-scroll"
+                                    dragula="blurbchannels" [(dragulaModel)]="blurbMoreIcons">
+
+                                    <div class="sharing-intent-channel" *ngFor="let icons of blurbMoreIcons">
+                                      <div class="drag-bar-outer">
+                                        <span class="icon icon-menu"></span>
+                                      </div>
+                                      <div class="sharing-channel-outer">
+                                        <div class="sharing-channel-name"> <span
+                                            [ngClass]="'inline-block font-size18 icomoon-brand-icon-' + icons.DisplayName | lowercase"></span>&nbsp;
+                                          {{icons.DisplayName}}</div>
+                                      </div>
+                                    </div>
+                                  </div>
+
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="row margin-top-20">
+                            <div class="col-xl-12 container">
+                              <div class="card bg-light">
+                                <div class="card-header font-weight700 text-capitalise font-size13">Disabled Channels
+                                </div>
+                                <div class="card-body">
+                                  <div id="disabled-sharing-web-intent"
+                                    class="draggable-cursor-disabled d-flex justify-content-start disabled-sharing-intent-box sharing-disabled-scroll"
+                                    data-target="disabled" dragula="blurbchannels"
+                                    [(dragulaModel)]="blurbDisabledIcons">
+                                    <div class="sharing-intent-channel" *ngFor="let icons of blurbDisabledIcons">
+                                      <div class="drag-bar-outer">
+                                        <span class="icon icon-menu"></span>
+                                      </div>
+                                      <div class="sharing-channel-outer">
+                                        <div class="sharing-channel-name"> <span
+                                            [ngClass]="'inline-block font-size18 icomoon-brand-icon-' + icons.DisplayName | lowercase"></span>&nbsp;
+                                          {{icons.DisplayName}}</div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
+                        </div>
+                        <div class="col-xl-4 col-lg-3 col-md-6">
+                          <img src="assets/images/web-sharing-intent.svg" class="img-fluid">
+                        </div>
+                      </div>
+                    </ng-template>
+                  </div>
+                  <div class="tab-pane fade" id="mobile-content-channel" role="tabpanel"
+                    aria-labelledby="mobile-content-channel-tab">
+                    <div *ngIf="isSharingControlLoaderActive"
+                      class="row align-items-center justify-content-center h-100">
+                      <div class="col text-center"> <img src="assets/images/app-preloader.svg" class="img-fluid"> </div>
+                    </div>
+                    <div *ngIf="mobileControls.length == 0;else sharingintentboxesmob"
+                      class="row align-items-center justify-content-center h-100">
+                      <div class="col text-center"> No mobile controls available! </div>
+                    </div>
+                    <ng-template #sharingintentboxesmob>
+                      <div class="row">
+                        <div class="col-xl-12">
+                          <div class="alert alert-info font-size13">
+                            Click & drag to enable/ disable channels. Once enabled, move channels between
+                            Content Share Icons & More Sharig options to prioritise on how the intent will be displayed
+                            on
+                            Content Card at the Advocate side.
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="row margin-top-20">
+                        <div class="col-xl-8 col-lg-9 col-md-6">
+                          <div class="row">
+
+                            <div class="col-lg-6 col-md-12">
+                              <div class="card border">
+                                <div class="card-header font-weight700 text-capitalise font-size13">
+                                  <div class="row">
+                                    <div class="width-30p margin-right-10">
+                                      <span class="icon icon-square font-size20 sharing-intent-content"></span>
+                                    </div>
+                                    <div class="col-8">
+                                      Content Share Icons <span class="font-weight500">(Max 4 Icons Only)</span>
+                                    </div>
+                                  </div>
+                                </div>
+                                <div class="card-body max-height-16vw overflow-y-auto">
+
+                                  <div id="blurb-sharing-mob-intent" data-target="blurb" dragula="blurbchannelsmob"
+                                    [(dragulaModel)]="blurbIconsMob" class="sharing-scroll">
+                                    <div class="sharing-intent-channel" *ngFor="let icons of blurbIconsMob">
+                                      <div class="drag-bar-outer">
+                                        <span class="icon icon-menu"></span>
+                                      </div>
+                                      <div class="sharing-channel-outer">
+                                        <div class="sharing-channel-name"> <span
+                                            [ngClass]="'inline-block font-size18 icomoon-brand-icon-' + icons.DisplayName | lowercase"></span>&nbsp;{{icons.DisplayName}}
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                            <div class="col-lg-6 col-md-12">
+                              <div class="card border">
+                                <div class="card-header font-weight700 text-capitalise font-size13">
+                                  <div class="row">
+                                    <div class="width-30p margin-right-10">
+                                      <span class="icon icon-square font-size20 sharing-intent-more"></span>
+                                    </div>
+                                    <div class="col-8">
+                                      More Sharing Options
+                                    </div>
+                                  </div>
+                                </div>
+                                <div class="card-body max-height-16vw overflow-y-auto">
+                                  <div id="more-sharing-web-intent" data-target="more" class="sharing-scroll"
+                                    dragula="blurbchannelsmob" [(dragulaModel)]="blurbMoreIconsMob">
+
+                                    <div class="sharing-intent-channel" *ngFor="let icons of blurbMoreIconsMob">
+                                      <div class="drag-bar-outer">
+                                        <span class="icon icon-menu"></span>
+                                      </div>
+                                      <div class="sharing-channel-outer">
+                                        <div class="sharing-channel-name"> <span
+                                            [ngClass]="'inline-block font-size18 icomoon-brand-icon-' + icons.DisplayName | lowercase"></span>&nbsp;
+                                          {{icons.DisplayName}}</div>
+                                      </div>
+                                    </div>
+                                  </div>
+
+                                </div>
+                              </div>
+                            </div>
+
+                            <div class="col-xl-12 margin-top-20">
+                              <div class="card bg-light">
+                                <div class="card-header font-weight700 text-capitalise">Disabled Channels</div>
+                                <div class="card-body">
+                                  <div id="disabled-sharing-web-intent"
+                                    class="draggable-cursor-disabled d-flex justify-content-start disabled-sharing-intent-box sharing-disabled-scroll"
+                                    data-target="disabled" dragula="blurbchannelsmob"
+                                    [(dragulaModel)]="blurbDisabledIconsMob">
+                                    <div class="sharing-intent-channel" *ngFor="let icons of blurbDisabledIconsMob">
+                                      <div class="drag-bar-outer">
+                                        <span class="icon icon-menu"></span>
+                                      </div>
+                                      <div class="sharing-channel-outer">
+                                        <div class="sharing-channel-name"> <span
+                                            [ngClass]="'inline-block font-size18 icomoon-brand-icon-' + icons.DisplayName | lowercase"></span>&nbsp;
+                                          {{icons.DisplayName}}</div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-xl-4 col-lg-3 col-md-6">
+                          <img src="assets/images/mobile-sharing-intent.svg" class="img-fluid">
+                        </div>
+                      </div>
+                    </ng-template>
+                  </div>
+                </div>
+              </ng-template>
+
+            </div>
+          </div>
+        </ng-template>
+      </article>
+
+      <article *ngIf="!isSharingControlLoaderActive && !isLoadingContentSettings"
+        class="card p-3 rounded-10 border-0 margin-top-20">
+        <div *ngIf="isContentSettingsFetchError" class="alert alert-danger margin-v-10" role="alert">
+          <div>Oops! Something went wrong!</div>
+        </div>
+        <div class="row" *ngIf="!isContentSettingsFetchError&&!isLoadingContentSettings">
+          <div class="col-xl-12">
+            <div class="font-size14 font-weight700 uppercase"> Content management</div>
+            <div class="font-size12">Manage advocate privileges for content management</div>
+            <div class="row" *ngIf="contentSettings!=undefined">
+              <div class="col-xl-12">
+                <ul class="list-group list-group-flush margin-top-20">
+                  <li class="list-group-item">
+                    <div class="d-flex justify-content-between">
+                      <div>
+                        <div class="font-size15">Enable comment on sharing</div>
+                        <div class="font-size12">Manage user privilages to add comments while sharing a content.</div>
+                      </div>
+                      <div class="text-right">
+                        <ui-switch size="small" [(ngModel)]="contentSettings.CommentOnSharing"
+                          (click)="updateContentSettings('CommentOnSharing',contentSettings.CommentOnSharing)">
+                        </ui-switch>
+                        <div class="font-size12" *ngIf="contentSettings.CommentOnSharing">Enabled</div>
+                        <div class="font-size12" *ngIf="!contentSettings.CommentOnSharing">Disabled</div>
+                      </div>
+                    </div>
+                  </li>
+                  <li class="list-group-item">
+                    <div class="d-flex justify-content-between">
+                      <div>
+                        <div class="font-size15">Display content shareability filter for advocates</div>
+                        <div class="font-size12">Do you want users to have a filter, through which "Shareable" and
+                          "Non-Shareable" content can be switched.</div>
+                      </div>
+                      <div class="text-right">
+                        <ui-switch size="small" [(ngModel)]="contentSettings.ShareabilityFilterEnabled"
+                          (click)="updateContentSettings('ShareabilityFilterEnabled',contentSettings.ShareabilityFilterEnabled)">
+                        </ui-switch>
+                        <div class="font-size12" *ngIf="contentSettings.ShareabilityFilterEnabled">Enabled</div>
+                        <div class="font-size12" *ngIf="!contentSettings.ShareabilityFilterEnabled">Disabled</div>
+                      </div>
+                    </div>
+                  </li>
+                  <li class="list-group-item">
+                    <div class="d-flex justify-content-between">
+                      <div>
+                        <div class="font-size15">Use content description as title</div>
+                        <div class="font-size12">While sharing a content, use the description as title, instead of
+                          leaving
+                          it blank.</div>
+                      </div>
+                      <div class="text-right">
+                        <ui-switch size="small" [(ngModel)]="contentSettings.UseDescription"
+                          (click)="updateContentSettings('UseDescription',contentSettings.UseDescription)">
+                        </ui-switch>
+                        <div class="font-size12" *ngIf="contentSettings.UseDescription">Enabled</div>
+                        <div class="font-size12" *ngIf="!contentSettings.UseDescription">Disabled</div>
+                      </div>
+                    </div>
+                  </li>
+                </ul>
+
+                <div class="row margin-top-30">
+                  <div class="col-xl-12">
+                    <div class="font-size14 font-weight700 uppercase"> Create Content Settings</div>
+                    <div class="font-size12">Manage advocate create content settings</div>
+                    <div class="row">
+                      <div class="col-xl-12">
+                        <ul class="list-group list-group-flush margin-top-20">
+                          <li class="list-group-item">
+                            <div class="d-flex justify-content-between">
+                              <div>
+                                <div class="font-size15">Enable content suggestion</div>
+                                <div class="font-size12">Manage whether users can suggest a content to admin while
+                                  creating a
+                                  content.</div>
+                              </div>
+                              <div class="text-right">
+                                <ui-switch size="small" [(ngModel)]="contentSettings.SuggestToAdmin"
+                                  (click)="updateContentSettings('SuggestToAdmin',contentSettings.SuggestToAdmin)">
+                                </ui-switch>
+                                <div class="font-size12" *ngIf="contentSettings.SuggestToAdmin">Enabled</div>
+                                <div class="font-size12" *ngIf="!contentSettings.SuggestToAdmin">Disabled</div>
+                              </div>
+                            </div>
+
+
+                            <div class="border padding-h-10 padding-v-5 rounded-10 margin-v-10"
+                              *ngIf="contentSettings.SuggestToAdmin">
+                              <div class="d-flex justify-content-between">
+                                <div>
+                                  <div class="font-size15">Select admin while suggesting content</div>
+                                  <div class="font-size12">User can choose from a list of admins, to whom he may suggest
+                                    a
+                                    new content for approval.</div>
+                                </div>
+                                <div>
+                                  <div class="text-right">
+                                    <ui-switch size="small" [(ngModel)]="contentSettings.DirectShare"
+                                      (click)="updateContentSettings('DirectShare',contentSettings.DirectShare)">
+                                    </ui-switch>
+                                    <div class="font-size12" *ngIf="contentSettings.DirectShare">Enabled</div>
+                                    <div class="font-size12" *ngIf="!contentSettings.DirectShare">Disabled</div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </li>
+                          <li class="list-group-item">
+                            <div class="d-flex justify-content-between">
+                              <div>
+                                <div class="font-size15">Enable direct share on content suggestion</div>
+                                <div class="font-size12">Manage whether user can share a content directly while
+                                  creating a
+                                  content</div>
+                              </div>
+                              <div class="text-right">
+                                <ui-switch size="small" [(ngModel)]="contentSettings.SendContentToAdmin"
+                                  (click)="updateContentSettings('SendContentToAdmin',contentSettings.SendContentToAdmin)">
+                                </ui-switch>
+                                <div class="font-size12" *ngIf="contentSettings.SendContentToAdmin">Enabled</div>
+                                <div class="font-size12" *ngIf="!contentSettings.SendContentToAdmin">Disabled</div>
+                              </div>
+                            </div>
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row margin-top-30">
+                  <div class="col-xl-12">
+                    <div class="font-size14 font-weight700 uppercase"> Content Display Settings</div>
+                    <div class="font-size12">Manage advocate content display</div>
+                    <div class="row">
+                      <div class="col-xl-12">
+                        <ul class="list-group list-group-flush margin-top-20">
+                          <li class="list-group-item">
+                            <div class="d-flex justify-content-between">
+                              <div>
+                                <div class="font-size15">Display tags on published content</div>
+                                <div class="font-size12">Manage displaying available tags on published content</div>
+                              </div>
+                              <div class="text-right">
+                                <ui-switch size="small" [(ngModel)]="contentSettings.DisplayTagsInAdvocate"
+                                  (click)="updateContentSettings('DisplayTagsInAdvocate',contentSettings.DisplayTagsInAdvocate)">
+                                </ui-switch>
+                                <div class="font-size12" *ngIf="contentSettings.DisplayTagsInAdvocate">Enabled</div>
+                                <div class="font-size12" *ngIf="!contentSettings.DisplayTagsInAdvocate">Disabled</div>
+                              </div>
+                            </div>
+                          </li>
+                          <li class="list-group-item">
+                            <div class="d-flex justify-content-between">
+                              <div class="row">
+                                <div class="col-xl-9">
+                                  <div class="font-size15">Display article date on published content</div>
+                                  <div class="font-size12">Manage displaying the created date of the contents.If content
+                                    is created outside the app then the actual date on which the content is published in
+                                    the source will be shown.
+                                  </div>
+                                </div>
+                                <div class="col-xl-3 text-right">
+                                  <ui-switch size="small" [(ngModel)]="contentSettings.ShowArticleDate"
+                                    (click)="updateContentSettings('ShowArticleDate',contentSettings.ShowArticleDate)">
+                                  </ui-switch>
+                                  <div class="font-size12" *ngIf="contentSettings.ShowArticleDate">Enabled</div>
+                                  <div class="font-size12" *ngIf="!contentSettings.ShowArticleDate">Disabled</div>
+                                </div>
+                              </div>
+                            </div>
+                          </li>
+                          <li class="list-group-item">
+                            <div class="d-flex justify-content-between">
+                              <div>
+                                <div class="font-size15">Display content source type on published content</div>
+                                <div class="font-size12">Manage displaying the content source name associated with the content</div>
+                              </div>
+                              <div class="text-right">
+                                <ui-switch size="small" [(ngModel)]="contentSettings.ShowContentSourceType"
+                                  (click)="updateContentSettings('ShowContentSourceType',contentSettings.ShowContentSourceType)">
+                                </ui-switch>
+                                <div class="font-size12" *ngIf="contentSettings.ShowContentSourceType">Enabled</div>
+                                <div class="font-size12" *ngIf="!contentSettings.ShowContentSourceType">Disabled</div>
+                              </div>
+                            </div>
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </article>
+
+      <article *ngIf="!isSharingControlLoaderActive && !isLoadingContentSettings"
+        class="card p-3 rounded-10 border-0 margin-top-20">
+        <div *ngIf="isContentSettingsFetchError" class="alert alert-danger margin-v-10" role="alert">
+          <div>Oops! Something went wrong!</div>
+        </div>
+        <div class="row" *ngIf="!isContentSettingsFetchError&&!isLoadingContentSettings">
+          <div class="col-xl-12">
+            <div class="font-size14 font-weight700 uppercase">Content published for new user</div>
+            <div class="font-size12">Manage the number of published content to be pushed for a new user on registeration.</div>
+            <div class="row">
+              <div class="col-xl-6">
+                <div class="form-group mb-0">
+                  <label class="col-form-label" for="newUserBlurbCount">Content count</label>
+                  <div class="input-group">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text icon icon-user"></span>
+                    </div>
+                    <ng-select2 id="newUserBlurbCount" [data]="blurbCountOptionsForNewUserList" class="flex-grow-auto"
+                      [(ngModel)]="selectedBlurbCountId" (ngModelChange)="enableSaveForNewUseBlurbCount()" width="100%">
+                    </ng-select2>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="d-flex justify-content-end margin-top-30">
+              <button aria-label="Cancel" class="btn btn-link" type="button" (click)="cancelNewBlurbCountEdit()">Cancel</button>
+              <div class="block-relative"> <button class="btn btn-primary margin-left-10" type="submit"
+                  (click)="updateContentSettings('NewUserBlurbCount')" [disabled]="!isEnableSaveForBlurbCount">Save
+                </button>
+                <div *ngIf="isSavingBlurbCountInProgress" class="preloader-cover"> <img
+                    src="assets/images/app-preloader.svg" class="preloader20 preloader-middle"> </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <article *ngIf="!isSharingControlLoaderActive && !isLoadingContentSettings"
+        class="card p-3 rounded-10 border-0 margin-top-20">
+        <div *ngIf="isContentSettingsFetchError" class="alert alert-danger margin-v-10" role="alert">
+          <div>Oops! Something went wrong!</div>
+        </div>
+        <div class="row" *ngIf="!isContentSettingsFetchError&&!isLoadingContentSettings">
+          <div class="col-xl-12">
+            <div class="font-size14 font-weight700 uppercase"> Company disclaimer</div>
+            <div class="font-size12">Content created by admins/suggested by advocates on the app , which does not have a url will be hosted & displayed on the app's landing
+               page. Insert company disclaimer message on landing page.</div>
+            <div class="alert alert-info margin-v-10">
+              On enabling, you may edit the text to be displayed as disclaimer on the landing page. Changes will be
+              saved only after clicking "Save".
+            </div>
+          </div>
+        </div>
+        <div class="row margin-top-20" *ngIf="contentSettings!=undefined">
+          <div class="col-lg-6">
+            <div class="border rounded padding-h-10 padding-v-10">
+              <div class="form-group form-check mb-0">
+                <input class="form-check-input checkbox-theme" id="disclaimer-text" name="disclaimer-text"
+                  type="checkbox" [(ngModel)]="contentSettings.DisclaimerTextEnabled"
+                  (ngModelChange)="updateFormControlView('DisclaimerTextEnabled',contentSettings.DisclaimerTextEnabled)">
+                <label class="form-check-label" for="disclaimer-text"> Show disclaimer text on landing page<span
+                    class="icon icon-info" ngbTooltip="This text will be displayed on landing page/ CMS page."
+                    data-placement="top"></span></label>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-12">
+            <div class="row">
+              <div class="col-12">
+                <form class="form-group m-0" [formGroup]="form" (ngSubmit)="saveDisclaimerText()">
+                  <fieldset>
+                    <div class="form-group">
+                      <label class="col-form-label" for="disclaimerText">Disclaimer Text</label>
+                      <div class="input-group">
+                        <div class="input-group-prepend"><span class="input-group-text icon icon-file-text"></span>
+                        </div>
+                        <textarea formControlName="disclaimerText" autocomplete="off"
+                          class="form-control text-area-height overflow-y-auto" id="disclaimerText"
+                          [(ngModel)]="contentSettings.DisclaimerText"></textarea>
+                        <div
+                          *ngIf="disclaimerConfigSubmitted && formControl().disclaimerText.errors && formControl().disclaimerText.errors.required"
+                          class="alert alert-danger my-1" role="alert">Please enter a disclaimer text!</div>
+                        <div
+                          *ngIf="disclaimerConfigSubmitted && formControl().disclaimerText.errors && formControl().disclaimerText.errors.maxLength"
+                          class="alert alert-danger my-1" role="alert">
+                          A disclaimer text should not be more than 250 characters!</div>
+                      </div>
+                    </div>
+                  </fieldset>
+                  <div class="d-flex justify-content-end margin-top-20">
+                    <button aria-label="Cancel" class="btn btn-link" type="button" (click)="cancelDisclaimerTextEdit()">Cancel</button>
+                    <div class="block-relative"> <button class="btn btn-primary margin-left-10" id="btnDisclaimer"
+                        type="submit" [disabled]="!contentSettings.DisclaimerTextEnabled">Save</button>
+                      <div *ngIf="isSavingDisclaimerText" class="preloader-cover"> <img
+                          src="assets/images/app-preloader.svg" class="preloader20 preloader-middle"> </div>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>

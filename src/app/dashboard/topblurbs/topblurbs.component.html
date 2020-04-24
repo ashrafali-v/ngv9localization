@@ -1,0 +1,331 @@
+<section>
+    <article class="row card-header pt-0 px-0 margin-h-neg-16">
+        <div class="col-12">
+            <div class="form-group mb-0">
+                <label class="col-form-label" for="date-span">Date span</label>
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text icon icon-calendar"></span>
+                    </div>
+                    <input type="text" class="form-control form-control-sm" id="tbdaterange" />
+                </div>
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="form-group mb-0">
+                <label class="col-form-label" for="blurbs">Sort by</label>
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text icon icon-align-left"></span>
+                    </div>
+                    <select class="form-control form-control-sm" id="blurbs" [(ngModel)]="chosenMod"
+                        (ngModelChange)="sortTopBlurb()">
+                        <option value="shares">Shares</option>
+                        <option value="engagements">Engagements</option>
+                        <option value="sharesAndEngagements">Shares & Engagements</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="form-group mt-1 mb-0">
+                <label class="col-form-label" for="search">SEARCH BY</label>
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text icon icon-search"></span>
+                    </div>
+                    <input type="text" class="form-control form-control-sm" [(ngModel)]="searchText"
+                        placeholder="Title, Description, Comment">
+                </div>
+            </div>
+        </div>
+    </article>
+
+    <article class="row margin-top-20">
+        <div class="col dashboard-blurbs-scroll">
+            <div *ngIf="topBlurbs && topBlurbs.length>0 && !isLoadingTopBlurbs">
+                <div *ngFor="let blurb of topBlurbs | filter : searchText : searchableList :serachableProperty">
+                    <ng-template #dasboardBlurbContent>
+                        <!-- ++++++++ popover ++++++++ -->
+                        <div class="border padding-v-0 padding-h-0 rounded-5">
+                            <div class="tiny-well padding-v-5 padding-h-5 rounded-bottom-0">
+                                <div class="font-weight700 font-size11"><span
+                                        class="icon icon-share-2 font-weight700"></span>&nbsp;SHARES</div>
+                                <div class="font-weight600 font-size12">{{blurb.Shares.Total}}</div>
+                            </div>
+                            <div class="row margin-top-5 gutter-5 padding-h-10">
+                                <div class="col font-size9 margin-bottom-5">
+                                    <table class="table table-sm margin-v-0">
+                                        <tbody>
+                                            <tr>
+                                                <td class="border-0">
+                                                    <div
+                                                        class="icomoon-brand-icon-facebook font-size11 font-weight600 text-muted-3">
+                                                    </div>
+                                                    <div class="text-muted-3 font-size8 font-weight700">FACEBOOK
+                                                    </div>
+                                                    <div class="font-size13 font-weight600">
+                                                        {{blurb.Shares.Facebook}}</div>
+                                                </td>
+                                                <td class="border-0">
+                                                    <div
+                                                        class="icomoon-brand-icon-twitter font-size11 font-weight600 text-muted-3">
+                                                    </div>
+                                                    <div class="text-muted-3 font-size8 font-weight700">TWITTER
+                                                    </div>
+                                                    <div class="font-size13 font-weight600">{{blurb.Shares.Twitter}}
+                                                    </div>
+                                                </td>
+                                                <td class="border-0">
+                                                    <div
+                                                        class="icomoon-brand-icon-linkedin font-size11 font-weight600 text-muted-3">
+                                                    </div>
+                                                    <div class="text-muted-3 font-size8 font-weight700">LINKEDIN
+                                                    </div>
+                                                    <div class="font-size13 font-weight600">
+                                                        {{blurb.Shares.LinkedIn}}</div>
+                                                </td>
+                                                <td class="border-0">
+                                                    <div class="icon icon-mail font-size11 font-weight600 text-muted-3">
+                                                    </div>
+                                                    <div class="text-muted-3 font-size8 font-weight700">MAIL</div>
+                                                    <div class="font-size13 font-weight600">{{blurb.Shares.Email}}
+                                                    </div>
+                                                </td>
+                                            </tr>
+
+                                            <tr>
+                                                <td>
+                                                    <div
+                                                        class="icomoon-brand-icon-tumblr font-size11 font-weight600 text-muted-3">
+                                                    </div>
+                                                    <div class="text-muted-3 font-size8 font-weight700">TUMBLR</div>
+                                                    <div class="font-size13 font-weight600">{{blurb.Shares.Tumblr}}
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div
+                                                        class="icomoon-brand-icon-pinterest font-size11 font-weight600 text-muted-3">
+                                                    </div>
+                                                    <div class="text-muted-3 font-size8 font-weight700">PINTEREST
+                                                    </div>
+                                                    <div class="font-size13 font-weight600">
+                                                        {{blurb.Shares.Pinterest}}</div>
+                                                </td>
+                                                <td>
+                                                    <div
+                                                        class="icomoon-brand-icon-whatsapp font-size11 font-weight600 text-muted-3">
+                                                    </div>
+                                                    <div class="text-muted-3 font-size8 font-weight700">WHATSAPP
+                                                    </div>
+                                                    <div class="font-size13 font-weight600">
+                                                        {{blurb.Shares.WhatsApp}}</div>
+                                                </td>
+                                                <td>
+                                                    <div
+                                                        class="icomoon-brand-icon-skype font-size11 font-weight600 text-muted-3">
+                                                    </div>
+                                                    <div class="text-muted-3 font-size8 font-weight700">SKYPE</div>
+                                                    <div class="font-size13 font-weight600">{{blurb.Shares.Skype}}
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="4">
+                                                    <div class="text-muted-3 font-size8 font-weight700">OTHERS</div>
+                                                    <div class="font-size13 font-weight600">{{blurb.Shares.Others}}
+                                                    </div>
+                                                </td>
+                                            </tr>
+
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="border padding-v-0 padding-h-0 rounded-5 margin-top-5">
+                            <div class="tiny-well padding-v-5 padding-h-5 rounded-bottom-0">
+                                <div class="font-weight700 font-size11"><span
+                                        class="icon icon-trello font-weight700"></span>&nbsp;ENGAGEMENTS</div>
+                                <div class="font-weight600 font-size12">{{blurb.Engagements.Total}}</div>
+                            </div>
+                            <div class="row margin-top-5 gutter-5 padding-h-10">
+                                <div class="col-12 font-size9 margin-bottom-5">
+                                    <div class="padding-h-5">
+                                        <span
+                                            class="icomoon-brand-icon-facebook font-size11 font-weight600 text-muted-3">
+                                        </span> &nbsp;
+                                        <span class="text-muted-3 font-size10 font-weight700">FACEBOOK
+                                        </span>
+                                    </div>
+
+                                    <table class="table table-sm margin-v-0">
+                                        <tbody>
+                                            <tr>
+                                                <td>
+                                                    <div
+                                                        class="icon icon-thumbs-up font-size11 font-weight600 text-muted-3">
+                                                    </div>
+                                                    <div class="text-muted-3 font-size8 font-weight700">LIKES
+                                                    </div>
+                                                    <div class="font-size13 font-weight600">
+                                                        {{blurb.Engagements.Facebook.Likes}}</div>
+                                                </td>
+                                                <td>
+                                                    <div
+                                                        class="icon icon-corner-up-right font-size11 font-weight600 text-muted-3">
+                                                    </div>
+                                                    <div class="text-muted-3 font-size8 font-weight700">SHARES
+                                                    </div>
+                                                    <div class="font-size13 font-weight600">
+                                                        {{blurb.Engagements.Facebook.Shares}}</div>
+                                                </td>
+                                                <td>
+                                                    <div
+                                                        class="icon icon-message-square font-size11 font-weight600 text-muted-3">
+                                                    </div>
+                                                    <div class="text-muted-3 font-size8 font-weight700">COMMENTS
+                                                    </div>
+                                                    <div class="font-size13 font-weight600">
+                                                        {{blurb.Engagements.Facebook.Comments}}</div>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="col-12 font-size9 margin-bottom-5">
+                                    <div class="padding-h-5">
+                                        <span
+                                            class="icomoon-brand-icon-twitter font-size11 font-weight600 text-muted-3">
+                                        </span> &nbsp;
+                                        <span class="text-muted-3 font-size10 font-weight700">TWITTER
+                                        </span>
+                                    </div>
+                                    <table class="table table-sm margin-v-0">
+                                        <tbody>
+                                            <tr>
+                                                <td>
+                                                    <div
+                                                        class="icon icon-heart font-size11 font-weight600 text-muted-3">
+                                                    </div>
+                                                    <div class="text-muted-3 font-size8 font-weight700">FAVS
+                                                    </div>
+                                                    <div class="font-size13 font-weight600">
+                                                        {{blurb.Engagements.Twitter.Favorites}}</div>
+                                                </td>
+                                                <td>
+                                                    <div
+                                                        class="icon icon-repeat font-size11 font-weight600 text-muted-3">
+                                                    </div>
+                                                    <div class="text-muted-3 font-size8 font-weight700">RETWEETS
+                                                    </div>
+                                                    <div class="font-size13 font-weight600">
+                                                        {{blurb.Engagements.Twitter.Retweets}}</div>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="col-12 font-size9">
+                                    <div class="padding-h-5">
+                                        <span
+                                            class="icomoon-brand-icon-linkedin font-size11 font-weight600 text-muted-3">
+                                        </span> &nbsp;
+                                        <span class="text-muted-3 font-size10 font-weight700">LINKEDIN
+                                        </span>
+                                    </div>
+                                    <table class="table table-sm margin-v-0">
+                                        <tbody>
+                                            <tr>
+                                                <td>
+                                                    <div
+                                                        class="icon icon-thumbs-up font-size11 font-weight600 text-muted-3">
+                                                    </div>
+                                                    <div class="text-muted-3 font-size8 font-weight700">LIKES
+                                                    </div>
+                                                    <div class="font-size13 font-weight600">
+                                                        {{blurb.Engagements.LinkedIn.Likes}}</div>
+                                                </td>
+                                                <td>
+                                                    <div
+                                                        class="icon icon-message-square font-size11 font-weight600 text-muted-3">
+                                                    </div>
+                                                    <div class="text-muted-3 font-size8 font-weight700">COMMENTS
+                                                    </div>
+                                                    <div class="font-size13 font-weight600">
+                                                        {{blurb.Engagements.LinkedIn.Comments}}</div>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                            </div>
+                        </div>
+                        <!-- ++++++++ popover ++++++++ -->
+                    </ng-template>
+                    <div class="card card-body card-clickable-blu bg-light padding-v-5 rounded-md margin-bottom-10 margin-right-20"
+                        placement="left" [ngbPopover]="dasboardBlurbContent" container="body"
+                        popoverClass="app-popover">
+                        <div class="row">
+                            <div class="col-2 padding-left-5 padding-right-10 margin-top-5">
+                                <div class="blurb-thumb-image-contain">
+                                    <!-- <object data="item.User.PictureUrl" class="img-fluid rounded-sm blurb-thumb-image default-image" type="image/jpg" alt="">                               
+                          </object> -->
+                                    <img [src]="blurb.Blurb.ImageUrl"
+                                        class="img-fluid rounded-sm blurb-thumb-image default-image"
+                                        alt="Blurb image of {{blurb.Blurb.Title}}">
+                                </div>
+                            </div>
+                            <div class="col-10 padding-left-0 padding-right-5">
+                                <div
+                                    class="font-weight400 font-size11 text-muted font-italic text-wrap word-break line-clamp1">
+                                    {{blurb.Blurb.Comment}}</div>
+                                <div class="font-weight600 font-size13 text-wrap word-break line-clamp2">
+                                    {{blurb.Blurb.Title}}</div>
+                                <div class="font-weight400 font-size12 text-wrap word-break line-clamp1">
+                                    {{blurb.Blurb.Description}}</div>
+                                <div class="col-12 tiny-well padding-bottom-5 padding-h-5 margin-bottom-5 margin-top-5">
+                                    <div class="row font-size12 no-gutters">
+                                        <div class="col">
+                                            <div><span class="text-muted text-uppercase font-weight500 font-size10">
+                                                    <span class="icon icon-share-2"></span>&nbsp;Shares</span>
+                                            </div>
+                                            <div class="font-weight600 font-size13">{{blurb.Shares.Total}}</div>
+                                        </div>
+                                        <div class="col">
+                                            <div><span class="text-muted text-uppercase font-weight500 font-size10">
+                                                    <span class="icon icon-trello"></span>&nbsp;Engagements</span>
+                                            </div>
+                                            <div class="font-weight600 font-size13">{{blurb.Engagements.Total}}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div *ngIf="topBlurbs && topBlurbs.length==0 && !isLoadingTopBlurbs"
+                class="row align-items-center justify-content-center h-100 text-center text-muted">
+                <div class="text-center">
+                    <div class="icon icon-alert-circle font-size50"></div>
+                    <div class="font-size13 d-block">Uh oh, there are no Blurbs!</div>
+                </div>
+            </div>
+
+
+            <div *ngIf="isLoadingTopBlurbs">
+                <div class="row align-items-center justify-content-center h-100">
+                    <div class="col text-center">
+                        <img src="assets/images/app-preloader.svg" class="img-fluid">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </article>
+
+</section>

@@ -1,0 +1,335 @@
+<div class="row margin-h-0">
+    <div class="col-xl-12">
+
+        <article class="card p-3 rounded-10 border-0">
+
+            <div class="row">
+                <div class="col">
+                    <h6 class="font-weight700 font-size14">POINTS</h6>
+                    <p class="font-size12">Configure points for key platform matrices.</p>
+                </div>
+                <div class="col" *ngIf="isCreateButtonActive">
+                    <div class="row justify-content-end">
+                        <div class="col-auto">
+                            <div class="col block-relative">
+                                <button type="button" ngbTooltip="Add point plan" data-placement="bottom"
+                                    class="btn btn-primary btn-block padding-v-5 rounded-5"
+                                    (click)="createChannelPointPlanModal()"><span class="icon icon-plus"></span>
+                                </button>
+                                <div *ngIf="isCreateLoaderActive" class="preloader-cover"> <img
+                                        src="assets/images/app-preloader.svg" class="preloader20 preloader-middle">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row gutter-5 card-header rounded-0 margin-top-5 margin-bottom-20">
+                <div class="col-12">
+                    <ul class="nav nav-pills justify-content-center font-size12" id="points-tab" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active" (click)="tabChangeEventChannel()" id="channel-point-tab"
+                                data-toggle="pill" href="#channel-point" role="tab" aria-controls="channel-point-tab"
+                                aria-selected="false">CHANNEL POINT PLAN
+                                <span class="badge badge-secondary font-size11">{{channelPointPlan.length}}</span></a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" (click)="tabChangeEvent()" id="onetime-point-tab" data-toggle="pill"
+                                href="#onetime-point" role="tab" aria-controls="onetime-point-tab"
+                                aria-selected="false">ONE TIME ACTIVITIES
+                                <span class="badge badge-secondary font-size11">{{oneTimeActivities.length}}</span></a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" (click)="tabChangeEvent()" id="regular-point-tab" data-toggle="pill"
+                                href="#regular-point" role="tab" aria-controls="regular-point-tab"
+                                aria-selected="false">REGULAR ACTIVITIES
+                                <span class="badge badge-secondary font-size11">{{regularActivities.length}}</span></a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div *ngIf="isPointPlanFetchError;else pointplan" class="alert alert-danger margin-v-10" role="alert">
+                <div>Oops! Something went wrong!Click <a href="/settings/points">here</a> to reload this page.</div>
+            </div>
+            <ng-template #pointplan>
+                <div class="row">
+                    <div class="col">
+                        <div *ngIf="isPointPlanLoaderActive;else pointplanbody"
+                            class="row align-items-center justify-content-center h-100">
+                            <div class="col text-center"> <img src="assets/images/app-preloader.svg" class="img-fluid">
+                            </div>
+                        </div>
+                        <ng-template #pointplanbody>
+                            <div class="tab-content" id="points-tabContent">
+
+                                <div class="tab-pane fade show active" id="channel-point" role="tabpanel"
+                                    aria-labelledby="channel-point-tab">
+                                    <channel-point-plan (getPointPlan)="getPointPlan()"
+                                        [defaultPlan]="dafaultPointPlanName" [channelPointPlan]="channelPointPlan">
+                                    </channel-point-plan>
+                                </div>
+                                <div class="tab-pane fade" id="onetime-point" role="tabpanel"
+                                    aria-labelledby="onetime-point-tab">
+                                    <div *ngIf="oneTimeActivities.length == 0;else oneTime"
+                                        class="row align-items-center justify-content-center h-100">
+                                        <div class="col text-center"> No one time activity
+                                            available </div>
+                                    </div>
+                                    <ng-template #oneTime>
+                                        <div class="row justify-content-end">
+                                            <div class="col-auto">
+                                                <button type="button" ngbTooltip="Edit One-Time Activities"
+                                                    (click)="editOnetimeActivity(editOA)" data-placement="bottom"
+                                                    class="btn ghost-btn-bright btn-block padding-v-5 rounded-5"><span
+                                                        class="icon icon-edit"></span>
+                                                </button>
+                                            </div>
+                                        </div>
+
+
+                                        <table
+                                            class="table responsive-table table-striped table-header-fixed margin-top-10 table-lg">
+                                            <thead>
+                                                <tr>
+                                                    <th scope="col" class="width-30p">
+                                                        #
+                                                    </th>
+                                                    <th scope="col">
+                                                        Activity
+                                                    </th>
+                                                    <th scope="col">
+                                                        Point
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr *ngFor="let onetime of oneTimeActivities;let i = index;">
+                                                    <td data-label="#">
+                                                        {{i+1}}
+                                                    </td>
+                                                    <td data-label="Activity">
+                                                        <div class="font-weight700">
+                                                            {{onetime.DisplayName}}
+                                                        </div>
+                                                    </td>
+                                                    <td data-label="Points">
+                                                        <div class="font-weight700">{{onetime.Value}}</div>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </ng-template>
+                                </div>
+
+                                <div class="tab-pane fade" id="regular-point" role="tabpanel"
+                                    aria-labelledby="regular-point-tab">
+                                    <div *ngIf="regularActivities.length == 0;else regular"
+                                        class="row align-items-center justify-content-center h-100">
+                                        <div class="col text-center"> No regular activity
+                                            available </div>
+                                    </div>
+                                    <ng-template #regular>
+                                        <div class="row justify-content-end">
+                                            <div class="col-auto">
+                                                <button type="button" ngbTooltip="Edit Regular Activities"
+                                                    (click)="editRegularActivity(editRA)" data-placement="bottom"
+                                                    class="btn ghost-btn-bright btn-block padding-v-5 rounded-5"><span
+                                                        class="icon icon-edit"></span>
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <table
+                                            class="table responsive-table table-striped table-header-fixed margin-top-10 table-lg">
+                                            <thead>
+                                                <tr>
+                                                    <th scope="col" class="width-30p">
+                                                        #
+                                                    </th>
+                                                    <th scope="col">
+                                                        Activity
+                                                    </th>
+                                                    <th scope="col">
+                                                        Point
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr *ngFor="let regular of regularActivities;let i = index;">
+                                                    <td data-label="#">
+                                                        {{i+1}}
+                                                    </td>
+                                                    <td data-label="Action">
+                                                        <div class="font-weight700">
+                                                            {{regular.DisplayName}}
+                                                        </div>
+                                                    </td>
+                                                    <td data-label="Points">
+                                                        <div class="font-weight700">{{regular.Value}}</div>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </ng-template>
+                                </div>
+                            </div>
+                        </ng-template>
+                    </div>
+                </div>
+            </ng-template>
+        </article>
+    </div>
+
+</div>
+<ng-template #editOA let-c="close" let-d="dismiss">
+    <div class="modal-header">
+        <div class="modal-title">
+            <span class="font-weight700 d-block">One Time Activities</span>
+        </div>
+        <button type="button" *ngIf="!isFormValueChangeOneTime" class="close" aria-label="Close" (click)="d()">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        <button type="button" *ngIf="isFormValueChangeOneTime" class="close" aria-label="Close"
+            (click)="confirmationOneTime()">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <form #editOnetimePointForm="ngForm">
+            <div class="max-height-60vh overflow-y-auto">
+                <table class="table responsive-table table-striped table-header-fixed table-lg">
+                    <thead>
+                        <tr>
+                            <th scope="col" class="width-30p">
+                                #
+                            </th>
+                            <th scope="col">
+                                Activity
+                            </th>
+                            <th scope="col">
+                                Point
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let onetime of oneTimeActivities;let i = index;" [ngModelGroup]="i">
+                            <td data-label="#">{{i+1}}</td>
+                            <td data-label="Activity">
+                                <input type="hidden"
+                                    class="border-0 bg-transparent font-size13 font-weight700 w-100 word-break line-clamp2"
+                                    readonly>
+                                <input type="hidden"
+                                    class="border-0 bg-transparent font-size12 font-weight700 w-100 word-break line-clamp2"
+                                    readonly ngModel="{{onetime.SettingsId}}" name="SettingsId"
+                                    #pointsSettingsId="ngModel">
+                                <input type="text" readonly ngModel="{{onetime.DisplayName}}" name="Name"
+                                    class="border-0 bg-transparent font-size12 font-weight700 w-100 word-break line-clamp2"
+                                    #pointsName="ngModel">
+                            </td>
+                            <td data-label="Points">
+                                <input type="number" class="form-control form-control-sm margin-v-5 one-time-activity"
+                                    required pattern="^[0-9]*$" min="0" (input)="onSearchChange($event.target.value)"
+                                    ngModel="{{onetime.Value}}" min="0" name="Value" #pointsValueOneTime="ngModel">
+                            </td>
+                            <div class="alert alert-danger" *ngIf="!pointsValueOneTime.valid">
+                                <div *ngIf="pointsValueOneTime.errors.required"> This field cannot be empty</div>
+                                <div *ngIf="pointsValueOneTime.errors.pattern"> Enter only positive values. Decimals are
+                                    not
+                                    allowed</div>
+                            </div>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </form>
+    </div>
+    <div class="modal-footer">
+        <div class="d-flex justify-content-end">
+            <button type="button" class="btn btn-link" *ngIf="!isFormValueChangeOneTime" aria-label="Cancel"
+                (click)="c()">Cancel</button>
+            <button type="button" class="btn btn-link" *ngIf="isFormValueChangeOneTime" aria-label="Cancel"
+                (click)="confirmationOneTime()">Cancel</button>
+            <div class="col block-relative">
+                <button class="btn btn-primary" type="submit" [disabled]="editOnetimePointForm.invalid"
+                    (click)="updateOneTimeActivity(editOnetimePointForm.value)">Save</button>
+                <div *ngIf="updateOneTimeActivityLoaderStatus" class="preloader-cover"> <img
+                        src="assets/images/app-preloader.svg" class="preloader20 preloader-middle"> </div>
+            </div>
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #editRA let-c="close" let-d="dismiss">
+    <div class="modal-header">
+        <div class="modal-title">
+            <span class="font-weight700 d-block" id="modal-basic-title">Regular Activities</span>
+        </div>
+        <button type="button" *ngIf="!isFormValueChangeRegular" class="close" aria-label="Close" (click)="d()">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        <button type="button" *ngIf="isFormValueChangeRegular" class="close" aria-label="Close"
+            (click)="confirmationRegular()">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <form #editRegularPointForm="ngForm">
+            <div class="max-height-60vh overflow-y-auto">
+                <table class="table responsive-table table-striped table-header-fixed table-lg">
+                    <thead>
+                        <tr>
+                            <th scope="col" class="width-30p">
+                                #
+                            </th>
+                            <th scope="col">
+                                Activity
+                            </th>
+                            <th scope="col">
+                                Point
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let regular of regularActivities;let i = index;" [ngModelGroup]="i">
+                            <td data-label="#">{{i+1}}</td>
+                            <input type="hidden"
+                                class="border-0 bg-transparent font-size12 font-weight700 w-100 word-break line-clamp2"
+                                readonly ngModel="{{regular.SettingsId}}" name="SettingsId" #pointsSettingsId="ngModel">
+                            <td data-label="Activity">
+                                <input type="text"
+                                    class="border-0 bg-transparent font-size12 font-weight700 w-100 word-break line-clamp2"
+                                    readonly ngModel="{{regular.DisplayName}}" name="Name" #pointsName="ngModel">
+                            </td>
+                            <td data-label="Points">
+                                <input type="number" class="form-control form-control-sm margin-v-5" required
+                                    pattern="^[0-9]*$" (input)="onSearchChange($event.target.value)"
+                                    ngModel="{{regular.Value}}" min="0" name="Value" #pointsValue="ngModel"></td>
+                            <div class="alert alert-danger" *ngIf="!pointsValue.valid">
+                                <div *ngIf="pointsValue.errors.required"> This field cannot be empty</div>
+                                <div *ngIf="pointsValue.errors.pattern"> Enter only positive values. Decimals not
+                                    allowed
+                                </div>
+                            </div>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <div class="d-flex justify-content-end">
+            <button type="button" *ngIf="!isFormValueChangeRegular" class="btn btn-link" aria-label="Cancel"
+                (click)="c()">Cancel</button>
+            <button type="button" *ngIf="isFormValueChangeRegular" class="btn btn-link" aria-label="Cancel"
+                (click)="confirmationRegular()">Cancel</button>
+            <div class="col block-relative">
+                <button class="btn btn-primary" type="submit" [disabled]="editRegularPointForm.invalid"
+                    (click)="updateRegularActivity(editRegularPointForm.value)">Save</button>
+                <div *ngIf="updateRegularActivityLoaderStatus" class="preloader-cover"> <img
+                        src="assets/images/app-preloader.svg" class="preloader20 preloader-middle"> </div>
+            </div>
+        </div>
+    </div>
+</ng-template>

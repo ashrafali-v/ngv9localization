@@ -1,0 +1,147 @@
+<section>
+    <article class="row margin-top-20">
+        <div class="col">
+            <div class="font-size11">{{tenantOrganization}}</div>
+            <h3 i18n="dashboard header|An introduction header for this sample@@dashboardHeader" class="font-weight500 line-height1">Dashboard</h3>
+        </div>
+    </article>
+
+    <article class="row margin-top-30 ">
+        <div class="col-xl-8 col-lg-12">
+            <div *ngIf="errorOccurred" class="alert alert-danger margin-v-10" role="alert">
+                <div>Oops! Something went wrong!</div>
+            </div>
+            <div class="row fill-height">
+                <div class="col padding-h-30">
+                    <div class="row gutter-5 margin-bottom-20 light-neuomorphic-bg">
+                        <div class="col-lg-6 col-md-6 margin-bottom-5 equi-height">
+                            <div class="h-100 padding-h-10">
+                                <div class="d-flex flex-column equi-height h-100 padding-v-10">
+                                    <div class="d-flex flex-row">
+                                        <div class="side-lamp1"></div>
+                                        <div class="margin-left-5">
+                                            <div class="font-weight600 font-size12">POTENTIAL REACH</div>
+                                            <div *ngIf="potentialReach != null && potentialReach != undefined"
+                                                class="align-self-start font-weight700 font-size16 line-height1">
+                                                {{potentialReach}}</div>
+                                        </div>
+
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-md-6 margin-bottom-5 equi-height">
+                            <div class="h-100 padding-h-10">
+                                <div class="d-flex flex-column equi-height h-100 padding-v-10">
+                                    <div class="d-flex flex-row">
+                                        <div class="side-lamp2"></div>
+                                        <div class="margin-left-5">
+                                            <div class="font-weight600 font-size12">TOTAL USERS</div>
+                                            <div *ngIf="totalUsers != null && totalUsers != undefined"
+                                                class="align-self-start font-weight700 font-size16 line-height1">
+                                                {{totalUsers}}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-md-6 margin-bottom-5 equi-height">
+                            <div class="h-100 padding-h-10">
+                                <div class="d-flex flex-column equi-height h-100 padding-v-10">
+                                    <div class="d-flex flex-row">
+                                        <div class="side-lamp3"></div>
+                                        <div class="margin-left-5">
+                                            <div class="font-weight600 font-size12">EARNED MEDIA VALUE [EMV] GENERATED</div> 
+                                            <div *ngIf="totalEmvGenerated != null && totalEmvGenerated != undefined"
+                                                class="align-self-start font-weight700 font-size16 line-height1">
+                                                ${{totalEmvGenerated}}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-md-6 margin-bottom-5 equi-height">
+                            <div class="h-100 padding-h-10">
+                                <div class="d-flex flex-column equi-height h-100 padding-v-10">
+                                    <div class="d-flex flex-row">
+                                        <div class="side-lamp4"></div>
+                                        <div class="margin-left-5">
+                                            <div class="font-weight600 font-size12">APPROVED CONTENT</div>
+                                            <div *ngIf="totalApprovedContent != null && totalApprovedContent != undefined"
+                                                class="align-self-start font-weight700 font-size16 line-height1">
+                                                {{totalApprovedContent}}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <div class="card p-3 rounded-10 border-0">
+                        <app-sharesandengagements></app-sharesandengagements>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-4 col-lg-12 lg-margin-top-20">  
+
+            <div class="card h-100 p-3 rounded-10 border-0">
+                <div class="row card-header-top rounded-top-10 pb-0">
+                    <div class="col">
+                        <ul class="nav nav-pills margin-top-10 margin-bottom-10 justify-content-center font-size12"
+                            id="pills-tab" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link active" id="pills-advocates-tab" data-toggle="pill"
+                                    href="#pills-advocates" role="tab" aria-controls="pills-advocates"
+                                    aria-selected="false">TOP 10 ADVOCATES</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="pills-blurbs-tab" data-toggle="pill" href="#pills-blurbs"
+                                    role="tab" aria-controls="pills-blurbs" aria-selected="true">TOP 10 BLURBS</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <div class="tab-content" id="pills-tabContent">
+                            <div class="tab-pane fade show active" id="pills-advocates" role="tabpanel"
+                                aria-labelledby="pills-advocates-tab">
+                                <app-topadvocates></app-topadvocates>
+                            </div>
+                            <div class="tab-pane fade" id="pills-blurbs" role="tabpanel"
+                                aria-labelledby="pills-blurbs-tab">
+                                <app-topblurbs></app-topblurbs>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </article>
+    <article class="row margin-top-30">
+        <div class="col">
+            <div class="card card-clickable-blu rounded-10">
+                <app-contentperformanceanalytics></app-contentperformanceanalytics>
+            </div>
+        </div>
+    </article>
+    <article class="row margin-top-30">
+        <div class="col">
+            <div class=" card card-clickable-blu rounded-10">
+                <app-googleanalytics></app-googleanalytics>
+            </div>
+        </div>
+    </article>
+    <article class="row margin-top-30">
+        <div class="col">
+            <div class=" card card-clickable-blu rounded-10">
+                <app-earnedmediavalue></app-earnedmediavalue>
+            </div>
+        </div>
+    </article>
+</section>

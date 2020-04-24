@@ -1,0 +1,495 @@
+<section>
+        <div class="row margin-h-0">
+            <div class="col-xl-12">    
+                <article class="card p-3 rounded-10 border-0">    
+                    <div class="row">
+                        <div class="col-12">
+                            <div *ngIf="!initialSMTPLoadSuccess && !initialSAMLLoadSuccess && !initialPasswordConfigSuccess"
+                            class="alert alert-danger margin-v-10" role="alert">
+                                <div>Oops! Something went wrong! Click <a href="/settings/configurations">here</a> to reload this
+                                    page.
+                                </div>
+                            </div>
+                            <div class="font-weight700 font-size14">MAIL SERVER</div>
+                            <div class="font-size12">Manage email server settings.</div>
+                        </div>
+                    </div>
+                    <div class="row align-items-center justify-content-center h-100"
+                        *ngIf="isSmtpConfigLoadingInProgress">
+                        <div class="col text-center"> <img src="assets/images/app-preloader.svg"
+                                class="img-fluid">
+                        </div>
+                    </div>
+                    <div class="form-group" *ngIf="!isSmtpConfigLoadingInProgress">
+                        <div class="row margin-top-20">
+                            <div class="col-12">
+                                <div class="tiny-well padding-v-10 padding-h-10">
+                                    <div class="font-size12 font-weight600">Note: Emails will be sent using SOCXO mail
+                                        server with
+                                        "From"
+                                        address as <span class="badge badge-light font-size14">social@socxo.com</span>. If
+                                        you wish to
+                                        send mails
+                                        through your company mail server and use
+                                        custom "From" address, please configure your mail server settings.
+                                    </div>
+                                    <div class="margin-top-10" *ngIf="smtpConfigSetButNotActivated">
+                                        <div class="alert alert-primary" role="alert">
+                                            SMTP configurations has been set. Please check your e-mail and click on the
+                                            activation link
+                                            to activate the settings.
+                                        </div>
+                                        <div class="row d-flex justify-content-end padding-h-10">
+                                            <div class="block-relative">
+                                                <button class="btn btn-primary" (click)="resendActivationEmail()">Resend
+                                                    Activation
+                                                    Mail</button>
+                                                <div class="preloader-cover" *ngIf="isResendActivationMailInProgress">
+                                                    <img src="assets/images/app-preloader.svg"
+                                                        class="preloader20 preloader-middle">
+                                                </div>
+                                                </div>
+                                                <div class="block-relative">
+                                                    <button class="btn btn-secondary margin-left-10" (click)="resetSMTPConfig()">Restore
+                                                        Defaults</button>
+                                                    <div class="preloader-cover" *ngIf="isResetSMTPConfigInProgress">
+                                                        <img src="assets/images/app-preloader.svg"
+                                                            class="preloader20 preloader-middle">
+                                                </div>
+                                            </div> 
+                                        </div>                                                                         
+                                    </div>
+                                </div>    
+                                <div class="d-flex justify-content-end margin-top-20">                                    
+                                    <div *ngIf="enableAddingSMTPConfigOption">
+                                        <button class="btn btn-primary" (click)="enableAddingSMTPConfig()">Add SMTP
+                                            configuration</button>
+                                    </div>                                    
+                                </div>    
+                            </div>    
+                            <div class="col-12 margin-top-10"
+                                *ngIf="!enableAddingSMTPConfigOption && !smtpConfigSetButNotActivated">
+                                <div class="alert alert-info">Customize the sender email address for all email notifications
+                                    to your
+                                    advocates
+                                </div>
+                                <div class="row justify-content-end">
+                                    <div class="col-auto">
+                                        <button type="button" ngbTooltip="Edit smtp configuration"
+                                        (click)="enableAddingSMTPConfig()" data-placement="bottom"
+                                        [hidden]="!showSMTPEditButton"
+                                            class="btn ghost-btn-bright btn-block padding-v-5 rounded-5"><span
+                                                class="icon icon-edit"></span>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div>
+                                    <form class="form-group m-0" [formGroup]="form" (ngSubmit)="updateSMTPConfigurations()">
+                                        <fieldset>
+                                            <div class="form-group margin-top-10">
+                                                <label class="col-form-label" for="smtpHost">SMTP Server</label>
+                                                <div class="input-group">
+                                                    <div class="input-group-prepend"><span
+                                                            class="input-group-text icon icon-server"></span>
+                                                    </div>
+                                                    <input formControlName="smtpHost" type="text" id="smtpHost"
+                                                        name="smtpHost" class="form-control" autocomplete="off" />
+                                                    <div *ngIf="SMTPConfigSubmitted && formControl().smtpHost.errors && formControl().smtpHost.errors.required"
+                                                        class="alert alert-danger my-1" role="alert">Please enter a
+                                                        smtp server!</div>
+                                                    <div *ngIf="SMTPConfigSubmitted && formControl().smtpHost.errors && formControl().smtpHost.errors.maxLength"
+                                                        class="alert alert-danger my-1" role="alert">
+                                                        A smtp server should not be more than 30 characters!</div>
+                                                    <div *ngIf="SMTPConfigSubmitted && formControl().smtpHost.errors && formControl().smtpHost.errors.pattern"
+                                                        class="alert alert-danger my-1" role="alert">
+                                                        A smtp server allows only alphabets and numbers! Please
+                                                        check your input.</div>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="col-form-label" for="port">Port</label>
+                                                <div class="input-group">
+                                                    <div class="input-group-prepend"><span
+                                                            class="input-group-text icon icon-server"></span>
+                                                    </div>
+                                                    <input formControlName="smtpPort" type="text" id="smtpPort"
+                                                        name="smtpPort" class="form-control" autocomplete="off">
+                                                    <div *ngIf="SMTPConfigSubmitted && formControl().smtpPort.errors && formControl().smtpPort.errors.required"
+                                                        class="alert alert-danger my-1" role="alert">Please enter a
+                                                        valid smtp port!</div>
+                                                    <div *ngIf="SMTPConfigSubmitted && formControl().smtpPort.errors && formControl().smtpPort.errors.pattern"
+                                                        class="alert alert-danger my-1" role="alert">
+                                                        You have entered an invalid port number. Please note that a
+                                                        port number consists only of integers!</div>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="col-form-label" for="smtpUsername">SMTP Username</label>
+                                                <div class="input-group">
+                                                    <div class="input-group-prepend"><span
+                                                            class="input-group-text icon icon-user"></span>
+                                                    </div>
+                                                    <input formControlName="smtpUsername" type="text" id="smtpUsername"
+                                                        name="smtpUsername" class="form-control" autocomplete="off" />
+                                                    <div *ngIf="SMTPConfigSubmitted && formControl().smtpUsername.errors && formControl().smtpUsername.errors.required"
+                                                        class="alert alert-danger my-1" role="alert">Please enter a
+                                                        username!</div>
+                                                    <div *ngIf="SMTPConfigSubmitted && formControl().smtpUsername.errors && formControl().smtpUsername.hasError('maxlength')"
+                                                        class="alert alert-danger my-1" role="alert">
+                                                        Username should not be more than 80 characters!</div>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="col-form-label" for="smtpEmail">From Email Address</label>
+                                                <div class="input-group">
+                                                    <div class="input-group-prepend"><span
+                                                            class="input-group-text icon icon-mail"></span>
+                                                    </div>
+                                                    <input formControlName="smtpEmailAddress" type="text" id="smtpEmail"
+                                                        name="smtpEmail" class="form-control" autocomplete="off" />
+                                                    <div *ngIf="SMTPConfigSubmitted && formControl().smtpEmailAddress.errors && formControl().smtpEmailAddress.errors.required"
+                                                        class="alert alert-danger my-1" role="alert">
+                                                        Please enter an e-mail address from which the notifications
+                                                        will be sent!</div>
+                                                    <div *ngIf="SMTPConfigSubmitted && formControl().smtpEmailAddress.errors && formControl().smtpEmailAddress.errors.email"
+                                                        class="alert alert-danger my-1" role="alert">
+                                                        Please enter a valid e-mail address!</div>
+                                                    <div *ngIf="SMTPConfigSubmitted && formControl().smtpEmailAddress.errors && formControl().smtpEmailAddress.errors.maxLength"
+                                                        class="alert alert-danger my-1" role="alert">
+                                                        E-mail address should not be more than 80 characters!</div>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="col-form-label" for="smtpPassword">SMTP Password</label>
+                                                <div class="input-group">
+                                                    <div class="input-group-prepend"><span
+                                                            class="input-group-text icon icon-unlock"></span>
+                                                    </div>
+                                                    <input formControlName="smtpPassword" type="password" id="smtpPassword"
+                                                        name="smtpPassword" class="form-control" autocomplete="off" />
+                                                    <div *ngIf="SMTPConfigSubmitted && formControl().smtpPassword.errors && formControl().smtpPassword.errors.required"
+                                                        class="alert alert-danger my-1" role="alert">Please enter a
+                                                        password!</div>
+                                                    <div *ngIf="SMTPConfigSubmitted && formControl().smtpPassword.errors && formControl().smtpPassword.hasError('maxlength')"
+                                                        class="alert alert-danger my-1" role="alert">
+                                                        Password should not be more than 80 characters!</div>
+                                                </div>
+                                            </div>
+    
+                                            <div class="border rounded-5 padding-h-10 padding-v-10">
+                                                <div class="form-group form-check mb-0"> <input
+                                                        class="form-check-input checkbox-theme" id="ssl" name="ssl"
+                                                        type="checkbox" formControlName="isSmtpSSLEnabled">
+                                                    <label class="form-check-label" for="ssl">Secure sockets layers.</label>
+                                                </div>
+                                            </div>
+    
+                                        </fieldset>
+                                        <div class="d-flex justify-content-end margin-top-20">
+                                            <div class="block-relative">
+                                                <button aria-label="Cancel" class="btn btn-link" type="button"
+                                                    (click)="resetSMTPConfig()" [hidden]="!enableRestoreDefaults"
+                                                    id="btnResetSMTP">Cancel and Restore
+                                                    Defaults</button>
+                                                <div class="preloader-cover" *ngIf="isResetSMTPConfigInProgress">
+                                                    <img src="assets/images/app-preloader.svg"
+                                                        class="preloader20 preloader-middle">
+                                                </div>
+                                            </div>
+                                            <button class="btn btn-link" (click)="cancelAddingSMTPConfig()"
+                                                [hidden]="enableRestoreDefaults">Cancel</button>
+                                            <div class="block-relative">
+                                                <button class="btn btn-primary margin-left-10" id="btnSMTP"
+                                                    [hidden]="enableRestoreDefaults" type="submit">Save</button>
+                                                <div class="preloader-cover" *ngIf="smtpConfigUpdateInProgress">
+                                                    <img src="assets/images/app-preloader.svg"
+                                                        class="preloader20 preloader-middle">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+    
+                <article class="card p-3 rounded-10 border-0 margin-top-20">
+    
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="font-weight700 font-size14">SAML CONFIGURATION</div>
+                            <div class="font-size12">Enable users to access your tenant with SAML Idp Authentication.</div>
+                        </div>
+                    </div>
+                    <div class="row margin-top-20">
+                        <div class="col-12">
+    
+                            <div class="border rounded padding-h-10 padding-v-10">
+                                <div class="form-group form-check mb-0">
+                                    <input class="form-check-input checkbox-theme" id="saml-auth" name="saml-auth"
+                                        type="checkbox" [(ngModel)]="SAMLAuthStatus">
+                                    <label class="form-check-label" for="saml-auth">Enable SAML authentication</label>
+                                </div>
+                            </div>
+    
+                        </div>
+                        <div class="col-lg-12">
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <label class="col-form-label" for="server-url">SAML IDP Server URL</label>
+                                        <div class="input-group">
+                                            <div class="input-group-prepend"><span
+                                                    class="input-group-text icon icon-server"></span>
+                                            </div><input autocomplete="off" class="form-control" formcontrolname="title"
+                                                id="server-url" name="title" placeholder="Server URL" type="text"
+                                                [disabled]="!SAMLAuthStatus" [(ngModel)]="SAMLIdpURL">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-form-label" for="certificate">SAML Certificate</label>
+                                        <div class="input-group">
+                                            <div class="input-group-prepend"><span
+                                                    class="input-group-text icon icon-file-text"></span>
+                                            </div>
+                                            <textarea class="form-control text-area-height overflow-y-auto" id="certificate"
+                                                rows="3" [disabled]="!SAMLAuthStatus"
+                                                [(ngModel)]="SAMLCertificate"></textarea>
+                                        </div>
+                                    </div>
+    
+                                    <div class="d-flex justify-content-end margin-top-30">
+                                        <button aria-label="Cancel" class="btn btn-link" type="button">Cancel</button>
+                                        <button class="btn btn-primary margin-left-10" type="submit" (click)="enableSAML()"
+                                            [disabled]="!SAMLAuthStatus">Save</button>
+                                    </div>
+    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+    
+                <article class="card p-3 rounded-10 border-0 margin-v-20">
+    
+                    <div class="row">
+                        <div class="col">
+                            <div class="font-weight700 font-size14">PASSWORD CONFIGURATION</div>
+                            <div class="font-size12">Configure users password policy.</div>
+                        </div>
+                    </div>
+    
+    
+                    <div class="row margin-top-20">
+                        <div class="col-xl-6">
+    
+    
+                            <ol class="vertical-radio-theme margin-top-20">
+                                <li class="vertical-radio-gap">
+                                    <div class="border rounded-top-10 padding-v-5"  [ngClass]="{'border-success': passwordType == '1'}">
+                                           <div class="form-check">
+                                        <input class="form-check-input radio-theme vertical-radio-button" type="radio"
+                                            name="password-config" id="passwordsuperstrong" value="1"
+                                            [(ngModel)]="passwordType" (click)="changePasswordStrength()">
+                                        <label class="form-check-label font-weight700" for="passwordsuperstrong">
+                                            Super Strong
+                                        </label>
+                                        <ul
+                                            class="list-group bullet-list list-group-flush margin-top-5 font-size13 list-group-sm">
+                                            <li class="list-group-item">Min 8 characters. </li>
+                                            <li class="list-group-item">Must have atleast one Lowercase(a-z).</li>
+                                            <li class="list-group-item">Must have atleast one Upper case(A-Z).</li>
+                                            <li class="list-group-item">Must have atleast one Number(0-9).</li>
+                                            <li class="list-group-item">Must have atleast one Special character(!@#$%^&*()<>
+                                                    ).</li>
+                                            <li class="list-group-item">Not more than 2 identical characters close by.</li>
+                                        </ul>
+                                    </div>
+                                    </div>                               
+                                 
+                                </li>
+                                <li class="vertical-radio-gap">
+                                    <div class="border rounded-top-10 padding-v-5"  [ngClass]="{'border-success': passwordType == '2'}">
+                                        <div class="form-check">
+                                            <input class="form-check-input radio-theme vertical-radio-button" type="radio"
+                                                name="password-config" id="passwordconfigstrong" value="2"
+                                                [(ngModel)]="passwordType" (click)="changePasswordStrength()">
+                                            <label class="form-check-label font-weight700" for="passwordconfigstrong">
+                                                Strong
+                                            </label>
+                                            <ul
+                                                class="list-group bullet-list list-group-flush margin-top-5 font-size13 list-group-sm">
+                                                <li class="list-group-item">Min 8 characters. </li>
+                                                <li class="list-group-item">Must have atleast one Lowercase(a-z).</li>
+                                                <li class="list-group-item">Must have atleast one Upper case(A-Z).</li>
+                                                <li class="list-group-item">Must have atleast one Number(0-9).</li>
+                                                <li class="list-group-item">Must have atleast one Special
+                                                    character(!@#$%^&*()<>).
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="margin-bottom-30">
+                                    <div class="border rounded-top-10 padding-v-5"  [ngClass]="{'border-success': passwordType == '3'}">
+                                    <div class="form-check">
+                                        <input class="form-check-input radio-theme vertical-radio-button" type="radio"
+                                            name="password-config" id="passwordgood" value="3" [(ngModel)]="passwordType" (click)="changePasswordStrength()">
+                                        <label class="form-check-label font-weight700" for="passwordgood">
+                                            Good
+                                        </label>
+                                        <ul
+                                            class="list-group bullet-list list-group-flush margin-top-5 font-size13 list-group-sm">
+                                            <li class="list-group-item">Min 8 characters. </li>
+                                            <li class="list-group-item">Must have atleast one Lowercase(a-z).</li>
+                                            <li class="list-group-item">Must have atleast one Upper case(A-Z).</li>
+                                            <li class="list-group-item">Must have atleast one Number(0-9).</li>
+                                        </ul>
+                                    </div>
+                                    </div>
+    
+                                </li>
+                                <li class="margin-bottom-30">
+                                    
+                                    <div class="border rounded-top-10 padding-v-5"  [ngClass]="{'border-success': passwordType == '4'}">
+                                    <div class="form-check">
+                                        <input class="form-check-input radio-theme vertical-radio-button" type="radio"
+                                            name="password-config" id="passwordfair" value="4" [(ngModel)]="passwordType" (click)="changePasswordStrength()">
+                                        <label class="form-check-label font-weight700" for="passwordfair">
+                                            Fair
+                                        </label>
+                                        <ul
+                                            class="list-group bullet-list list-group-flush margin-top-5 font-size13 list-group-sm">
+                                            <li class="list-group-item">Min 8 characters. </li>
+                                        </ul>
+                                    </div>
+                                    </div>
+    
+                                </li>
+                                <li>
+                                    
+                                    <div class="border rounded-top-10 padding-v-5"  [ngClass]="{'border-success': passwordType == '5'}">
+                                    <div class="form-check">
+                                        <input class="form-check-input radio-theme vertical-radio-button" type="radio"
+                                            name="password-config" id="passwordlow" value="5" [(ngModel)]="passwordType" (click)="changePasswordStrength()">
+                                        <label class="form-check-label font-weight700" for="passwordlow">
+                                            Low
+                                        </label>
+                                        <ul
+                                            class="list-group bullet-list list-group-flush margin-top-5 font-size13 list-group-sm">
+                                            <li class="list-group-item">Min 6 characters. Field cannot be empty </li>
+                                        </ul>
+                                    </div>
+                                    </div>
+    
+                                </li>
+    
+                            </ol>
+                        </div>
+                        <div class="col-xl-6">
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="border rounded-5 padding-h-10 padding-v-10">
+                                        <div class="row no-gutters justify-content-between">
+                                            <div class="col-12">
+    
+                                                <div class="form-group form-check mb-0">
+                                                    <input class="form-check-input checkbox-theme" id="password-expiry"
+                                                        name="password-expiry" type="checkbox"
+                                                        [(ngModel)]="isPasswordExpiry">
+                                                    <label class="form-check-label" for="password-expiry">Password
+                                                        Expiry</label>
+                                                </div>
+                                                <div class="alert alert-info mb-0 margin-top-10">Select the period after
+                                                    which users
+                                                    will be
+                                                    automatically prompted
+                                                    by
+                                                    the app to change their password.</div>
+                                            </div>
+                                        </div>
+                                        <div *ngIf="isPasswordExpiry">
+                                            <div class="row margin-top-10">
+                                                <div class="col-12">
+                                                    <div class="form-group mb-0"> <label class="col-form-label"
+                                                            for="duration">Duration
+                                                        </label>
+                                                        <div class="input-group">
+                                                            <div class="input-group-prepend"> <span
+                                                                    class="input-group-text icon icon-clock"></span> </div>
+                                                            <ng-select2 id="expiryDuration" [data]="expiryDuration"
+                                                                class="flex-grow-auto" [(ngModel)]="selectedExpiryDuration"
+                                                                (ngModelChange)="changeExpiryDuration()" width="100%">
+                                                            </ng-select2>
+    
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-12 margin-top-5" *ngIf="selectedDuration">
+                                                    <div class="alert alert-warning font-size13">Password Expiration period
+                                                        is
+                                                        set to 
+                                                        <strong>{{selectedDuration}}</strong> days.</div>
+                                                </div>
+                                            </div>
+                                            <div class="d-flex justify-content-end margin-top-30">
+                                                <button aria-label="Cancel" class="btn btn-link" (click)="closePasswordExpiry()"
+                                                    type="button">Cancel</button>
+                                                <button class="btn btn-primary margin-left-10" type="submit"
+                                                    (click)="setPasswordExpiry()">Confirm</button>
+                                            </div>
+                                        </div>
+                                    </div>
+    
+                                </div>
+                            </div>
+    
+                            <div class="tiny-well padding-v-10 padding-h-10 margin-top-20">
+                                <div class="font-size12 font-weight600"> 
+                                    PASSWORD STRENGTH</div>
+                                <!-- <div class="font-size35 font-weight700">{{passwordStrengthType}}</div> -->
+                                <div *ngIf="passwordType=='1'" class="font-size35 font-weight700">Super Strong</div>
+                                <div *ngIf="passwordType=='2'" class="font-size35 font-weight700">Strong</div>
+                                <div *ngIf="passwordType=='3'" class="font-size35 font-weight700">Good</div>
+                                <div *ngIf="passwordType=='4'" class="font-size35 font-weight700">Fair</div>
+                                <div *ngIf="passwordType=='5'" class="font-size35 font-weight700">Low</div>
+                                <div class="margin-v-10" *ngIf="passwordType=='1'">
+                                    <ngb-progressbar type="success" [value]="100" [striped]="true"></ngb-progressbar>
+                                </div>
+                                <div class="margin-v-10" *ngIf="passwordType=='2'">
+                                    <ngb-progressbar type="success" [value]="75" [striped]="true"></ngb-progressbar>
+                                </div>
+                                <div class="margin-v-10" *ngIf="passwordType=='3'">
+                                    <ngb-progressbar type="success" [value]="50" [striped]="true"></ngb-progressbar>
+                                </div>
+                                <div class="margin-v-10" *ngIf="passwordType=='4'">
+                                    <ngb-progressbar type="success" [value]="25" [striped]="true"></ngb-progressbar>
+                                </div>
+                                <div class="margin-v-10" *ngIf="passwordType=='5'">
+                                    <ngb-progressbar type="success" [value]="10" [striped]="true"></ngb-progressbar>
+                                </div>
+    
+                                <div class="alert alert-warning">Note: All
+                                    Users
+                                    will be notified on increasing the password complexity level. User will have to login
+                                    again
+                                    across all devices
+                                    including mobile
+                                    app after updating to a secure password.</div>
+    
+                                <div class="d-flex justify-content-end margin-top-30">
+                                    <button aria-label="Cancel" class="btn btn-link" type="button" (click)="closePasswordComplexity()">Cancel</button>
+                                    <button class="btn btn-primary margin-left-10" type="submit"
+                                        (click)="setPasswordComplexity()" [disabled]="!enableConfirm">Confirm</button>
+                                </div>
+    
+                            </div>
+                        </div>
+                    </div>
+    
+                </article>
+    
+            </div>
+        </div>
+    </section>

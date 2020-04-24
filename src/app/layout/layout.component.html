@@ -1,0 +1,264 @@
+<main class="flex-container-row-wrap">
+
+    <section class="navigation-module">
+        <article class="row d-flex justify-content-center m-0">
+
+            <div class="col-3 py-3 text-wrap text-break d-flex justify-content-center px-0">
+
+                <div class="navigation-link-wrap">
+                    <div>
+                        <ng-template #popContent>
+                            <div class="font-size10">{{userRole}}</div>
+                            <div class="font-size14 font-weight500 line-height1">{{userName}}</div>
+                        </ng-template>
+                        <a class="profile-image-thumb" [ngbPopover]="popContent" [autoClose]="'outside'"
+                            placement="right" triggers="mouseenter:mouseleave">
+                            <img src="{{userProfileImage}}" class="img-fluid" alt="{{userName}}">
+                        </a>
+
+                        <a class="dropright navigation-link margin-top-20" [ngbPopover]="NotificationContent"
+                            [autoClose]="'outside'" triggers="mouseenter:mouseleave" placement="right"
+                            aria-haspopup="true" aria-expanded="false">
+                            <span class="icon icon-bell dropdown-toggle"></span>
+                            <ng-template #NotificationContent>Notifications here!</ng-template>
+                            <div class="dropdown-menu">
+                                notification
+                            </div>
+                        </a>
+
+                        <a class="dropright navigation-add-link margin-top-10" [ngbPopover]="AddContent"
+                            [autoClose]="'outside'" triggers="mouseenter:mouseleave" placement="right"
+                            aria-haspopup="true" aria-expanded="false">
+                            <span class="icon icon-plus dropdown-toggle"></span>
+                            <ng-template #AddContent>Add contents here!</ng-template>
+                            <div class="dropdown-menu">
+                                add
+                            </div>
+                        </a>
+
+                    </div>
+                    <div>
+                        <button class="navigation-demo-link pulse margin-bottom-10" placement="right"
+                            ngbTooltip="Request for a demo">
+                            <span class="icon icon-monitor"></span>
+                        </button>
+                        <a href="#" class="dropright navigation-link margin-bottom-10" placement="right"
+                            ngbTooltip="Switch language">
+                            <div class="font-size9">EN</div>
+                            <span class="icon icon-globe dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
+                                aria-expanded="false"></span>
+                            <div class="dropdown-menu">
+                                globalization
+                            </div>
+                        </a>
+                        <a href="#" class="navigation-link margin-bottom-10" placement="right"
+                            ngbTooltip="Change Theme">
+                            <span class="icon icon-moon"></span>
+                        </a>
+
+                        <a routerLink="/login" (click)="logout()" class="navigation-link margin-bottom-10"
+                            placement="right" ngbTooltip="Logout">
+                            <span class="icon icon-log-out"></span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-9 border-left navigation-menu-module  py-3 d-flex full-height z-1">
+
+                <div class="nav-menu-body w-100">
+                    <div class="nav-menu-content">
+                        <article class="row d-flex justify-content-center">
+                            <a href="#" class="col tenant-logo-container text-center">
+                                <img src="{{tenantLogoUrl}}" class="tenant-logo" alt="tenant logo image">
+                            </a>
+                        </article>
+                        <div class="menu-group-vertical-item margin-top-30 margin-bottom-10">
+                            <a routerLink="/dashboard" class="w-100 nav-menu-link"
+                                routerLinkActive="active-nav-menu-link">
+                                <div class="row">
+                                    <div class="col-3 padding-right-0 text-center d-flex justify-content-center">
+                                        <div class=" icon icon-home sidebar-menu-icon"></div>
+                                    </div>
+                                    <div class="col-9 padding-left-0">
+                                        Dashboard
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+
+                        <div class="menu-group-vertical-item margin-bottom-10">
+                            <a href="#" class="w-100 nav-menu-link" routerLinkActive="active-nav-menu-link">
+                                <div class="row">
+                                    <div class="col-3 padding-right-0 text-center d-flex justify-content-center">
+                                        <div class=" icon icon-archive sidebar-menu-icon"></div>
+                                    </div>
+                                    <div class="col-9 padding-left-0">
+                                        Content
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+
+                        <div class="menu-group-vertical-item margin-bottom-10">
+                            <a href="#" class="w-100 nav-menu-link" routerLinkActive="active-nav-menu-link">
+                                <div class="row">
+                                    <div class="col-3 padding-right-0 text-center d-flex justify-content-center">
+                                        <div class=" icon icon-rss sidebar-menu-icon"></div>
+                                    </div>
+                                    <div class="col-9 padding-left-0">
+                                        Content Sources
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+
+                        <div class="menu-group-vertical-item margin-bottom-10">
+                            <a href="#" class="w-100 nav-menu-link" routerLinkActive="active-nav-menu-link">
+                                <div class="row">
+                                    <div class="col-3 padding-right-0 text-center d-flex justify-content-center">
+                                        <div class=" icon icon-users sidebar-menu-icon"></div>
+                                    </div>
+                                    <div class="col-9 padding-left-0">
+                                        Users
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+
+                        <div class="menu-group-vertical-item margin-bottom-10">
+                            <a href="#" class="w-100 nav-menu-link" routerLinkActive="active-nav-menu-link">
+                                <div class="row">
+                                    <div class="col-3 padding-right-0 text-center d-flex justify-content-center">
+                                        <div class=" icon icon-gift sidebar-menu-icon"></div>
+                                    </div>
+                                    <div class="col-9 padding-left-0">
+                                        Rewards &amp; Badges
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+
+                        <div class="menu-group-vertical-item margin-bottom-10">
+                            <a href="#" class="w-100 nav-menu-link" routerLinkActive="active-nav-menu-link">
+                                <div class="row">
+                                    <div class="col-3 padding-right-0 text-center d-flex justify-content-center">
+                                        <div class=" icon icon-bar-chart-2 sidebar-menu-icon"></div>
+                                    </div>
+                                    <div class="col-9 padding-left-0">
+                                        Polls
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+
+                        <div class="menu-group-vertical-item margin-bottom-10">
+                            <a routerLink="/settings" class="w-100 nav-menu-link"
+                                routerLinkActive="active-nav-menu-link">
+                                <div class="row">
+                                    <div class="col-3 padding-right-0 text-center d-flex justify-content-center">
+                                        <div class="icon icon-settings sidebar-menu-icon"></div>
+                                    </div>
+                                    <div class="col-9 padding-left-0">Settings                                     
+                                        <span *ngIf="hasExpiredTokens" class="link-error"></span>                                        
+                                    </div>
+                                </div>
+                            </a>    
+                            <span class="icon icon-chevron-down"
+                                [ngClass]="{ 'icon-chevron-up' : !settingsSubMenuCollapsed}"
+                                (click)="settingsSubMenuCollapsed = !settingsSubMenuCollapsed"></span>                                                   
+                        </div>
+                        <!-- SubMenuStart -->
+                        <div class="nav-menu-content" [ngbCollapse]="settingsSubMenuCollapsed">
+                            <div class="menu-group-vertical-item margin-bottom-10">
+                                <a #channelsLink routerLink="/settings/channels" routerLinkActive="active-nav-menu-link"
+                                class="w-100 nav-menu-link">Channel<span *ngIf="hasExpiredTokens" 
+                                    class="link-error"></span>                  
+                                </a>
+                            </div>
+                            <div class="menu-group-vertical-item margin-bottom-10">
+                                <a routerLink="/settings/users" routerLinkActive="active-nav-menu-link"
+                                class="w-100 nav-menu-link">User                      
+                                </a>
+                            </div>
+                            <div class="menu-group-vertical-item margin-bottom-10">
+                                <a routerLink="/settings/teams" routerLinkActive="active-nav-menu-link"
+                                class="w-100 nav-menu-link">Team                      
+                                </a>
+                            </div>
+                            <div class="menu-group-vertical-item margin-bottom-10">
+                                <a routerLink="/settings/content" routerLinkActive="active-nav-menu-link"
+                                class="w-100 nav-menu-link">Content                      
+                                </a>
+                            </div>
+                            <div class="menu-group-vertical-item margin-bottom-10">
+                                <a routerLink="/settings/categories" routerLinkActive="active-nav-menu-link"
+                                class="w-100 nav-menu-link">Category                      
+                                </a>
+                            </div>
+                            <div class="menu-group-vertical-item margin-bottom-10">
+                                <a routerLink="/settings/analytics" routerLinkActive="active-nav-menu-link"
+                                class="w-100 nav-menu-link">Analytics                      
+                                </a>
+                            </div>
+                            <div class="menu-group-vertical-item margin-bottom-10">
+                                <a routerLink="/settings/notifications" routerLinkActive="active-nav-menu-link"
+                                class="w-100 nav-menu-link">Notification                      
+                                </a>
+                            </div>
+                            <div class="menu-group-vertical-item margin-bottom-10">
+                                <a routerLink="/settings/points" routerLinkActive="active-nav-menu-link"
+                                class="w-100 nav-menu-link">Point Plan                      
+                                </a>
+                            </div>
+                            <div class="menu-group-vertical-item margin-bottom-10">
+                                <a routerLink="/settings/configurations" routerLinkActive="active-nav-menu-link"
+                                class="w-100 nav-menu-link">Configuration                      
+                                </a>
+                            </div>
+                        </div> 
+                        <!-- SubMenuEnd -->
+                        <div class="menu-group-vertical-item margin-bottom-10">
+                            <a href="#" class="w-100 nav-menu-link" routerLinkActive="active-nav-menu-link">
+                                <div class="row">
+                                    <div class="col-3 padding-right-0 text-center d-flex justify-content-center">
+                                        <div class=" icon icon-box sidebar-menu-icon"></div>
+                                    </div>
+                                    <div class="col-9 padding-left-0">
+                                        Apps
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+
+                        <div class="menu-group-vertical-item margin-bottom-10">
+                            <a href="#" class="w-100 nav-menu-link" routerLinkActive="active-nav-menu-link">
+                                <div class="row">
+                                    <div class="col-3 padding-right-0 text-center d-flex justify-content-center">
+                                        <div class=" icon icon-help-circle sidebar-menu-icon"></div>
+                                    </div>
+                                    <div class="col-9 padding-left-0">
+                                        Help
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="nav-menu-footer">
+                        <img src="assets/images/poweredby-socxo-logo.svg" class="img-fluid" alt="SOCXO logo">
+                    </div>
+                </div>
+            </div>
+        </article>
+    </section>
+
+    <section class="content-module padding-h-20 padding-v-15  ml-sm-auto">
+
+        <article class="row">
+            <div class="col">
+
+                <router-outlet></router-outlet>
+
+            </div>
+        </article>
+    </section>
+</main>

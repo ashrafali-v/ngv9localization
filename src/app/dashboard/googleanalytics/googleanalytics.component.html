@@ -1,0 +1,427 @@
+<section class="{{fullScreenToggleClass}}">
+
+
+     
+    <article class="row padding-top-20 padding-h-15" aria-controls="google-analytics-body"
+        data-toggle="collapse" href="#google-analytics-body" role="button" aria-expanded="false">     
+
+
+<!-- 
+    <article class="row padding-top-20 padding-h-15" role="button" aria-expanded="false"
+        aria-controls="google-analytics-body"> -->
+        <div class="col">
+            <div class="row">
+                <div class="col">
+                    <h6 class="font-weight700 font-size14">{{title}}</h6>
+                </div>
+            </div>
+            <p class="font-size12">Milestones achieved through {{tenantOrganization}}.</p>
+        </div>
+
+        <div class="col">
+            <div class="row row justify-content-end">
+                <div class="col-auto">
+                    <button type="button" class="btn btn-link app-icon-link remove-collapse" ngbTooltip="Download as Excelsheet"
+                        data-placement="top"><span class="icon icon-download"></span></button>
+                    <button type="button" class="btn btn-link app-icon-link" ngbTooltip="Click to Expand"
+                        data-toggle="collapse" data-target="#google-analytics-body" aria-expanded="false"
+                        aria-controls="google-analytics-body" (click)="initializeGoogleAnalytics()"><span
+                            class="icon icon-chevron-down" aria-hidden="true"></span></button>
+                    <button type="button" data-toggle="collapse('dispose')" class="btn btn-link app-icon-link remove-collapse"
+                        ngbTooltip="Refresh" data-placement="top" (click)="refresh()"><span
+                            class="icon icon-refresh-cw"></span></button>
+                    <button type="button" class="btn btn-link app-icon-link remove-collapse" (click)="toggleFullscreenView()"
+                        ngbTooltip="Fullscreen View" data-placement="top"><span
+                            class="icon icon-maximize-2"></span></button>
+                </div>
+            </div>
+        </div>
+    </article>
+
+    <div class="collapse padding-h-15" id="google-analytics-body">
+        <div *ngIf="errorOccurred" class="alert alert-danger margin-v-10" role="alert">
+            <div>Oops! Something went wrong!</div>
+        </div>
+        <article class="row card-header rounded-0 margin-top-5 margin-bottom-20 ">
+            <div class="col-8">
+                <div class="row">
+                    <div class="col-4">
+                        <div class="row margin-bottom-10">
+                            <div class="col">
+                                <div class="form-check">
+                                    <input class="form-check-input radio-theme" type="radio" name="garadio" id="traffic"
+                                        value="traffic" checked (change)="radioButtonChange($event)">
+                                    <label class="form-check-label" for="traffic">
+                                        TRAFFIC
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="form-check">
+                                    <input class="form-check-input radio-theme" type="radio" name="garadio" id="goal" value="goal"
+                                        (change)="radioButtonChange($event)">
+                                    <label class="form-check-label" for="goal">
+                                        GOAL
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <div class="form-group mb-0">
+                            <label class="col-form-label" for="profiles">Profiles</label>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text icon icon-user"></span>
+                                </div>
+                                <ng-select2 id="profiles" [data]="googleAnalyticsProfiles" class="flex-grow-auto"
+                                    [(ngModel)]="selectedProfile" (ngModelChange)="getGranularGoogleAnalytics()"
+                                    width="100%"></ng-select2>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col" [hidden]="isGoalsSelected">
+                        <div class="form-group mb-0">
+                            <label class="col-form-label" for="metric">Metric</label>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text icon icon-bar-chart"></span>
+                                </div>
+                                <ng-select2 id="metrics" [data]="metrics" class="flex-grow-auto"
+                                    [(ngModel)]="selectedMetric" (ngModelChange)="getGranularGoogleAnalytics()"
+                                    width="100%"></ng-select2>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col" [hidden]="!isGoalsSelected">
+                        <div class="form-group mb-0">
+                            <label class="col-form-label" for="goals">Goals</label>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text icon icon-bar-chart"></span>
+                                </div>
+                                <ng-select2 id="goals" [data]="goals" class="flex-grow-auto" [(ngModel)]="selectedGoal"
+                                    (ngModelChange)="getGranularGoogleGoalAnalytics()" width="100%"></ng-select2>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="form-group mb-0">
+                            <label class="col-form-label" for="date-span">Date span</label>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text icon icon-calendar"></span>
+                                </div>
+                                <input type="text" class="form-control form-control-sm" id="gadaterange">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </article>
+
+
+
+        <article class="row">
+            <div *ngIf="!isGraphLoadedInitially" class="row align-items-center justify-content-center h-100">
+                <div class="col-2">
+                    <img src="assets/images/app-preloader.svg" class="fluid-img">
+                </div>
+            </div>
+            <div class="col-lg-9 lap-w-100 padding-bottom-20">
+                <div *ngIf="!googleAnalyticsConnected" class="text-center text-muted">
+                    <div class="icon icon-alert-circle font-size50"></div> <span class="font-size13"> Oops, Looks like
+                        you're not connected to Google Analytics</span>
+                </div>
+                <canvas [hidden]="!isGraphLoadedInitially || !googleAnalyticsConnected" id="googleAnalyticsLineChart"></canvas>
+            </div>
+            <div class="col-lg-3 lap-w-100">
+
+                <div class="block-relative" [hidden]="isGoalsSelected">
+
+                    <div class="row lap-margin-top-10 separator-bottom">
+                        <div class="lap-col6-to-col3 padding-v-10 lap-bordered3-h-ends-0-bf-hide">
+                            <div class="font-weight600 font-size12">TOTAL PAGE VIEWS</div>
+                            <div class="font-weight700 font-size16">{{totalPageViews}}</div>
+                        </div>
+
+                        <div class="lap-col6-to-col3 padding-v-10 lap-bordered3-h-ends-0-bf-hide">
+                            <div class="font-weight600 font-size12">CONTRIBUTED CONTENT</div>
+                            <div class="font-weight700 font-size16">{{totalContributedContent}}</div>
+                        </div>
+
+                        <div class="lap-col6-to-col3 padding-v-10 lap-bordered3-h-ends-0-bf-hide">
+                            <div class="font-weight600 font-size12">CONTRIBUTED USERS</div>
+                            <div class="font-weight700 font-size16">{{totalContributedUsers}}</div>
+                        </div>
+                        <div class="lap-col6-to-col3 padding-v-10 lap-bordered3-h-ends-0-bf-hide">
+                            <div class="font-weight600 font-size12">GENERATED PAGE VIEWS</div>
+                            <div class="font-weight700 font-size16">{{generatedPageViews}}**</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row margin-top-20">
+                    <div class="lap-col12-to-col6">
+                        <!-- ++fb+++ -->
+                        <div *ngIf="!facebookIsTrendingStright" class="stat-box margin-v-5"
+                            [ngClass]="facebookIsTrending ? 'success-theme' : 'danger-theme'">
+                            <div class="font-size12 font-weight500"><span
+                                    class="icomoon-brand-icon-facebook"></span>&nbsp;
+                                FACEBOOK</div>
+                            <div class="row no-gutters justify-content-between">
+                                <div class="col">
+                                    <div class="d-flex flex-row">
+                                        <div class="stat-icon-title"></div>
+                                        <div class="font-size13 font-weight700">{{totalFbPageViews}}</div>
+
+                                    </div>
+                                </div>
+                                <div class="col text-right">
+                                    <div class="font-size13 font-weight700">{{facebookTrendDiff}}</div>
+                                </div>
+                                <div class="col-auto text-center circle-progress">
+                                    <!-- ++++++++ radial progress bar ++++++++++ -->
+                                    <circle-progress [percent]="facebookPercent" [subtitle]="facebookSubtitle"
+                                        [innerStrokeColor]="facebookInnerStrokeColor"
+                                        [subtitleColor]="facebookSubtitleColor"
+                                        [outerStrokeColor]="facebookOuterStrokeColor"></circle-progress>
+                                    <!-- ++++++++ radial progress bar ++++++++++ -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <div *ngIf="facebookIsTrendingStright" class="stat-box same-trend-theme margin-v-5">
+                            <div class="font-size12 font-weight500"><span
+                                    class="icomoon-brand-icon-facebook"></span>&nbsp;
+                                FACEBOOK</div>
+                            <div class="row no-gutters justify-content-between">
+                                <div class="col">
+                                    <div class="d-flex flex-row">
+                                        <div class="stat-icon-title"></div>
+                                        <div class="font-size13 font-weight700">{{totalFbPageViews}}</div>
+
+                                    </div>
+                                </div>
+                                <div class="col text-right">
+                                    <div class="font-size12 font-weight500">{{facebookTrendDiff}}</div>
+                                </div>
+                                <div class="col-auto text-center circle-progress">
+                                    <!-- ++++++++ radial progress bar ++++++++++ -->
+                                    <circle-progress [percent]="facebookPercent" [subtitle]="facebookSubtitle"
+                                        [innerStrokeColor]="facebookInnerStrokeColor"
+                                        [subtitleColor]="facebookSubtitleColor"
+                                        [outerStrokeColor]="facebookOuterStrokeColor"></circle-progress>
+                                    <!-- ++++++++ radial progress bar ++++++++++ -->
+                                </div>
+                            </div>
+                        </div>
+                        <!-- ++fb+++ -->
+                    </div>
+
+                    <div class="lap-col12-to-col6">
+                        <!-- ++tw+++ -->
+                        <div *ngIf="!twitterIsTrendingStright" class="stat-box margin-v-5"
+                            [ngClass]="twitterIsTrending ? 'success-theme' : 'danger-theme'">
+                            <div class="font-size12 font-weight500"><span
+                                    class="icomoon-brand-icon-twitter"></span>&nbsp;
+                                TWITTER</div>
+                            <div class="row no-gutters justify-content-between">
+                                <div class="col">
+                                    <div class="d-flex flex-row">
+                                        <div class="stat-icon-title"></div>
+                                        <div class="font-size13 font-weight700">
+                                            {{totalTwitterPageViews}}</div>
+                                    </div>
+                                </div>
+                                <div class="col text-right">
+                                    <div class="font-size12 font-weight500">{{twitterTrendDiff}}</div>
+                                </div>
+                                <div class="col-auto text-right circle-progress">
+                                    <!-- ++++++++ radial progress bar ++++++++++ -->
+                                    <circle-progress [percent]="twitterPercent" [subtitle]="twitterSubtitle"
+                                        [innerStrokeColor]="twitterInnerStrokeColor"
+                                        [subtitleColor]="twitterSubtitleColor"
+                                        [outerStrokeColor]="twitterOuterStrokeColor"></circle-progress>
+                                    <!-- ++++++++ radial progress bar ++++++++++ -->
+                                </div>
+                            </div>
+                        </div>
+                        <div *ngIf="twitterIsTrendingStright" class="stat-box same-trend-theme margin-v-5">
+                            <div class="font-size12 font-weight500"><span
+                                    class="icomoon-brand-icon-twitter"></span>&nbsp;
+                                TWITTER</div>
+                            <div class="row no-gutters justify-content-between">
+                                <div class="col">
+                                    <div class="d-flex flex-row">
+                                        <div class="stat-icon-title"></div>
+                                        <div class="font-size13 font-weight700">
+                                            {{totalTwitterPageViews}}</div>
+                                    </div>
+                                </div>
+                                <div class="col text-right">
+                                    <div class="font-size12 font-weight500">{{twitterTrendDiff}}</div>
+                                </div>
+                                <div class="col-auto text-right circle-progress">
+                                    <!-- ++++++++ radial progress bar ++++++++++ -->
+                                    <circle-progress [percent]="twitterPercent" [subtitle]="twitterSubtitle"
+                                        [innerStrokeColor]="twitterInnerStrokeColor"
+                                        [subtitleColor]="twitterSubtitleColor"
+                                        [outerStrokeColor]="twitterOuterStrokeColor"></circle-progress>
+                                    <!-- ++++++++ radial progress bar ++++++++++ -->
+                                </div>
+                            </div>
+                        </div>
+                        <!-- ++tw+++ -->
+                    </div>
+
+                    <div class="lap-col12-to-col6">
+
+                        <!-- ++ln+++ -->
+                        <div *ngIf="!linkedInIsTrendingStright" class="stat-box margin-v-5"
+                            [ngClass]="linkedInIsTrending ? 'success-theme' : 'danger-theme'">
+                            <div class="font-size12 font-weight500"><span
+                                    class="icomoon-brand-icon-linkedin"></span>&nbsp;
+                                LINKEDIN</div>
+                            <div class="row no-gutters justify-content-between">
+                                <div class="col">
+                                    <div class="d-flex flex-row">
+                                        <div class="stat-icon-title"></div>
+                                        <div class="font-size13 font-weight700">
+                                            {{totalLinkedinPageViews}}</div>
+                                    </div>
+                                </div>
+                                <div class="col text-right">
+                                    <div class="font-size12 font-weight500">{{linkedInTrendDiff}}</div>
+                                </div>
+                                <div class="col-auto text-right circle-progress">
+                                    <!-- ++++++++ radial progress bar ++++++++++ -->
+                                    <circle-progress [percent]="linkedInPercent" [subtitle]="linkedInSubtitle"
+                                        [innerStrokeColor]="linkedInInnerStrokeColor"
+                                        [subtitleColor]="linkedInSubtitleColor"
+                                        [outerStrokeColor]="linkedInOuterStrokeColor"></circle-progress>
+                                    <!-- ++++++++ radial progress bar ++++++++++ -->
+                                </div>
+                            </div>
+                        </div>
+                        <div *ngIf="linkedInIsTrendingStright" class="stat-box same-trend-theme margin-v-5">
+                            <div class="font-size12 font-weight500"><span
+                                    class="icomoon-brand-icon-linkedin"></span>&nbsp;
+                                    LINKEDIN</div>
+                            <div class="row no-gutters justify-content-between">
+                                <div class="col">
+                                    <div class="d-flex flex-row">
+                                        <div class="stat-icon-title"></div>
+                                        <div class="font-size13 font-weight700">{{totalLinkedinPageViews}}</div>
+                                    </div>
+                                </div>
+                                <div class="col text-right">
+                                    <div class="font-size12 font-weight500">{{linkedInTrendDiff}}</div>
+                                </div>
+                                <div class="col-auto text-right circle-progress">
+                                    <!-- ++++++++ radial progress bar ++++++++++ -->
+                                    <circle-progress [percent]="linkedInPercent" [subtitle]="linkedInSubtitle"
+                                        [innerStrokeColor]="linkedInInnerStrokeColor"
+                                        [subtitleColor]="linkedInSubtitleColor"
+                                        [outerStrokeColor]="linkedInOuterStrokeColor"></circle-progress>
+                                    <!-- ++++++++ radial progress bar ++++++++++ -->
+                                </div>
+                            </div>
+                        </div>
+                        <!-- ++ln+++ -->
+                    </div>
+
+                </div>
+
+                <div class="row justify-content-center">
+                    <div class="col-md-auto block-relative">
+                        <button [disabled]="!googleAnalyticsConnected" class="ghost-btn ghost-btn-lg font-size12 margin-v-20 d-block"
+                            (click)="getDetailedGoogleAnalyticsTraffic(detailedTraffic)">View
+                            More Details</button>
+                        <div class="preloader-cover" *ngIf="isDetailedTrafficLoadingInProgress">
+                            <img src="assets/images/app-preloader.svg" class="preloader20 preloader-middle">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </article>
+
+        <ng-template #detailedTraffic let-modal>
+            <div class="modal-header">
+                <div class="modal-title"><span class="font-size13 text-muted-3 font-weight500">{{selectedProfileName}}</span>&nbsp;
+                    <span class="font-size11 text-muted font-weight500">{{startDate}} - {{endDate}}</span>
+                    <span class=" font-weight700 d-block">Page Views&nbsp;<span class="font-weight500">Traffic</span>                        
+                    </span>
+                </div>
+
+                <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div *ngIf="detailedTrafficList.length == 0; else table" class="text-center text-muted">
+                    <div class="icon icon-alert-circle font-size50"></div>
+                    <span class="font-size13">Hang on. There are no data to show at the moment..</span>
+                </div>
+
+                <ng-template #table>
+                    <table class="responsive-table table-striped table-header-fixed">
+                        <thead>
+                            <tr>
+                                <th scope="col" class="width-30p">#</th>
+                                <th scope="col">Top 10 Contributed Content</th>
+                                <th scope="col">Contributed Users</th>
+                                <th scope="col">Page Views</th>
+                            </tr>
+
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let blurbanalytic of detailedTrafficList; let idx = index">
+                                <td data-label="#">{{idx + 1}}</td>
+                                <td data-label="Top 10 Content">
+                                    <div class="row justify-content-end">
+                                        <div
+                                            class="col-2 padding-left-5 padding-right-10 blurb-thumb-image-contain margin-top-5">
+                                            <img src={{blurbanalytic.Blurb.ImageUrl}}
+                                                class="img-fluid rounded-sm blurb-thumb-image"
+                                                alt={{blurbanalytic.Blurb.Title}}>
+                                        </div>
+                                        <div class="col-10 padding-left-0 padding-right-5 text-left">
+                                            <div class="font-weight600 font-size14 text-wrap word-break line-clamp2">
+                                                {{blurbanalytic.Blurb.Title}}</div>
+                                            <div class="font-weight400 font-size12 text-wrap word-break line-clamp1">
+                                                {{blurbanalytic.Blurb.Description}}</div>
+                                            <div class="d-block margin-v-5">
+                                                <a href={{blurbanalytic.Blurb.Url}} target="_blank"
+                                                    class="ghost-btn ghost-btn-sm font-weight400 font-size12">View</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td data-label="Contributed Users">
+                                    <div *ngFor="let user of blurbanalytic.Users" class="user-thumb-image-sm-contain">
+                                        <img src={{user.User.PictureUrl}} alt={{user.User.UserName}}
+                                            class="img-fluid rounded-sm user-thumb-image-sm"
+                                            ngbTooltip={{user.User.DisplayName}}({{user.Value}})>
+                                    </div>
+                                </td>
+                                <td data-label="Page Views">
+                                    <div class="font-weight700 font-size14 text-wrap word-break">
+                                        {{blurbanalytic.Value}}</div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-light font-size13"
+                            (click)="modal.close('Close click')">Close</button>
+                    </div>
+                </ng-template>
+            </div>
+        </ng-template>
+    </div>
+
+</section>

@@ -1,0 +1,178 @@
+<div class="row margin-h-0">
+    <div class="col-xl-12">
+        <article class="card p-3 rounded-10 border-0">
+            <div class="row justify-content-end margin-bottom-20">
+                <div class="col">
+                    <h6 class="font-weight700 font-size14">NOTIFICATIONS</h6>
+                    <p class="font-size12">Manage notification settings</p>
+                </div>
+            </div>
+            <div class="row card-header-top pb-0 margin-bottom-20">
+                <div class="col-12">
+                    <ul class="nav nav-pills justify-content-center font-size12 margin-v-20" id="notifications-tab"
+                        role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active" id="browser-notifications-tab" data-toggle="pill"
+                                href="#browser-notifications" role="tab" aria-controls="browser-notifications-tab"
+                                aria-selected="false">EMAIL NOTIFICATION</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="mobile-notifications-tab" data-toggle="pill"
+                                href="#mobile-notifications" role="tab" aria-controls="mobile-notifications-tab"
+                                aria-selected="false">PUSH NOTIIFICATION</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <div class="tab-content" id="notifications-tabContent">
+
+                        <div class="tab-pane fade show active" id="browser-notifications" role="tabpanel"
+                            aria-labelledby="browser-notifications-tab">
+
+                            <div class="row margin-top-20">
+                                <div class="col-xl-12">
+                                    <div class="border rounded-5 padding-v-10 padding-h-10">
+                                        <div class="font-size14 font-weight700">ADMIN NOTIFICATIONS</div>
+                                        <div class="font-size12">Manage your email Notifications</div>
+
+
+                                        <ul class="list-group list-group-flush list-group-sm margin-top-20">
+                                            <li class="list-group-item">
+                                                <div class="d-flex justify-content-between">
+                                                    <div>
+                                                        <div class="font-size15">User Registration</div>
+                                                        <div class="font-size12">Get notified when a new user is
+                                                            registered</div>
+                                                    </div>
+                                                    <div>
+                                                        <div class="block-relative text-right">
+                                                            <ui-switch
+                                                                [(ngModel)]="isNewUserRegistrationNotificationEnabled"
+                                                                id="newUserRegistration" size="small"
+                                                                (ngModelChange)="updateUserRegistrationNotificationSetting()">
+                                                            </ui-switch>
+                                                            <div class="preloader-cover"
+                                                                *ngIf="isUpdateNewUserRegistrationNotificationInProgress">
+                                                                <img src="assets/images/app-preloader.svg"
+                                                                    class="preloader20 preloader-middle">
+                                                            </div>
+                                                        </div>
+                                                        <div *ngIf="!isNewUserRegistrationNotificationEnabled"
+                                                            class="font-size12">Disabled</div>
+                                                        <div *ngIf="isNewUserRegistrationNotificationEnabled"
+                                                            class="font-size12">Enabled</div>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                            <li class="list-group-item">
+                                                <div class="d-flex justify-content-between">
+                                                    <div>
+                                                        <div class="font-size15">Suggested Content</div>
+                                                        <div class="font-size12">Get notified when a user suggests
+                                                            content</div>
+                                                    </div>
+                                                    <div>
+                                                        <div class="block-relative text-right">
+                                                            <ui-switch
+                                                                [(ngModel)]="isSuggestedContentNotificationEnabled"
+                                                                id="suggestedContent" size="small"
+                                                                (ngModelChange)="updateSuggestedContentNotificationSetting()">
+                                                            </ui-switch>
+                                                            <div class="preloader-cover"
+                                                                *ngIf="isUpdateSuggestedContentNotificationInProgress">
+                                                                <img src="assets/images/app-preloader.svg"
+                                                                    class="preloader20 preloader-middle">
+                                                            </div>
+                                                        </div>
+                                                        <div *ngIf="!isSuggestedContentNotificationEnabled"
+                                                            class="font-size12">Disabled</div>
+                                                        <div *ngIf="isSuggestedContentNotificationEnabled"
+                                                            class="font-size12">Enabled</div>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                            <li class="list-group-item">
+                                                <div class="d-flex justify-content-between">
+                                                    <div>
+                                                        <div class="font-size15">Redemption Request</div>
+                                                        <div class="font-size12">Get notified when user makes a
+                                                            redemption request</div>
+                                                    </div>
+                                                    <div>
+                                                        <div class="block-relative text-right">
+                                                            <ui-switch
+                                                                [(ngModel)]="isNewRedemptionRequestNotificationEnabled"
+                                                                id="newRedemptionRequest" size="small"
+                                                                (ngModelChange)="updateNewRedemptionRequestNotificationSetting()">
+                                                            </ui-switch>
+                                                            <div class="preloader-cover"
+                                                                *ngIf="isUpdateNewRedemptionRequestNotificationInProgress">
+                                                                <img src="assets/images/app-preloader.svg"
+                                                                    class="preloader20 preloader-middle">
+                                                            </div>
+                                                        </div>
+                                                        <div *ngIf="!isNewRedemptionRequestNotificationEnabled"
+                                                            class="font-size12">Disabled</div>
+                                                        <div *ngIf="isNewRedemptionRequestNotificationEnabled"
+                                                            class="font-size12">Enabled</div>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="tab-pane fade show" id="mobile-notifications" role="tabpanel"
+                            aria-labelledby="mobile-notifications-tab">
+
+                            <div class="row margin-top-20">
+                                <div class="col-xl-12">
+
+                                    <div class="border rounded-5 padding-v-10 padding-h-10">
+
+                                        <div class="font-size14 font-weight700">ADVOCATE NOTIFICATIONS</div>
+                                        <div class="font-size12">Manage Push Notifications for User</div>
+
+                                        <ul class="list-group list-group-flush list-group-sm margin-top-20">
+                                            <li class="list-group-item">
+                                                <div class="d-flex justify-content-between">
+                                                    <div>
+                                                        <div class="font-size15">Content Notification</div>
+                                                        <div class="font-size12">Notify user when a new content is
+                                                            published</div>
+                                                    </div>
+                                                    <div>
+                                                        <div class="block-relative text-right">
+                                                            <ui-switch [(ngModel)]="isPushNotificationEnabledForBlurbs"
+                                                                id="pushNotification" size="small"
+                                                                (ngModelChange)="updatePushNotification()">
+                                                            </ui-switch>
+                                                            <div class="preloader-cover"
+                                                                *ngIf="isUpdatePushNotificationInProgress">
+                                                                <img src="assets/images/app-preloader.svg"
+                                                                    class="preloader20 preloader-middle">
+                                                            </div>
+                                                        </div>
+                                                        <div *ngIf="!isPushNotificationEnabledForBlurbs"
+                                                            class="font-size12">Disabled</div>
+                                                        <div *ngIf="isPushNotificationEnabledForBlurbs"
+                                                            class="font-size12">Enabled</div>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </article>
+    </div>
+</div>

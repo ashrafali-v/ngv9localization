@@ -1,0 +1,695 @@
+<div class="row margin-h-0">
+    <div class="col-xl-12">
+
+        <article class="card p-3 rounded-10 border-0">
+            <div *ngIf="isTeamFetchError" class="alert alert-danger margin-v-10" role="alert">
+                <div>Oops! Something went wrong!Click <a href="/settings/teams">here</a> to reload this page.</div>
+            </div>
+            <div class="text-center text-muted"
+                *ngIf="!isTeamLoading && !isTeamFetchError && (Teams==undefined || Teams.length==0)">
+                <div class="icon icon-alert-circle font-size50"></div> <span class="font-size13"> This is a fresh start.
+                    Create a
+                    new team!</span>
+            </div>
+
+            <article class="row">
+                <div class="col">
+                    <h6 class="font-weight700 font-size14">TEAMS</h6>
+                    <p class="font-size12">Create and manage user team.</p>
+                </div>
+
+                <div class="col">
+                    <div class="row row justify-content-end">
+                        <div class="col-auto">
+                            <button type="button" (click)="addTeamPopUp(addTeam)" ngbTooltip="Add team"
+                                data-placement="bottom" class="btn btn-primary btn-block padding-v-5 rounded-5"><span
+                                    class="icon icon-plus"></span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </article>
+            <div>
+                <div class="row align-items-center justify-content-center h-100" *ngIf="isTeamLoading">
+                    <div class="col text-center"> <img src="assets/images/app-preloader.svg" class="img-fluid"> </div>
+                </div>
+                <div class="row" *ngIf="!isTeamLoading && !isTeamFetchError && Teams!=undefined && Teams.length>0">
+                    <div class="col-xl-6 col-lg-8 col-md-12">
+                        <div class="form-group margin-bottom-5"><label class="col-form-label" for="search">SEARCH
+                                BY</label>
+                            <div class="input-group">
+                                <div class="input-group-prepend"><span class="input-group-text icon icon-search"></span>
+                                </div>
+                                <input class="form-control form-control-sm"
+                                    *ngIf="!isTeamLoading && Teams!=undefined && Teams.length>0"
+                                    [(ngModel)]="teamSearchText" placeholder="Team name"
+                                    (ngModelChange)="teamCurrentPage = 1" type="text">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <table class="table responsive-table table-striped table-header-fixed"
+                    *ngIf="!isTeamLoading && !isTeamFetchError && Teams!=undefined && Teams.length>0">
+                    <thead>
+                        <tr>
+                            <th scope="col" class="width-30p">
+                                #
+                            </th>
+                            <th scope="col">
+                                Team
+                            </th>
+                            <th scope="col">
+                                Leaderboard
+                                View <span class="icon icon-info" ngbTooltip="Manage the leaderboard view for advocate."
+                                    data-placement="bottom" container="body"></span>
+                            </th>
+                            <th scope="col">
+                                Users
+                            </th>
+                            <th scope="col">Actions
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr
+                            *ngFor="let i=index; let team of Teams | filter : teamSearchText : '' : ['Title'] | slice: (teamCurrentPage-1) * teamPageSize : (teamCurrentPage-1) * teamPageSize + teamPageSize">
+                            <td data-label="#">
+                                {{(teamCurrentPage-1) * teamPageSize +i + 1}}
+                            </td>
+                            <td data-label="Team">
+                                <div class="font-weight700">
+                                    {{team.Title}}
+                                </div>
+                            </td>
+                            <td data-label="Leaderboard View">
+                                <button type="button" (click)="editTeamPopUp(editTeam,team)"
+                                    class="btn btn-link-underline badge badge-warning font-weight500"
+                                    *ngIf="!team.IsLeaderBoardViewEnabled">
+                                    LEADERBOARD DISABLED
+                                </button>
+                                <button type="button" (click)="editTeamPopUp(editTeam,team)"
+                                    *ngIf="team.IsLeaderBoardViewEnabled && team.IsTeamLeaderBoard"
+                                    class="btn btn-link-underline badge badge-secondary font-size12 font-weight500">
+                                    {{team.Title}}
+                                </button>
+                                <button type="button" (click)="editTeamPopUp(editTeam,team)"
+                                    *ngIf="team.IsLeaderBoardViewEnabled && !team.IsTeamLeaderBoard"
+                                    class="btn btn-link-underline badge badge-light font-weight500">
+                                    ALL TEAMS
+                                </button>
+                            </td>
+                            <td data-label="Users">
+                                <div class="form-check">
+                                    <div class="block-relative" *ngIf="team.UserCount>0">
+                                        <button type="button" class="btn btn-link btn-link-underline"
+                                            (click)="getUserListForTeam(team,teamuserlist)">{{team.UserCount}}</button>
+                                        <div class="preloader-cover" *ngIf="team.IsUserListForTeamLoading"> <img
+                                                src="assets/images/app-preloader.svg"
+                                                class="preloader20 preloader-middle"> </div>
+                                    </div>
+                                    <div *ngIf="team.UserCount==0" class="font-size16 font-weight700 text-muted-3">
+                                        {{team.UserCount}}
+                                    </div>
+                                </div>
+                            </td>
+                            <td data-label="Actions">
+                                <button type="button" class="btn btn-link ghost-btn ghost-btn-sm"
+                                    [ngbPopover]="teamMoreOptions" [autoClose]="true" aria-haspopup="true"
+                                    aria-expanded="false"><span class="icon icon-more-vertical"></span>
+                                    <ng-template #teamMoreOptions>
+                                        <button type="link" (click)="editTeamPopUp(editTeam,team)"
+                                            class="btn btn-link d-block padding-top-10 padding-h-5 margin-bottom-5 font-size12 btn-link-underline">
+                                            <span class="icon icon-edit"></span>&nbsp;Edit
+                                        </button>
+                                        <div class="block-relative">
+                                            <button
+                                                [ngbTooltip]="(Teams.length==1 ) ? 'There should be atleast one team.' : ''"
+                                                type="link" [disabled]="Teams.length==1"
+                                                (click)="deleteTeamPopUp(teamDelete,team)"
+                                                class="btn btn-link-danger d-block padding-v-10 padding-h-5 font-size12 btn-link-underline">
+                                                <span class="icon icon-trash"></span>&nbsp;Delete
+                                            </button>
+                                            <div *ngIf="isContentSourceFetchLoading" class="preloader-cover"> <img
+                                                    src="assets/images/app-preloader.svg"
+                                                    class="preloader20 preloader-middle"> </div>
+                                        </div>
+                                    </ng-template>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="row justify-content-between"
+                    *ngIf="!isTeamLoading && !isTeamFetchError && Teams!=undefined && Teams.length>0">
+                    <div class="col-xl-6 col-lg-6 col-md-12">
+                        <div class="border rounded-5 padding-h-5 padding-v-5">
+                            <div class="font-size13 font-weight700">
+                                Leaderboard View
+                            </div>
+                            <div class="margin-top-10">
+                                <ul class="list-group list-group-flush list-group-sm font-size12">
+                                    <li class="list-group-item"><span class="badge badge-light font-weight500"> ALL
+                                            TEAMS </span> Each advocates can view users from entire teams.</li>
+                                    <li class="list-group-item"><span
+                                            class="badge badge-warning font-weight500">LEADERBOARD DISABLED </span>
+                                        Leaderboard tab will be hidden for the advocates.</li>
+                                    <li class="list-group-item"><span class="badge badge-secondary font-weight500">TEAM
+                                            NAME </span> Leaderboard will include only users within specific team.</li>
+                                </ul>
+
+                                <div class="font-size13 font-weight700"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <ngb-pagination [rotate]="true" size='sm' [(page)]="teamCurrentPage"
+                        *ngIf="!isTeamLoading && Teams.length>teamPageSize" [pageSize]="teamPageSize"
+                        [collectionSize]="Teams.length" [maxSize]="5">
+                    </ngb-pagination>
+                </div>
+                <ng-template #teamDelete let-modal>
+                    <div class="modal-header">
+
+                        <div class="modal-title">
+                            <span class=" font-weight700 d-block">Delete Team</span>
+                        </div>
+
+                        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <ngb-tabset #t="ngbTabset" (tabChange)="beforeChange($event)">
+                            <ngb-tab id="team-contentsource" title="Content Source(s)"
+                                *ngIf="contentSourceListForTeam!=undefined && contentSourceListForTeam.length>0">
+                                <ng-template ngbTabContent>
+                                    <div class="margin-v-10">
+                                        <div class="alert alert-warning">There are associated content sources. Click
+                                            teams to
+                                            reassign them to another team.</div>
+                                        <table
+                                            class="table responsive-table table-striped table-header-fixed margin-top-10">
+                                            <thead>
+                                                <tr>
+                                                    <th scope="col" class="font-size11 text-left width-30p">
+                                                        #
+                                                    </th>
+                                                    <th scope="col" class="font-size11 text-left">
+                                                        Content Source(s)
+                                                    </th>
+                                                    <th scope="col" class="font-size11">
+                                                        Team
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody
+                                                *ngIf="contentSourceListForTeam!=undefined && contentSourceListForTeam.length>0">
+                                                <tr *ngFor="let contentSource of contentSourceListForTeam">
+                                                    <td data-label="ContentSourceTitle" class="font-size12 text-left">
+                                                        1
+                                                    </td>
+                                                    <td data-label="Content Source" class="font-size12 text-left">
+
+                                                        <div class="row no-gutters">
+                                                            <div
+                                                                class="width-60p user-thumb-image-sm-contain text-center margin-v-5 margin-right-10">
+                                                                <img class="default-image img-fluid rounded-sm blurb-thumb-image-sm"
+                                                                    src=" " alt="image of {{contentSource.Title}}">
+                                                            </div>
+                                                            <div class="width-8">
+                                                                <div
+                                                                    class="font-size12 font-weight600 text-lefttext-wrap word-break line-clamp2">
+                                                                    {{contentSource.Title}} </div>
+                                                            </div>
+                                                        </div>
+
+                                                    </td>
+                                                    <td data-label="Team" class="font-size12">
+
+                                                        <div class="form-group margin-v-10">
+                                                            <div class="input-group">
+                                                                <div class="input-group-prepend">
+                                                                    <span
+                                                                        class="input-group-text icon icon-users"></span>
+                                                                </div>
+                                                                <ng-select2 width="100%" id="teams"
+                                                                    class="flex-grow-auto" [data]="contentSource.Teams"
+                                                                    [(ngModel)]="contentSource.TeamId"
+                                                                    (ngModelChange)="contentSourceChange()"
+                                                                    placeholder="Choose a team">
+                                                                </ng-select2>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </ng-template>
+                            </ngb-tab>
+                            <ngb-tab id="team-user" title="User(s)" *ngIf="deleteTeamModel.UserCount>0"
+                                [disabled]="isTeamContentSourceReassignError">
+                                <ng-template ngbTabContent>
+                                    <div class="row">
+                                        <div class="col-xl-6 col-lg-12">
+                                            <div class="margin-v-10">
+                                                <div class="alert alert-warning">There are
+                                                    <strong>{{deleteTeamModel.UserCount}}</strong>
+                                                    users.
+                                                    Click teams to reassign these users to another team.</div>
+                                                <div class="form-group mb-0">
+                                                    <div class="input-group">
+                                                        <div class="input-group-prepend">
+                                                            <span class="input-group-text icon icon-users"></span>
+                                                        </div>
+                                                        <ng-select2 width="100%" id="userTeams" class="flex-grow-auto"
+                                                            [data]="userTeamListForDelete"
+                                                            [(ngModel)]="selectedTeamIdForUserTeam"
+                                                            (ngModelChange)="userTeamChange()"
+                                                            placeholder="Choose a team">
+                                                        </ng-select2>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </ng-template>
+                            </ngb-tab>
+                            <ngb-tab id="team-confirm" title="Confirm"
+                                [disabled]="isTeamContentSourceReassignError || selectedTeamIdForUserTeam == 0">
+                                <ng-template ngbTabContent>
+                                    <div class="alert alert-warning margin-v-10">
+                                        <ul
+                                            class="list-group list-group-flush list-group-sm bullet-list list-group-transparent">
+                                            <li class="list-group-item">Rewards associated will be removed.</li>
+                                            <li class="list-group-item">Content sources with only this team and
+                                                auto-approved are re-assinged.</li>
+                                            <li class="list-group-item">Registered/Invited users are re-assigned to new
+                                                team.</li>
+                                            <li class="list-group-item">Badges associated will be removed.</li>
+                                            <li class="list-group-item">Are you sure you want to delete this team ?</li>
+                                        </ul>
+                                    </div>
+                                </ng-template>
+                            </ngb-tab>
+                        </ngb-tabset>
+
+                        <div *ngIf="isContentSourceStep" class="margin-top-20">
+                            <button class="btn btn-outline-primary ghost-btn-sm font-size13"
+                                [disabled]="isTeamContentSourceReassignError" (click)="t.select('team-user')">Next
+                                Step&nbsp;<span class="icon icon-arrow-right"></span></button>
+                        </div>
+                        <div *ngIf="isUserStep" class="margin-top-20 d-flex justify-content-start">
+                            <div
+                                *ngIf="this.contentSourceListForTeam != undefined && this.contentSourceListForTeam.length >0">
+                                <button class="btn btn-outline-primary ghost-btn-sm font-size13"
+                                    (click)="t.select('team-contentsource')"><span
+                                        class="icon icon-arrow-left"></span>&nbsp; Previous Step</button>
+                            </div>
+                            <div>
+                                <button class="btn btn-outline-primary ghost-btn-sm font-size13 margin-left-10"
+                                    (click)="t.select('team-confirm')"
+                                    [disabled]="this.selectedTeamIdForUserTeam == 0">Next Step&nbsp;<span
+                                        class="icon icon-arrow-right"></span></button>
+                            </div>
+                        </div>
+                        <div *ngIf="isConfirmStep && deleteTeamModel.UserCount>0" class="margin-top-20">
+                            <button class="btn btn-outline-primary ghost-btn-sm font-size13"
+                                (click)="t.select('team-user')"><span class="icon icon-arrow-left"></span>&nbsp;Previous
+                                Step</button>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-link" (click)="modal.close('Close click')">Cancel</button>
+                        <div class="block-relative">
+                            <button [disabled]="isEnableDeleteTeamButton || !isConfirmStep" class="btn btn-danger"
+                                type="button" (click)="DeleteTeam()">Delete</button>
+                            <div *ngIf="isTeamDeleteLoading" class="preloader-cover"> <img
+                                    src="assets/images/app-preloader.svg" class="preloader20 preloader-middle">
+                            </div>
+                        </div>
+                    </div>
+                </ng-template>
+
+                <ng-template #addTeam let-modal>
+                    <form class="form-group m-0" [formGroup]="teamForm" (ngSubmit)="addNewTeam()">
+                        <div class="modal-header">
+                            <div class="modal-title">
+                                <span class=" font-weight700 d-block">Create Team</span>
+                            </div>
+
+                            <button type="button" class="close" aria-label="Close"
+                                (click)="modal.dismiss('Cross click')">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <div class="form-group mb-0">
+                                                <label class="col-form-label" for="title">Team Name</label>
+                                                <div class="input-group">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text icon icon-users"></span>
+                                                    </div>
+                                                    <input formControlName="title" type="text" id="title" name="title"
+                                                        class="form-control" autocomplete="off"
+                                                        placeholder="Enter team name" />
+                                                </div>
+                                            </div>
+                                            <div class="alert alert-light border border-light margin-top-5"
+                                                *ngIf="!teamCreateSubmitted">
+                                                <ul
+                                                    class="list-group bullet-list list-group-flush font-size13 list-group-sm">
+                                                    <li class="list-group-item">
+                                                        Team name allows only alphabets and numbers and special
+                                                        charaters
+                                                        (@#-.()) and should start with an alphabet with minimum 3
+                                                        characters and maximum 50 characters.</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                        <div class="col-12 margin-v-10">
+                                            <div class="alert alert-danger" role="alert"
+                                                *ngIf="teamCreateSubmitted && formControl().title.errors">
+                                                <div *ngIf="formControl().title.errors.required">Please enter a team
+                                                    name!
+                                                </div>
+                                                <div *ngIf="formControl().title.hasError('maxlength')">
+                                                    Team name should not be more than 50 characters!</div>
+                                                <div *ngIf="formControl().title.hasError('minlength')">
+                                                    Team name should have minimum 3 characters.</div>
+                                                <div *ngIf="formControl().title.errors.pattern">
+                                                    Team name allows only alphabets and numbers and special charaters
+                                                    (@#-.()) and should start with an alphabet.</div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                    <div class="row margin-top-15">
+                                        <div class="col-12">
+                                            <div class="border rounded-5 padding-bottom-10 padding-h-10">
+                                                <div class="row no-gutters justify-content-between">
+                                                    <div class="col-6">
+                                                        <div class="font-size13 font-weight700 margin-top-5">Leaderboard
+                                                            View <span class="icon icon-info"
+                                                                ngbTooltip="Manage the leaderboard view for advocates."
+                                                                data-placement="top"></span></div>
+                                                        <div class="font-size11">Manage leaderboard view for users in
+                                                            this team.</div>
+                                                    </div>
+                                                    <div class="col-3 text-right margin-top-3">
+                                                        <ui-switch [(ngModel)]="addTeamModel.IsLeaderBoardViewEnabled"
+                                                            size="small" [ngModelOptions]="{standalone: true}">
+                                                        </ui-switch>
+                                                        <div class="font-size11"
+                                                            *ngIf="addTeamModel.IsLeaderBoardViewEnabled">Enabled</div>
+                                                        <div class="font-size11"
+                                                            *ngIf="!addTeamModel.IsLeaderBoardViewEnabled">Disabled
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row no-gutters justify-content-between">
+                                                    <div class="col-12" *ngIf="addTeamModel.IsLeaderBoardViewEnabled">
+                                                        <hr>
+                                                        <div class="d-block margin-bottom-5">
+                                                            <div class="toggle-radio"
+                                                                *ngIf="addTeamModel.IsLeaderBoardViewEnabled">
+                                                                <input type="radio" name="addTeam" value="weight"
+                                                                    id="allTeam"
+                                                                    [checked]="!addTeamModel.IsTeamLeaderBoard"
+                                                                    (change)="setLeaderboard()" />
+                                                                <label for="allTeam"
+                                                                    class="font-size12 font-weight500">All
+                                                                    Teams</label>
+                                                                <input type="radio" name="addTeam" value="dimensions"
+                                                                    id="newTeam"
+                                                                    [checked]="addTeamModel.IsTeamLeaderBoard"
+                                                                    (change)="setLeaderboard()" />
+                                                                <label for="newTeam"
+                                                                    class="font-size12 font-weight500">Current
+                                                                    Team</label>
+                                                            </div>
+                                                        </div>
+                                                        <div class="font-size11"
+                                                            *ngIf="!addTeamModel.IsTeamLeaderBoard">
+                                                            Leaderboard will feature users from entire teams.
+                                                        </div>
+                                                        <div class="font-size11" *ngIf="addTeamModel.IsTeamLeaderBoard">
+                                                            Leaderboard
+                                                            will feature users from this team only.
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-link" aria-label="Cancel"
+                                (click)="modal.close('Close click')">Cancel</button>
+
+                            <div class="block-relative">
+                                <button class="btn btn-primary" type="submit" id="btnCreateTeam">Create</button>
+                                <div *ngIf="isTeamCreateLoading" class="preloader-cover"> <img
+                                        src="assets/images/app-preloader.svg" class="preloader20 preloader-middle">
+                                </div>
+                            </div>
+
+                        </div>
+                    </form>
+                </ng-template>
+
+                <ng-template #teamuserlist let-modal>
+                    <div class="modal-header">
+
+                        <div class="modal-title">
+                            <span class="font-size11 text-muted font-weight500">TEAM -
+                                {{selectedTeamNameForUserList}}</span>
+                            <span class=" font-weight700 d-block">Users</span>
+                        </div>
+
+                        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-xl-6 col-lg-8 col-md-12">
+                                <div class="form-group margin-bottom-5"><label class="col-form-label"
+                                        for="search">SEARCH
+                                        BY</label>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend"><span
+                                                class="input-group-text icon icon-search"></span>
+                                        </div>
+                                        <input class="form-control form-control-sm"
+                                            *ngIf="!isTeamLoading && Teams!=undefined && Teams.length>0"
+                                            [(ngModel)]="userSearchText" placeholder="Name,Email"
+                                            (ngModelChange)="teamCurrentPage = 1" type="text">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="d-block max-height-30vw overflow-y-auto">
+                            <table class="table responsive-table table-striped table-header-fixed">
+                                <thead>
+                                    <tr>
+                                        <th scope="col" class="font-size11 text-left width-30p">
+                                            #
+                                        </th>
+                                        <th scope="col" class="font-size11 text-left">
+                                            Name
+                                        </th>
+                                        <th scope="col" class="font-size11">
+                                            Rank
+                                        </th>
+                                        <th scope="col" class="font-size11">
+                                            Points
+                                        </th>
+                                        <th scope="col" class="font-size11">
+                                            Email
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody *ngIf="userListForTeam!=undefined && userListForTeam.length>0">
+                                    <tr
+                                        *ngFor="let user of userListForTeam | filter: userSearchText : '' : ['DisplayName','UserName'];let i = index;">
+
+                                        <td data-label="Name" class="font-size10 text-left">
+                                            {{i + 1}}
+                                        </td>
+                                        <td data-label="Name" class="font-size12 text-left">
+                                            <div
+                                                class="width-30p padding-right-5 margin-top-5 d-inline-block user-thumb-image-sm-contain">
+                                                <img [src]="user.PictureUrl"
+                                                    class="img-fluid rounded-sm user-thumb-image-sm  default-image"
+                                                    alt="{{user.DisplayName}}">
+                                            </div>
+                                            <div class="width-6 padding-left-0 d-inline-block">
+                                                <div
+                                                    class="font-weight500 font-size10 text-wrap word-break line-clamp1 text-left">
+                                                    {{user.RoleName}}</div>
+                                                <div
+                                                    class="font-weight700 font-size12 text-wrap word-break line-clamp2 text-left">
+                                                    {{user.DisplayName}}</div>
+
+                                            </div>
+                                        </td>
+                                        <td data-label="Rank" class="font-size12">
+                                            <div class="text-wrap word-break line-clamp2">
+                                                {{user.Rank}}
+                                            </div>
+                                        </td>
+                                        <td data-label="Points" class="font-size12">
+                                            <div class="text-wrap word-break">
+                                                {{user.UserPoints}}
+                                            </div>
+                                        </td>
+                                        <td data-label="Email" class="font-size12">
+                                            <div class="text-wrap word-break line-clamp1">
+                                                {{user.UserName}}
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-link" (click)="modal.close('Close click')">Close</button>
+                    </div>
+                </ng-template>
+
+                <ng-template #editTeam let-modal>
+                    <form class="form-group m-0" [formGroup]="editForm" (ngSubmit)="editTeamSettings()">
+                        <div class="modal-header">
+
+                            <div class="modal-title">
+                                <span class=" font-weight700 d-block">Edit Team</span>
+                            </div>
+
+                            <button type="button" class="close" aria-label="Close"
+                                (click)="modal.dismiss('Cross click')">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <div class="form-group mb-0">
+                                                <label class="col-form-label" for="title">Team Name</label>
+                                                <div class="input-group">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text icon icon-users"></span>
+                                                    </div>
+                                                    <input formControlName="title" type="text" id="title" name="title"
+                                                        class="form-control" autocomplete="off"
+                                                        [(ngModel)]="editTeamModel.Title"
+                                                        placeholder="Edit Team Name" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-12">
+                                            <div *ngIf="teamEditSubmitted && editFormcontrol().title.errors && editFormcontrol().title.errors.required"
+                                                class="alert alert-danger my-1" role="alert">Please enter a team name!
+                                            </div>
+                                            <div *ngIf="teamEditSubmitted && editFormcontrol().title.errors && editFormcontrol().title.hasError('maxlength')"
+                                                class="alert alert-danger my-1" role="alert">
+                                                A team name should not be more than 50 characters!</div>
+                                            <div *ngIf="teamEditSubmitted && editFormcontrol().title.errors && editFormcontrol().title.hasError('minlength')"
+                                                class="alert alert-danger my-1" role="alert">
+                                                A team name should have minimum 3 characters.</div>
+                                            <div *ngIf="teamEditSubmitted && editFormcontrol().title.errors && editFormcontrol().title.errors.pattern"
+                                                class="alert alert-danger my-1" role="alert">
+                                                A team name allows only alphabets and numbers and special charaters
+                                                (@#-.())
+                                                and
+                                                should start with an alphabet.Please check your input.</div>
+                                        </div>
+                                    </div>
+                                    <div class="row margin-top-15">
+                                        <div class="col-12">
+                                            <div class="border rounded-5 padding-bottom-10 padding-h-10">
+                                                <div class="row no-gutters justify-content-between">
+                                                    <div class="col-6">
+                                                        <div class="font-size13 font-weight700 margin-top-5">Leaderboard
+                                                            View <span class="icon icon-info"
+                                                                ngbTooltip="Manage the leaderboard view for advocates. Learn More"
+                                                                data-placement="top"></span></div>
+                                                        <div class="font-size11">Manage leaderboard view for users in
+                                                            this team.</div>
+                                                    </div>
+                                                    <div class="col-3 text-right margin-top-3">
+                                                        <ui-switch [(ngModel)]="editTeamModel.IsLeaderBoardViewEnabled"
+                                                            size="small" [ngModelOptions]="{standalone: true}">
+                                                        </ui-switch>
+                                                        <div class="font-size11"
+                                                            *ngIf="editTeamModel.IsLeaderBoardViewEnabled">Enabled</div>
+                                                        <div class="font-size11"
+                                                            *ngIf="!editTeamModel.IsLeaderBoardViewEnabled">Disabled
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row no-gutters justify-content-between">
+                                                    <div class="col-12" *ngIf="editTeamModel.IsLeaderBoardViewEnabled">
+                                                        <hr>
+                                                        <div class="d-block margin-bottom-5">
+                                                            <div class="toggle-radio">
+                                                                <input type="radio" name="addTeam" value="weight"
+                                                                    id="allTeam"
+                                                                    [checked]="!editTeamModel.IsTeamLeaderBoard"
+                                                                    (change)="editLeaderboard()" />
+                                                                <label for="allTeam"
+                                                                    class="font-size12 font-weight500">All
+                                                                    Teams</label>
+                                                                <input type="radio" name="addTeam" value="dimensions"
+                                                                    id="newTeam"
+                                                                    [checked]="editTeamModel.IsTeamLeaderBoard"
+                                                                    (change)="editLeaderboard()" />
+                                                                <label for="newTeam"
+                                                                    class="font-size12 font-weight500">Current
+                                                                    Team</label>
+                                                            </div>
+                                                        </div>
+                                                        <div class="font-size11"
+                                                            *ngIf="!editTeamModel.IsTeamLeaderBoard">
+                                                            Leaderboard will feature users from entire teams
+                                                        </div>
+                                                        <div class="font-size11"
+                                                            *ngIf="editTeamModel.IsTeamLeaderBoard">
+                                                            Leaderboard
+                                                            will feature users from this team only.
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-link" aria-label="Cancel"
+                                (click)="modal.close('Close click')">Cancel</button>
+                            <div class="block-relative">
+                                <button class="btn btn-primary" type="submit" id="btnEditTeam">Save</button>
+                                <div *ngIf="isTeamEditLoading" class="preloader-cover"> <img
+                                        src="assets/images/app-preloader.svg" class="preloader20 preloader-middle">
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+
+                </ng-template>
+            </div>
+        </article>
+    </div>
+</div>

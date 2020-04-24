@@ -1,0 +1,16 @@
+<div *ngIf="isActivationInProgress" class="row align-items-center justify-content-center h-100">
+    <div class="row">
+        <div class="col">
+            <img src="assets/images/app-preloader.svg" class="img-fluid">
+        </div>
+    </div>
+    <div class="row">
+        Please wait while we activate the SMTP configurations you set...
+    </div>
+</div>
+<div *ngIf="smtpActivationSuccessful" class="alert alert-success" role="alert">
+The SMTP configurations you set has been activated. Please click <a routerLink="/settings/configurations">here</a> to see the configurations.
+</div>
+<div *ngIf="smtpActivationFailed" class="alert alert-danger" role="alert">
+    {{smtpActivationFailureMessage}}
+</div>

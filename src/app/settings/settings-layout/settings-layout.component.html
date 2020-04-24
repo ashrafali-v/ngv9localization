@@ -1,0 +1,45 @@
+<article class="settings-header">
+    <div class="grid-container grid-container-2 margin-top-20 margin-bottom-30">        
+    <div>
+        <button (click)="toggleSidebar()" class="sidebar-toggle-btn"><span class="icon icon-menu"></span></button>
+    </div>
+    <div>
+        <h3 class="font-weight500 line-height1 margin-left-20"> Settings</h3>
+    </div>
+    </div>
+</article>
+
+<div class="settingsWrapper">
+    <div id="settings-sidebar" class="{{sideBarHideClass}} settings-sidebar">
+        <nav class="fixed-sidebar">
+            <ul class="list-group link-list-group font-size13 overflow-x-hide">
+                <li class="list-group-item">
+                    <a routerLink="/settings/channels" routerLinkActive="active-link"
+                        class="page-link">Channel<span *ngIf="hasExpiredTokens" 
+                        class="link-error"></span>                        
+                    </a></li>
+                <li class="list-group-item"><a routerLink="/settings/users" class="page-link"
+                        routerLinkActive="active-link">User</a></li>
+                <li class="list-group-item"><a routerLink="/settings/teams" class="page-link"
+                        routerLinkActive="active-link">Team</a></li>
+                <li class="list-group-item"><a  routerLink="/settings/content"class="page-link"
+                        routerLinkActive="active-link">Content</a></li>
+                <li class="list-group-item"><a routerLink="/settings/categories" class="page-link"
+                        routerLinkActive="active-link">Category</a></li>
+                <li class="list-group-item"><a routerLink="/settings/analytics" class="page-link"
+                        routerLinkActive="active-link">Analytics</a></li>
+                <li class="list-group-item"><a routerLink="/settings/notifications" class="page-link"
+                        routerLinkActive="active-link">Notification</a></li>
+                <li class="list-group-item"><a routerLink="/settings/points" class="page-link"
+                        routerLinkActive="active-link">Point Plan</a></li>
+                <li class="list-group-item"><a routerLink="/settings/configurations" class="page-link"
+                        routerLinkActive="active-link">Configuration</a></li>
+            </ul>
+        </nav>
+    </div>
+
+    <!-- Page content -->
+    <div class="settings-content">
+        <router-outlet></router-outlet>
+    </div>
+</div>

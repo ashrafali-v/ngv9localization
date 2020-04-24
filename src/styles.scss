@@ -54,5 +54,4 @@ a{  transition: all 0.35s ease-in-out, background-color 0.35s ease-in-out, backg
 body{@include font-stack();
 @include font-render();
 color: $body-text-base;
-font-size: calc($size16 + 0.5vw);
 }

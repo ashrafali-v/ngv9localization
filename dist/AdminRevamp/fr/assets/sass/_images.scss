@@ -1,0 +1,20 @@
+ /*++++++++++++++++++++++ do not edit here ++++++++++++++++++++++ */
+ @import "variables";
+ @import "mixins";
+ /*++++++++++++++++++++++ do not edit here ++++++++++++++++++++++ */
+
+ .tenant-logo-container{max-height:$size80;width:$size269; overflow: hidden;border-radius: $size10;padding:$size3;margin:0 $size20;background: $white;border:$size3 solid;border-color:lighten($tenant-color, 45%);outline: none;}
+ .tenant-logo-container:hover{border-color:lighten($tenant-color, 25%)}
+ .tenant-logo{max-height:$size70;max-width:$size100pr;border-radius:$size5;}
+ .auth-logo-container{display: block;width:$size90;max-width:$size90;height: auto;}
+ .profile-image-thumb{display: block;width: $size40;max-height: $size40; border-radius: $size10;border: 3px solid $dark-blue;background:$dark-blue;overflow: hidden;margin:0;padding:0;}
+ .default-image{text-indent: -9999px;position: relative;width: $size100pr;height: $size100pr;display: block;
+&::after{position: absolute;top: 0;left: 0;right: 0;margin: 0 auto; display: block;width: $size100pr;height: $size100pr;border-radius: $size2; content: '';background: $white url('assets/images/socxo-broken-image.svg') no-repeat center center;}
+}
+.blurb-thumb-image-contain{max-width: $size60;max-height: $size60;}
+// .blurb-thumb-default-contain:before{width: $size60;height: $size60;content: '\e97a';font-family:'feather-icon';font-size: $size40;margin:0 auto;color:$pastel-blue;}
+.blurb-thumb-image{max-height:$size60;overflow: hidden; display: flex;flex-flow: row nowrap;-o-object-fit: cover;object-fit: cover;-o-object-position: top;object-position: top; align-items: center;font-size: $size2;}
+.user-thumb-image-sm-contain{width: $size30;height: $size30;display: inline-block;margin-right: $size3;}
+.user-thumb-image-sm{max-height:$size30;overflow: hidden; display: flex;flex-flow: row nowrap;-o-object-fit: cover;object-fit: cover;-o-object-position: top;object-position: top; align-items: center;font-size: $size2;}
+.user-thumb-image-contain{width: $size30;height: $size30;display: inline-block;margin-right: $size3;}
+.user-thumb-image{max-height:$size30;overflow: hidden; display: flex;flex-flow: row nowrap;-o-object-fit: cover;object-fit: cover;-o-object-position: top;object-position: top; align-items: center;font-size: $size2;}

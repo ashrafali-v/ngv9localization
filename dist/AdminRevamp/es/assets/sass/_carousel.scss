@@ -1,0 +1,28 @@
+
+ /*++++++++++++++++++++++ do not edit here ++++++++++++++++++++++ */
+ @import "variables";
+ @import "mixins";
+ /*++++++++++++++++++++++ do not edit here ++++++++++++++++++++++ */
+
+ .carousel-caption {position: static;right: auto;bottom: auto;left: auto;z-index: 0;padding: $size20 0;color: $body-text-base;text-align: left;}
+ 
+//
+// Left/right controls for nav
+//
+
+.carousel-control-prev,
+.carousel-control-next {position: static;top: auto;bottom: auto;z-index: 1;display: flex;align-items: center;justify-content: center;width: 100%;color:inherit;text-align: center;opacity: 1;}
+.carousel-control-prev {left: auto;}
+.carousel-control-next {right: auto;}
+.carousel-control-prev-icon {background-image: none;} 
+.carousel-control-next-icon{background-image: none;}
+.carousel-indicators li {
+    box-sizing: content-box;
+    -webkit-box-flex: 0;
+    flex: 0 1 auto;
+    width: $size10;
+    height: $size5;margin:0 $size3;text-indent: -999px;cursor: pointer;background-color: $blue;background-clip: padding-box;border-top: $size5 solid transparent;border-bottom: $size5 solid transparent;
+    opacity: .5;
+    -webkit-transition: opacity .6s ease;
+    transition: opacity .6s ease;
+}

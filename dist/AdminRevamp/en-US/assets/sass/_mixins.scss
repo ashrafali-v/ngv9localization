@@ -1,0 +1,154 @@
+ /*++++++++++++++++++++++ do not edit here ++++++++++++++++++++++ */
+ @import "variables";
+ /*++++++++++++++++++++++ do not edit here ++++++++++++++++++++++ */
+
+
+@mixin font-render {
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        text-rendering: optimizeLegibility;
+        text-shadow:0 0 1px transparent;
+} 
+@mixin tenant-line {
+    height: 5px;
+    background: $tenant-color;
+    border-radius: $size10;
+}
+@mixin word-break {
+    white-space: normal!important;
+    word-break: break-all;
+} 
+@mixin font-stack {
+    font-family: -apple-system,BlinkMacSystemFont, "Segoe UI", "Noto", "Helvetica Neue",Arial, sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji" !important;       
+    font-weight: 400;
+    line-height: 1.5; 
+}
+@mixin pos-rel {
+    position: relative;
+}
+@mixin pos-abs {
+    position: absolute;
+}
+@mixin dis-block {
+    display: block;
+}
+@mixin dis-inline {
+    display: inline;
+}
+@mixin margin-no {
+    margin:0;
+}
+@mixin padding-no {
+    padding:0;
+}
+@mixin height100per {
+    height: 100%;
+}
+@mixin height100vh {
+    height: 100vh;
+}
+@mixin width100per {
+    width: 100%;
+}
+@mixin width100vh {
+    width: 100vh;
+}
+@mixin list-style-no {
+    list-style:none;
+}
+@mixin form-input-height {
+   height:calc(1.90em + .80rem + 6px);
+}
+@mixin form-input-height-sm {
+   height:calc(1.590em + .580rem + 1px);
+}
+@mixin nav-menu-link ($nav-menu-text, $nav-menu-text-dark, $nav-menu-link, $nav-menu-active, $nav-menu-hover) {
+    & {
+        color: $nav-menu-text;
+        background: $nav-menu-link;
+        &:visited {
+            color: $nav-menu-text;
+        background: $nav-menu-active;
+        }
+        &:hover {
+            color: $nav-menu-text-dark;
+        background: $nav-menu-hover;
+        }
+        &:active, &:focus {
+            color: $nav-menu-text-dark;
+        background: $nav-menu-active;
+        }
+    }
+}
+@mixin icon-nav-link ($icon-link, $icon-hover, $icon-focus, $icon-bg-focus) {
+    & {
+        color: $icon-link;
+        background: transparent;
+        &:visited {
+        color: $icon-link;
+        background: transparent;
+        }
+        &:hover {
+        color: $icon-hover;
+        background: $icon-bg-focus;
+        }
+        &:active, &:focus {
+        color: $icon-focus;
+        background: $icon-bg-focus;
+        }
+    }
+}
+@mixin navigation-link ($navig-link, $navig-link-bg, $navig-border, $navig-link-hover) {
+    & {
+        color: $navig-link;
+        border:0 solid $navig-border;
+        outline: 0 solid $navig-border;
+        background: $navig-link-bg;
+        &:visited {
+        color: $navig-link;
+        background: $navig-link-bg;
+        }
+        &:hover {
+        color: $navig-link;
+        background: $navig-link-hover;
+        }
+        &:active, &:focus {
+        color: $navig-link;
+        background: $navig-link-hover;
+        }
+    }
+}
+@mixin bordered-ghost-btn ($border-btn-link, $border-btn-bg) {
+    & {
+        color: $border-btn-bg;
+        background: transparent;
+        border:$size1 solid $border-btn-bg;
+        &:visited {
+        color: $border-btn-bg;
+        background: transparent;
+        border:$size1 solid $border-btn-bg;
+        }
+        &:hover {
+        color: $border-btn-link;
+        background: $border-btn-bg;
+        border:$size1 solid $border-btn-bg;
+        }
+        &:active, &:focus {
+        color: $border-btn-link;
+        background: $border-btn-bg;
+        border:$size1 solid $border-btn-bg;
+        }
+    }
+}
+
+/*++++++++++++++++++++++++++++++ radio - toggle +++++++++++++++++++++++++++++++++++ */
+@mixin hideInput {width: 0; height: 0; position: absolute; left: -9999px;}
+@mixin radio-toggle-breakpoint($point) {
+	@if $point == 1100 {
+		@media (max-width: 1100px) { @content ; }
+	}
+	@else if $point == 800 {
+		@media (max-width: 800px) { @content ; }
+	}
+}
+/*++++++++++++++++++++++++++++++ radio - toggle +++++++++++++++++++++++++++++++++++ */

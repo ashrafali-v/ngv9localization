@@ -1,0 +1,60 @@
+
+ /*++++++++++++++++++++++ do not edit here ++++++++++++++++++++++ */
+ @import "variables";
+ @import "mixins";
+ /*++++++++++++++++++++++ do not edit here ++++++++++++++++++++++ */
+
+.font-size8{font-size: $size8}
+.font-size9{font-size: $size9}
+.font-size10{font-size: $size10}  
+.font-size11{font-size: $size11} 
+.font-size12{font-size: $size12}  
+.font-size13{font-size: $size13}  
+.font-size14{font-size: $size14} 
+.font-size15{font-size: $size15}
+.font-size16{font-size: $size16}
+.font-size17{font-size: $size17}
+.font-size18{font-size: $size18}
+.font-size19{font-size: $size19}
+.font-size20{font-size: $size20}
+.font-size21{font-size: $size21}
+.font-size22{font-size: $size22}
+.font-size23{font-size: $size23}
+.font-size24{font-size: $size24}
+.font-size25{font-size: $size25}
+.font-size30{font-size: $size30}
+.font-size35{font-size: $size35}
+.font-size40{font-size: $size40}
+.font-size50{font-size: $size50}
+
+.font-weight100{font-weight: 100;}
+.font-weight300{font-weight: 300;}
+.font-weight400{font-weight: 400;}
+.font-weight500{font-weight: 500;}
+.font-weight600{font-weight: 600;}
+.font-weight700{font-weight: 700;}
+.font-weight800{font-weight: 800;}
+
+.lowercase{text-transform: lowercase;}
+.uppercase{text-transform: uppercase;}
+.capitalize{text-transform: capitalize;} 
+
+.text-muted{opacity: 0.5;}
+.text-muted-0{opacity: 1;}
+.text-muted-1{opacity: 0.95;}
+.text-muted-2{opacity: 0.7;}
+.text-muted-3{opacity: 0.5;}
+.text-muted-4{opacity: 0.3;}
+.text-muted-5{opacity: 0.2;}
+
+.text-italic{font-style: italic;}
+.word-break{word-break: break-all;}
+/* ++++++++++++ line clamp +++++++++++++++++++ */
+.line-clamp1{display: -webkit-box;-webkit-line-clamp: 1;-webkit-box-orient: vertical;overflow: hidden;}
+.line-clamp2{display: -webkit-box;-webkit-line-clamp: 2;-webkit-box-orient: vertical;overflow: hidden;}
+.line-clamp3{display: -webkit-box;-webkit-line-clamp: 3;-webkit-box-orient: vertical;overflow: hidden;}
+.line-clamp4{display: -webkit-box;-webkit-line-clamp: 4;-webkit-box-orient: vertical;overflow: hidden;}
+/* ++++++++++++ line clamp +++++++++++++++++++ */
+
+.message-square:before{content:"\e991";font-family:feather-icon;font-style: normal;font-size: $size14;margin-right: 5px;padding: 0;display: inline-block;}
+.message-bubble:before{content:"\e990";font-family:feather-icon;font-style: normal;font-size: $size14;margin-right: 5px;padding: 0;display: inline-block;}

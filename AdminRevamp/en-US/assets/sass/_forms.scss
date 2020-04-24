@@ -1,0 +1,130 @@
+ /*++++++++++++++++++++++ do not edit here ++++++++++++++++++++++ */
+ @import "variables";
+ @import "mixins";
+ /*++++++++++++++++++++++ do not edit here ++++++++++++++++++++++ */
+ 
+.password-container{position: relative;display: block;
+.password-control{position: absolute;right: $size10;top: $size40;}
+}
+.icon-filled-bg{padding: $size4;background: $danger-bg-color;font-weight: 800;border-radius: $size4;}
+.col-form-label{font-size:$size10;text-transform:uppercase;padding-top:$size10;padding-bottom:0;letter-spacing:0.85px;font-weight: 500;}
+.input-group-text{padding: $size2 $size8;border-radius:$form-border-radius;font-size: $size13;}
+.form-check{padding-left: 0;}
+.form-check-label{font-size:$size13;}
+.form-control{ @include form-input-height();padding:$size6 $size12;font-size:$size14;border-radius:$form-border-radius;border-color:$link-bg-blue;background-color:rgba(255, 255, 255, 0.801)}
+.form-control-sm{ @include form-input-height-sm();padding:$size3 $size9;font-size:$size13;}
+.text-area-height{max-height: $size80;min-height: $size80;}
+
+/*+++++++++++ form-validations +++++++++++++++++++++ */
+.alert{padding: .43rem .65rem;font-size: $size13;}
+.alert-danger{background-color: $danger-light-color;border-color: $danger-base-color;color: $danger-text-color;}
+.alert-warning{background-color: $warning-light-color;border-color: $warning-base-color;color: $warning-text-color;}
+.alert-success{background-color: $success-light-color;border-color: $success-base-color;color: $success-text-color;}
+/*+++++++++++ form-validations +++++++++++++++++++++ */
+
+
+/*+++++++++++ checkbox and radio +++++++++++++++++++++ */
+label {position: relative;}
+.checkbox-theme {
+	position: absolute;
+	clip: rect(0, 0, 0, 0);
+	&+label {display: flex;justify-items:center;
+		&::before {
+			content: ' ';
+			display: inline-block;
+			margin-right:$size5;
+			margin-top: $size2;
+			margin-bottom: $size2;
+			width: $size20;
+			height: $size20;
+			line-height:$size16;
+			transition: all .5s;
+			border: $size2 solid $pale-dark-blue;
+			border-radius: $size3;
+			overflow: hidden;
+		}
+	}
+	&:checked {
+		&+label {
+			&::before {
+				content: '\e92d';
+				font-family: 'feather-icon';
+				font-size: $size17;
+				line-height: $size15;
+				color: $white; 
+				background:$blue;
+				border-color:$blue;
+			} 
+		}
+	}
+}
+.radio-theme {
+	position: absolute;
+	clip: rect(0, 0, 0, 0);
+	&+label {
+		&::before {
+			content: '\a0';
+			display: inline-block;
+			margin: .2em .5em;
+			width: $size15;
+			height: $size15;
+			line-height: .75em;
+			transition: all .5s;
+			border: $size2 solid $pale-dark-blue;
+			border-radius: 50%;
+		}
+	}
+	&:checked {
+		&+label {
+			&::before {
+				content: '\a0';
+				background: $primary;
+				border: $size2 solid $white;
+				box-shadow: inset 0 0 0 1px $white, 0 0 0 1px $pale-dark-blue;
+			}
+		}
+	}
+}
+
+/*+++++++++++ checkbox and radio +++++++++++++++++++++ */
+
+/*+++++++++++ select2 box +++++++++++++++++++++ */
+.select2-results__option {font-size: $size13;}
+.select2-container--default .select2-selection--single {border-color:$link-bg-blue;font-size: $size14;}
+.select2-container--default .select2-search--dropdown .select2-search__field {border-radius: $size5;border-color:$link-bg-blue;outline: none;font-size: $size13;}
+.select2-container--default .select2-results__option--highlighted[aria-selected] {background: $blue;}
+/*+++++++++++ select2 box +++++++++++++++++++++ */
+
+
+/*+++++++++++ radio - toggle +++++++++++++++++++++ */ 
+.toggle-radio {
+	margin: 0; box-sizing: border-box;font-size: 0;display: flex; flex-flow: row nowrap;justify-content: flex-start; align-items: stretch;
+	input {@include hideInput;}
+	input + label {
+		margin: 0;padding:$size3 $size8; box-sizing: border-box;position: relative; display: inline-block;border: solid 1px #DDD; background-color: #FFF;
+		line-height: 140%;text-align: center;transition: 	border-color .15s ease-out, 
+					color .25s ease-out, 
+					background-color .15s ease-out,
+					box-shadow .15s ease-out;		
+		/* ADD THESE PROPERTIES TO SWITCH FROM AUTO WIDTH TO FULL WIDTH */
+		/*flex: 0 0 50%; display: flex; justify-content: center; align-items: center;*/
+		/* ----- */		
+		&:first-of-type {border-radius: 6px 0 0 6px; border-right: none;}
+		&:last-of-type {border-radius: 0 6px 6px 0; border-left: none;}
+	}
+	input:hover + label {border-color: $link-bg-blue-focus;}
+	input:checked + label {
+		background-color: $blue;
+		color: $white; 
+		border-color: $blue;
+		z-index: 1;
+	} 
+	@include radio-toggle-breakpoint(800) {
+		input + label {
+			padding: .75rem .25rem;
+			flex: 0 0 50%;
+			display: flex; justify-content: center; align-items: center;
+		}
+	}
+} 
+/*+++++++++++ radio - toggle +++++++++++++++++++++ */

@@ -1,0 +1,188 @@
+ /*++++++++++++++++++++++ do not edit here ++++++++++++++++++++++ */
+ @import "variables";
+ @import "mixins";
+ /*++++++++++++++++++++++ do not edit here ++++++++++++++++++++++ */
+
+.btn{font-weight: 500;}
+.btn-primary.focus, .btn-primary:focus {box-shadow:none;}
+.btn-primary:not(:disabled):not(.disabled):active:focus{box-shadow: none;}
+.btn-primary-sm{padding:$size3 $size10;border-radius: $size4;}
+.btn-danger{color: $white;background-color: $danger-base-color;border-color: $danger-base-color;
+&:hover, &:focus{box-shadow:none;background-color: $danger-focus-color;border-color: $danger-focus-color;}
+}  
+.btn-warning{color: $white;background-color:$warning-base-color;border-color: $warning-base-color;
+&:visited{color: $white;background-color: $warning-base-color;border-color: $warning-base-color;}
+&:disabled, .disabled{color: $white;background-color: $warning-base-color;border-color: $warning-base-color;}
+&:hover{box-shadow:none;background-color: $warning-focus-color;border-color: $warning-focus-color;color: $white;}
+&:active, &:focus, &:not(:disabled):not(.disabled):active{box-shadow:none;background-color: $warning-focus-color;border-color: $warning-focus-color;}
+&:not(:disabled):not(.disabled):active:focus{box-shadow: none;color: $white;} 
+}  
+.btn-outline-warning{color: $warning-text-color;background-color: transparent;border-color: $warning-base-color;
+&:visited, &:disabled, .disabled{color: $warning-text-color;}
+&:focus, &:active, &:not(:disabled):not(.disabled):active{box-shadow:none;background-color: $warning-focus-color;border-color: $warning-focus-color;}
+&:hover{box-shadow:none;background-color: $warning-base-color;border-color: $warning-base-color;}
+&:not(:disabled):not(.disabled):active:focus{box-shadow: none;color: $warning-text-color;} 
+}  
+.btn-danger-sm{padding:$size3 $size10;border-radius: $size4;}
+.ghost-btn{background: transparent;padding:$size9;font-weight: 500;border:$size1 solid  $pale-light-blue;outline: none;color: $primary;
+&:hover, &:focus{background: $pale-light-blue;color: $primary;outline: none;border:$size1 solid  $pale-light-blue;}
+} 
+.ghost-btn-bright{background: rgba($blue, 10%);padding:$size9;font-weight: 500;border:$size1 solid  $blue;outline: none;color: $primary;
+&:hover, &:focus{background: $blue;color: $white;outline: none;border:$size1 solid  $blue;}
+} 
+.ghost-danger-btn{background: $danger-bg-color;padding:$size9;font-weight: 500;border:$size1 solid  $danger-base-color;outline: none;color: $danger-text-color;
+&:hover, &:focus{background: $danger-base-color;color: $white;outline: none;border:$size1 solid  $danger-base-color;}
+} 
+.ghost-warning-btn{background: $warning-light-color;padding:$size9;font-weight: 500;border:$size1 solid  $warning-base-color;outline: none;color: $warning-text-color;
+&:hover{background: $warning-bg-color;color: $white;outline: none;border:$size1 solid  $warning-bg-color;}
+&:focus{background: $warning-focus-color;color: $white;outline: none;border:$size1 solid  $warning-focus-color;}
+} 
+.ghost-btn-lg{padding:$size12 $size20;border-radius: $size10;} 
+.ghost-btn-sm{padding:$size3 $size10;border-radius: $size4;} 
+.btn-link {
+  text-decoration: none;
+  &:hover {
+    text-decoration: none;
+  }
+  &:focus,
+  &.focus {
+    text-decoration: none;
+    box-shadow: none;
+  } 
+}
+.btn-link-danger {
+  text-decoration: none;
+  color: $danger-base-color;
+  &:hover {
+    text-decoration: none;
+    color: $danger-text-color;
+  }
+  &:focus,
+  &.focus {
+    color: $danger-text-color;
+    text-decoration: none;
+    box-shadow: none;
+  } 
+}
+.btn-link-warning {
+  text-decoration: none;
+  color: $warning-base-color;
+  &:hover {
+    text-decoration: none;
+    color: $warning-text-color;
+  }
+  &:focus,
+  &.focus {
+    color: $warning-text-color;
+    text-decoration: none;
+    box-shadow: none;
+  } 
+}
+.btn-link-underline {
+  text-decoration: none;
+  &:hover {
+    text-decoration: underline;
+  }
+  &:focus,
+  &.focus {
+    text-decoration: underline;
+    box-shadow: none;
+  } 
+}
+/*++++++++++++++++ pills & tabs ++++++++++++++++++++ */
+.nav-pills {
+    .nav-link{text-transform:uppercase;border-radius:0;color:$body-text-base;background-color:transparent;font-weight:700;border-bottom:$size3 solid transparent}  
+    .nav-link.active,
+    .show > .nav-link{color:$body-text-base;background-color:transparent;font-weight:700;border-bottom:$size3 solid $primary}
+    .nav-link-danger{text-transform:uppercase;border-radius:0;color:$danger-text-color;background-color:transparent;font-weight:700;border-bottom:$size3 solid transparent}  
+    .nav-link-danger.active,
+    .show > .nav-link-danger{color:$danger-text-color;background-color:transparent;font-weight:700;border-bottom:$size3 solid $danger-base-color}
+  }    
+.nav-tabs {
+  border-bottom: $size3 solid transparent;
+  .nav-item {
+  margin-bottom: -$size3;
+  font-size: $size12;
+  font-weight:700;
+  text-transform: uppercase;
+  }
+
+  .nav-link { 
+    border: 0 solid transparent;
+    border-bottom: $size3 solid transparent;
+    border-radius: 0;
+    border-color: transparent;
+    padding:$size3 $size10;
+    color:$body-text-base; 
+
+    &.disabled {
+      color: lighten($body-text-base, 40%);
+      background-color: transparent;
+      border-color: transparent;
+    }
+  }
+  .nav-link.active,
+  .nav-item.show .nav-link {
+    color: $body-text-base; 
+    border-color: $blue;
+    border-bottom: $size3 solid $blue;
+  }
+}
+/*++++++++++++++++ pills & tabs ++++++++++++++++++++ */
+
+/*++++++++++++++++ icon-links ++++++++++++++++++++ */
+.app-icon-link{@include icon-nav-link($pale-dark-blue, $pale-dark-blue-focus, $pale-dark-blue-focus, $pastel-blue);
+margin-left: $size10;padding: $size7 $size10;border-radius: $size5;}
+[data-toggle="collapse"].collapsed .icon-chevron-down:before {
+  content: "\e931";font-family:"feather-icon";
+}
+[data-toggle="collapse"] .collapse-chevron-down:before {  
+  content: "\e92e";font-family:"feather-icon";
+}
+.app-icon-link  .collapse-chevron-down:before {font-family:"feather-icon";content:"\e92e";}
+/*++++++++++++++++ icon-links ++++++++++++++++++++ */
+
+/*++++++++++++++++ preloader overlay ++++++++++++++++++++ */
+.block-relative{position: relative;}
+.block-relative .preloader-cover{width: 100%;height: 100%;background: rgba(255,255,255,0.90);position:absolute;top:0;left: 0;right: 0;margin:0 auto;text-align: center;z-index:9;display: flex;-webkit-box-align: center;-webkit-align-items: center;-ms-flex-align: center;align-items: center;-webkit-box-pack: center;-webkit-justify-content: center;-ms-flex-pack: center;justify-content: center;}
+.block-relative .preloader-middle{-webkit-box-flex: 0;-webkit-flex: none;-ms-flex: none;flex: none;}
+/*++++++++++++++++ preloader overlay ++++++++++++++++++++ */
+
+/*++++++++++++++++ sidebar-toggle ++++++++++++++++++++ */
+.sidebar-toggle-btn{outline: none;font-size: $size20;border-radius: $size5;@include bordered-ghost-btn($white, $blue);
+&{
+  &:visited, &:active, &:focus {
+    outline: none;box-shadow: 0 0 0 0 transparent;
+    }
+}
+}
+/*++++++++++++++++ sidebar-toggle ++++++++++++++++++++ */
+
+/*++++++++++++++++ social - links ++++++++++++++++++++ */
+.facebook-large-btn{color:$white;background-image: linear-gradient( 360deg, $facebook-color 10%, adjust-hue($facebook-color, 20%) 100%);border:none;outline: none;width:$size100;height:$size100;@include pos-rel();overflow:hidden;border-radius:$size10;font-weight:600;
+&:after{content: '\e961';font-family: "icomoon" !important;font-size: $size80;@include pos-abs();left: 0;right:0; bottom:-$size40;color: $white;opacity: 0.12;outline: none;border: $size1 solid transparent;}
+&:focus, &:active{outline:none;border:none;box-shadow: 0 0 0 $size3 rgba($facebook-color, 0.7);}
+&:hover{outline:none;border:none;background-image: linear-gradient( 360deg, $facebook-color 10%, adjust-hue($facebook-color, 40%) 100%);}
+}
+.twitter-large-btn{color:$white;background-image: linear-gradient( 360deg, $twitter-color 10%, adjust-hue($twitter-color, 20%) 100%);border:none;outline: none;width:$size100;height:$size100;@include pos-rel();overflow:hidden;border-radius:$size10;font-weight:600;
+&:after{content: '\ea6c';font-family: "icomoon" !important;font-size: $size80;@include pos-abs();left: 0;right:0; bottom:-$size40;color: $white;opacity: 0.12;outline: none;border: $size1 solid transparent;}
+&:focus, &:active{outline:none;border:none;box-shadow: 0 0 0 $size3 rgba($twitter-color, 0.7);}
+&:hover{outline:none;border:none;background-image: linear-gradient( 360deg, $twitter-color 10%, adjust-hue($twitter-color, 40%) 100%);}
+}
+.linkedin-large-btn{color:$white;background-image: linear-gradient( 360deg, $linkedin-color 10%, adjust-hue($linkedin-color, 20%) 100%);border:none;outline: none;width:$size100;height:$size100;@include pos-rel();overflow:hidden;border-radius:$size10;font-weight:600;
+&:after{content: '\e9bf';font-family: "icomoon" !important;font-size: $size80;@include pos-abs();left: 0;right:0; bottom:-$size40;color: $white;opacity: 0.12;outline: none;border: $size1 solid transparent;}
+&:focus, &:active{outline:none;border:none;box-shadow: 0 0 0 $size3 rgba($linkedin-color, 0.7);}
+&:hover{outline:none;border:none;background-image: linear-gradient( 360deg, $linkedin-color 10%, adjust-hue($linkedin-color, 40%) 100%);}
+}
+.instagram-large-btn{color:$white;background-image: linear-gradient( 360deg, $instagram-color 10%, adjust-hue($instagram-color, 20%) 100%);border:none;outline: none;width:$size100;height:$size100;@include pos-rel();overflow:hidden;border-radius:$size10;font-weight:600;
+&:after{content: '\e9a0';font-family: "icomoon" !important;font-size: $size80;@include pos-abs();left: 0;right:0; bottom:-$size40;color: $white;opacity: 0.12;outline: none;border: $size1 solid transparent;}
+&:focus, &:active{outline:none;border:none;box-shadow: 0 0 0 $size3 rgba($instagram-color, 0.7);}
+&:hover{outline:none;border:none;background-image: linear-gradient( 360deg, $instagram-color 10%, adjust-hue($instagram-color, 60%) 100%);}
+}
+.youtube-large-btn{color:$white;background-image: linear-gradient( 360deg, $youtube-color 10%, adjust-hue($youtube-color, 20%) 100%);border:none;outline: none;width:$size100;height:$size100;@include pos-rel();overflow:hidden;border-radius:$size10;font-weight:600;
+&:after{content: '\ea98';font-family: "icomoon" !important;font-size: $size80;@include pos-abs();left: 0;right:0; bottom:-$size40;color: $white;opacity: 0.12;outline: none;border: $size1 solid transparent;}
+&:focus, &:active{outline:none;border:none;box-shadow: 0 0 0 $size3 rgba($youtube-color, 0.7);}
+&:hover{outline:none;border:none;background-image: linear-gradient( 360deg, $youtube-color 10%, adjust-hue($youtube-color, 40%) 100%);}
+}
+/*++++++++++++++++ social - links ++++++++++++++++++++ */
+ 

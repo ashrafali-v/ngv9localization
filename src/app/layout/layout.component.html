@@ -47,9 +47,17 @@
                             <div class="font-size9">EN</div>
                             <span class="icon icon-globe dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
                                 aria-expanded="false"></span>
-                            <div class="dropdown-menu">
-                                globalization
-                            </div>
+                            <button type="button" [ngbPopover]="pointsMoreOptions" autoClose="outside"
+                                #popOver="ngbPopover">
+
+                                <ng-template #pointsMoreOptions>
+                                    <a href="\ngv9localization">English</a>
+                                    <br>
+                                    <a href="\ngv9localization\es">Spanish</a>
+                                    <br>
+                                    <a href="\ngv9localization\fr">French</a>
+                                </ng-template>
+                            </button>
                         </a>
                         <a href="#" class="navigation-link margin-bottom-10" placement="right"
                             ngbTooltip="Change Theme">
@@ -158,64 +166,64 @@
                                     <div class="col-3 padding-right-0 text-center d-flex justify-content-center">
                                         <div class="icon icon-settings sidebar-menu-icon"></div>
                                     </div>
-                                    <div class="col-9 padding-left-0">Settings                                     
-                                        <span *ngIf="hasExpiredTokens" class="link-error"></span>                                        
+                                    <div class="col-9 padding-left-0">Settings
+                                        <span *ngIf="hasExpiredTokens" class="link-error"></span>
                                     </div>
                                 </div>
-                            </a>    
+                            </a>
                             <span class="icon icon-chevron-down"
                                 [ngClass]="{ 'icon-chevron-up' : !settingsSubMenuCollapsed}"
-                                (click)="settingsSubMenuCollapsed = !settingsSubMenuCollapsed"></span>                                                   
+                                (click)="settingsSubMenuCollapsed = !settingsSubMenuCollapsed"></span>
                         </div>
                         <!-- SubMenuStart -->
                         <div class="nav-menu-content" [ngbCollapse]="settingsSubMenuCollapsed">
                             <div class="menu-group-vertical-item margin-bottom-10">
                                 <a #channelsLink routerLink="/settings/channels" routerLinkActive="active-nav-menu-link"
-                                class="w-100 nav-menu-link">Channel<span *ngIf="hasExpiredTokens" 
-                                    class="link-error"></span>                  
+                                    class="w-100 nav-menu-link">Channel<span *ngIf="hasExpiredTokens"
+                                        class="link-error"></span>
                                 </a>
                             </div>
                             <div class="menu-group-vertical-item margin-bottom-10">
                                 <a routerLink="/settings/users" routerLinkActive="active-nav-menu-link"
-                                class="w-100 nav-menu-link">User                      
+                                    class="w-100 nav-menu-link">User
                                 </a>
                             </div>
                             <div class="menu-group-vertical-item margin-bottom-10">
                                 <a routerLink="/settings/teams" routerLinkActive="active-nav-menu-link"
-                                class="w-100 nav-menu-link">Team                      
+                                    class="w-100 nav-menu-link">Team
                                 </a>
                             </div>
                             <div class="menu-group-vertical-item margin-bottom-10">
                                 <a routerLink="/settings/content" routerLinkActive="active-nav-menu-link"
-                                class="w-100 nav-menu-link">Content                      
+                                    class="w-100 nav-menu-link">Content
                                 </a>
                             </div>
                             <div class="menu-group-vertical-item margin-bottom-10">
                                 <a routerLink="/settings/categories" routerLinkActive="active-nav-menu-link"
-                                class="w-100 nav-menu-link">Category                      
+                                    class="w-100 nav-menu-link">Category
                                 </a>
                             </div>
                             <div class="menu-group-vertical-item margin-bottom-10">
                                 <a routerLink="/settings/analytics" routerLinkActive="active-nav-menu-link"
-                                class="w-100 nav-menu-link">Analytics                      
+                                    class="w-100 nav-menu-link">Analytics
                                 </a>
                             </div>
                             <div class="menu-group-vertical-item margin-bottom-10">
                                 <a routerLink="/settings/notifications" routerLinkActive="active-nav-menu-link"
-                                class="w-100 nav-menu-link">Notification                      
+                                    class="w-100 nav-menu-link">Notification
                                 </a>
                             </div>
                             <div class="menu-group-vertical-item margin-bottom-10">
                                 <a routerLink="/settings/points" routerLinkActive="active-nav-menu-link"
-                                class="w-100 nav-menu-link">Point Plan                      
+                                    class="w-100 nav-menu-link">Point Plan
                                 </a>
                             </div>
                             <div class="menu-group-vertical-item margin-bottom-10">
                                 <a routerLink="/settings/configurations" routerLinkActive="active-nav-menu-link"
-                                class="w-100 nav-menu-link">Configuration                      
+                                    class="w-100 nav-menu-link">Configuration
                                 </a>
                             </div>
-                        </div> 
+                        </div>
                         <!-- SubMenuEnd -->
                         <div class="menu-group-vertical-item margin-bottom-10">
                             <a href="#" class="w-100 nav-menu-link" routerLinkActive="active-nav-menu-link">
